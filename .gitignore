@@ -1,0 +1,4 @@
+.DS_Store
+.system_generated/
+*.log
+node_modules/

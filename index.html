@@ -1,0 +1,2222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChainSentinel — Financial Crime Investigation Platform</title>
+<meta name="description" content="ChainSentinel is a professional financial crime investigation platform for cryptocurrency tracing and fund-flow analysis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f4f8;--surface:#fff;--surface2:#f8fafc;--surface3:#f1f5f9;
+  --border:#e2e8f0;--border2:#cbd5e1;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --navy:#1e3a8a;--navy2:#1e40af;--blue:#2563eb;--blue-l:#dbeafe;--blue-ll:#eff6ff;
+  --sky:#0ea5e9;--sky-l:#e0f2fe;
+  --green:#059669;--green-l:#d1fae5;
+  --amber:#d97706;--amber-l:#fef3c7;
+  --orange:#ea580c;--orange-l:#ffedd5;
+  --red:#dc2626;--red-l:#fee2e2;
+  --gold:#b45309;
+  --sh:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);
+  --sh-md:0 4px 6px rgba(0,0,0,.07),0 10px 25px rgba(0,0,0,.05);
+  --sh-lg:0 10px 15px rgba(0,0,0,.08),0 20px 40px rgba(0,0,0,.07);
+  --r:10px;--r-sm:6px;--r-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+img{max-width:100%;height:auto}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--r-sm);font-weight:600;font-size:13px;transition:all .15s;white-space:nowrap;cursor:pointer}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 1px 2px rgba(30,58,138,.3)}
+.btn-primary:hover{background:var(--navy2);box-shadow:0 2px 8px rgba(30,58,138,.35)}
+.btn-secondary{background:var(--blue-ll);color:var(--navy);border:1px solid var(--blue-l)}
+.btn-secondary:hover{background:var(--blue-l)}
+.btn-ghost{background:var(--surface);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface3);color:var(--text)}
+.btn-danger{background:#fee2e2;color:var(--red);border:1px solid #fecaca}
+.btn-danger:hover{background:#fecaca}
+.btn-sm{padding:6px 11px;font-size:12px}
+.btn-xs{padding:4px 8px;font-size:11px}
+.btn-icon{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface);color:var(--text2)}
+.btn-icon:hover{background:var(--surface3);color:var(--text)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.02em}
+.badge-critical{background:#fee2e2;color:#991b1b}
+.badge-high{background:#ffedd5;color:#9a3412}
+.badge-medium{background:#fef3c7;color:#92400e}
+.badge-low{background:#d1fae5;color:#065f46}
+.badge-blue{background:var(--blue-l);color:var(--navy)}
+.badge-gray{background:var(--surface3);color:var(--text2)}
+.badge-observed{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.badge-detected{background:#fef9c3;color:#713f12;border:1px solid #fef08a}
+.badge-predicted{background:#f3e8ff;color:#6b21a8;border:1px solid #e9d5ff}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;background:#fff;z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0}
+.splash-card{text-align:center}
+.splash-logo{width:110px;height:86px;object-fit:contain;animation:logoPulse 2s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{transform:scale(.97);filter:drop-shadow(0 0 6px rgba(30,58,138,.2))}50%{transform:scale(1.03);filter:drop-shadow(0 0 18px rgba(30,58,138,.45))}}
+.splash-title{font-size:26px;font-weight:900;color:var(--navy);letter-spacing:.03em;margin-top:14px}
+.splash-sub{color:var(--text2);margin-top:4px;font-weight:500;font-size:13px}
+.splash-status{margin-top:20px;color:var(--text3);font-size:13px}
+.splash-dots{display:flex;justify-content:center;gap:7px;margin-top:10px}
+.splash-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);animation:dotAnim 1.1s infinite}
+.splash-dot:nth-child(2){animation-delay:.12s}.splash-dot:nth-child(3){animation-delay:.24s}.splash-dot:nth-child(4){animation-delay:.36s}.splash-dot:nth-child(5){animation-delay:.48s}
+@keyframes dotAnim{0%,100%{transform:scale(.7);opacity:.4}50%{transform:scale(1.5);opacity:1;background:var(--blue)}}
+.splash-bar{width:280px;height:3px;background:var(--border);border-radius:8px;margin:16px auto 0;overflow:hidden}
+.splash-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--blue),var(--sky));animation:barLoad 2.5s linear forwards}
+@keyframes barLoad{to{width:100%}}
+
+/* ── LOGIN ── */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f0f4ff 0%,#e8f0fe 50%,#f0f7ff 100%);padding:24px}
+#login::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(37,99,235,.06) 0%,transparent 60%),radial-gradient(circle at 80% 50%,rgba(14,165,233,.06) 0%,transparent 60%);pointer-events:none}
+.login-shell{width:460px;background:#fff;border-radius:18px;box-shadow:var(--sh-lg);overflow:hidden;border:1px solid var(--border);position:relative;z-index:1}
+.login-top{background:linear-gradient(150deg,#0f172a,#1e3a8a);padding:28px;text-align:center;border-bottom:3px solid var(--blue)}
+.login-logo{width:90px;height:70px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(14,165,233,.3))}
+.login-brand{color:#fff;font-size:26px;font-weight:900;letter-spacing:.05em;margin-top:10px}
+.login-tag{color:#93c5fd;font-size:12px;font-weight:500;margin-top:4px}
+.login-body{padding:28px}
+.login-h{font-weight:800;font-size:18px;color:var(--navy)}
+.login-sub{color:var(--text2);font-size:12px;margin-top:4px}
+.form-label{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--text2);margin:16px 0 6px}
+.form-field{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);outline:none;background:var(--surface2);transition:all .15s;font-size:13px}
+.form-field:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.form-field::placeholder{color:var(--text3)}
+.login-actions{display:flex;gap:10px;margin-top:18px}
+.login-actions .btn{flex:1;justify-content:center}
+.login-bio{margin-top:14px;border:1px solid var(--border);background:var(--surface2);border-radius:var(--r);padding:14px;text-align:center}
+.login-bio-icon{font-size:30px;color:var(--blue);animation:bioPulse 2s ease-in-out infinite}
+@keyframes bioPulse{50%{transform:scale(1.08);filter:drop-shadow(0 0 8px rgba(37,99,235,.4))}}
+.login-bio-text{font-size:12px;font-weight:600;color:var(--text);margin-top:6px}
+.login-bio-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.login-security{font-size:11px;color:var(--text3);text-align:center;margin-top:14px}
+.login-demo{font-size:11px;color:var(--text3);text-align:center;margin-top:6px}
+
+/* ── APP LAYOUT ── */
+#app{min-height:100vh}
+.topbar{height:64px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.topbar-logo{width:38px;height:38px;object-fit:contain;flex-shrink:0}
+.topbar-brand{margin-left:10px;flex-shrink:0}
+.topbar-brand b{display:block;font-size:16px;font-weight:900;color:var(--navy);letter-spacing:.04em}
+.topbar-brand span{display:block;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.06em}
+.topbar-divider{width:1px;height:28px;background:var(--border);margin:0 16px;flex-shrink:0}
+.topbar-case{flex-shrink:0;display:flex;align-items:center;gap:8px}
+.topbar-case-label{font-size:10px;color:var(--text3);font-weight:600}
+.topbar-case-id{font-size:13px;font-weight:700;color:var(--navy);background:var(--blue-ll);padding:4px 10px;border-radius:20px;border:1px solid var(--blue-l)}
+.topbar-search{flex:1;max-width:520px;margin:0 20px;position:relative}
+.topbar-search input{width:100%;padding:9px 14px 9px 38px;border:1.5px solid var(--border);border-radius:24px;background:var(--surface2);outline:none;font-size:13px;transition:all .15s}
+.topbar-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.08);background:#fff}
+.topbar-search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.sys-status{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green);background:var(--green-l);padding:6px 10px;border-radius:20px;border:1px solid #a7f3d0}
+.sys-status::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px;cursor:pointer}
+.topbar-profile{display:flex;align-items:center;gap:8px;border-left:1px solid var(--border);padding-left:12px}
+.topbar-profile b{font-size:12px;font-weight:700}
+.topbar-profile small{display:block;color:var(--text3);font-size:10px}
+.hamburger{display:none;flex-direction:column;gap:4px;padding:8px;cursor:pointer}
+.hamburger span{width:20px;height:2px;background:var(--text2);border-radius:2px;transition:all .2s}
+
+.layout{display:flex;min-height:calc(100vh - 64px)}
+.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);padding:12px 8px;position:fixed;top:64px;bottom:0;overflow-y:auto;overflow-x:hidden;transition:transform .25s;z-index:40}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.nav-group{font-size:10px;letter-spacing:.1em;color:var(--text3);font-weight:700;padding:14px 10px 6px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;margin:1px 0;border-radius:var(--r-sm);color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;text-align:left;position:relative}
+.nav-item:hover{background:var(--blue-ll);color:var(--navy)}
+.nav-item.active{background:var(--blue-ll);color:var(--navy);font-weight:700}
+.nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--blue);border-radius:0 3px 3px 0}
+.nav-icon{width:18px;text-align:center;font-size:14px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:700;background:var(--red-l);color:var(--red);padding:2px 6px;border-radius:10px}
+.nav-bottom{border-top:1px solid var(--border);margin:8px 0 0;padding-top:8px}
+
+.main{margin-left:240px;width:calc(100% - 240px);padding:22px 24px 60px;min-height:calc(100vh - 64px)}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:12px}
+.page-head-left .crumb{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.04em;margin-bottom:4px}
+.page-head-left h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.01em}
+.page-head-left p{font-size:12px;color:var(--text2);margin-top:3px}
+.page-head-right{display:flex;gap:8px;flex-shrink:0;align-items:center}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh)}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+.card-head b{font-size:13px;font-weight:700;color:var(--text)}
+.card-body{padding:16px}
+.card-section{padding:14px 16px;border-bottom:1px solid var(--border)}
+.card-section:last-child{border-bottom:none}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r) 0 0 var(--r)}
+.kpi-card.blue::before{background:var(--blue)}
+.kpi-card.red::before{background:var(--red)}
+.kpi-card.amber::before{background:var(--amber)}
+.kpi-card.green::before{background:var(--green)}
+.kpi-card.navy::before{background:var(--navy)}
+.kpi-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
+.kpi-value{font-size:26px;font-weight:900;color:var(--text);margin-top:6px;letter-spacing:-.01em}
+.kpi-delta{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500}
+.kpi-icon{position:absolute;right:12px;top:12px;font-size:22px;opacity:.12}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tbody tr{transition:background .1s}
+.tbl tbody tr:hover td{background:var(--blue-ll)}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl .mono{font-family:Consolas,monospace;font-size:11px;color:var(--text2)}
+
+/* ── ALERTS ── */
+.alert-card{padding:12px;border:1px solid var(--border);border-radius:var(--r-sm);background:#fff;cursor:pointer;transition:all .15s;border-left:3px solid var(--border2)}
+.alert-card:hover{box-shadow:var(--sh-md);transform:translateX(2px)}
+.alert-card.critical{border-left-color:var(--red)}
+.alert-card.high{border-left-color:var(--orange)}
+.alert-card.medium{border-left-color:var(--amber)}
+.alert-card.low{border-left-color:var(--green)}
+.alert-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.alert-title{font-size:12px;font-weight:700;color:var(--text)}
+.alert-desc{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5}
+.alert-meta{font-size:10px;color:var(--text3);margin-top:4px}
+
+/* ── GRAPH ── */
+.graph-wrap{background:linear-gradient(160deg,#0d1b2e,#0a1628);border-radius:var(--r);position:relative;overflow:hidden;border:1px solid #1e3a5f;user-select:none}
+.graph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.graph-svg{display:block;width:100%;cursor:grab}
+.graph-svg.dragging{cursor:grabbing}
+.graph-controls{position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:5}
+.graph-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#c8d8e8;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.graph-btn:hover{background:rgba(255,255,255,.16);color:#fff}
+.graph-btn.active{background:rgba(37,99,235,.4);border-color:rgba(37,99,235,.6);color:#93c5fd}
+.graph-legend{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.35);padding:8px 12px;border-radius:8px;color:#8faacc;font-size:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;z-index:5}
+.graph-label-bar{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.3);padding:6px 10px;border-radius:8px;color:#8faacc;font-size:10px;z-index:5}
+.graph-zoom{position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:4px;z-index:5}
+.graph-zoom button{width:28px;height:28px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#c8d8e8;border-radius:5px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.graph-zoom button:hover{background:rgba(255,255,255,.2)}
+
+/* ── DRAWER ── */
+.drawer{position:fixed;right:-460px;top:64px;bottom:0;width:460px;background:#fff;box-shadow:-8px 0 30px rgba(0,0,0,.12);z-index:45;transition:right .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;border-left:1px solid var(--border)}
+.drawer.open{right:0}
+.drawer-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:2}
+.drawer-head b{font-size:14px;font-weight:700}
+.drawer-body{padding:18px}
+.drawer-section{margin-bottom:20px}
+.drawer-section-title{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
+
+/* ── RISK BOX ── */
+.risk-box{padding:16px;border-radius:var(--r);background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;text-align:center;margin-bottom:16px}
+.risk-score{font-size:36px;font-weight:900;letter-spacing:-.02em}
+.risk-level{font-size:11px;font-weight:800;letter-spacing:.08em;margin-top:2px;opacity:.9}
+.risk-bar{height:6px;background:rgba(255,255,255,.15);border-radius:8px;margin-top:12px;overflow:hidden}
+.risk-bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#f59e0b,#f97316,#ef4444);transition:width .6s ease}
+
+/* ── KV GRID ── */
+.kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.kv-item{padding:10px;background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border)}
+.kv-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.kv-value{font-size:13px;font-weight:700;color:var(--text);margin-top:2px}
+
+/* ── TAGS ── */
+.tag-risk{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:var(--r-sm);background:var(--red-l);color:#991b1b;border:1px solid #fecaca;font-size:11px;font-weight:600;margin:5px 0}
+.tag-risk.medium{background:var(--amber-l);color:#92400e;border-color:#fde68a}
+.tag-risk.low{background:var(--green-l);color:#065f46;border-color:#a7f3d0}
+.tag-risk.predicted{background:#f3e8ff;color:#6b21a8;border-color:#e9d5ff}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:5px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:11px;font-weight:500;color:var(--text2)}
+
+/* ── ACTION GRID ── */
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
+.action-grid .btn{justify-content:center;font-size:11px}
+
+/* ── MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:80;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal{width:min(700px,95vw);max-height:88vh;overflow-y:auto;background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-lg);border:1px solid var(--border)}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:2;border-radius:var(--r-lg) var(--r-lg) 0 0}
+.modal-head b{font-size:15px;font-weight:700}
+.modal-body{padding:20px}
+
+/* ── NOTICE ── */
+.notice{border:1px solid var(--border);border-left:4px solid var(--blue);padding:12px;border-radius:var(--r-sm);margin-bottom:9px;cursor:pointer;transition:all .12s}
+.notice:hover{box-shadow:var(--sh)}
+.notice.critical{border-left-color:var(--red);background:#fff9f9}
+.notice.high{border-left-color:var(--orange);background:#fffaf6}
+.notice b{font-size:12px;font-weight:700}
+.notice p{font-size:11px;color:var(--text2);margin:5px 0 0;line-height:1.5}
+.notice-link{font-size:10px;color:var(--blue);font-weight:700;margin-top:6px;display:block}
+
+/* ── TOAST ── */
+.toast{position:fixed;right:20px;bottom:80px;background:#0f172a;color:#fff;padding:11px 16px;border-radius:var(--r);box-shadow:var(--sh-lg);z-index:200;font-size:12px;font-weight:500;border-left:3px solid var(--sky);animation:slideUp .2s ease;display:flex;align-items:center;gap:8px;max-width:340px}
+.toast.ok{border-left-color:var(--green)}
+.toast.warn{border-left-color:var(--amber)}
+.toast.err{border-left-color:var(--red)}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+
+/* ── TIMELINE ── */
+.timeline-item{display:grid;grid-template-columns:80px 16px 1fr;gap:12px;min-height:64px;padding:4px 0}
+.timeline-time{font-size:10px;color:var(--text3);font-weight:700;padding-top:3px;line-height:1.4}
+.timeline-dot-col{position:relative;display:flex;flex-direction:column;align-items:center}
+.timeline-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.timeline-line{flex:1;width:1px;background:var(--border2);margin-top:2px;opacity:.6}
+.timeline-content{padding-bottom:12px}
+.timeline-content b{font-size:12px;font-weight:700;color:var(--text)}
+.timeline-content p{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.5}
+.timeline-content small{font-size:10px;color:var(--text3);margin-top:2px;display:block}
+
+/* ── INVESTIGATION WORKSPACE ── */
+.workspace{display:grid;grid-template-columns:260px 1fr 300px;gap:0;height:calc(100vh - 64px - 44px);min-height:500px}
+.workspace-left{border-right:1px solid var(--border);overflow-y:auto;background:#fff;padding:14px}
+.workspace-center{overflow:hidden;position:relative;background:var(--bg)}
+.workspace-right{border-left:1px solid var(--border);overflow-y:auto;background:#fff;transition:transform .25s}
+.workspace-right.empty{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--text3);text-align:center;padding:20px}
+.workspace-tabs{border-bottom:1px solid var(--border);background:#fff;display:flex;padding:0 16px}
+.workspace-tab{padding:10px 14px;font-size:12px;font-weight:600;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.workspace-tab.active{color:var(--navy);border-bottom-color:var(--blue)}
+
+/* ── SOURCE ITEM ── */
+.source-item{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;background:#fff}
+.source-item b{font-size:12px;font-weight:700}
+.source-item small{display:block;color:var(--text3);font-size:11px;margin-top:2px}
+.sw{width:32px;height:18px;border-radius:20px;background:var(--border2);position:relative;transition:.2s;cursor:pointer;flex-shrink:0}
+.sw.on{background:var(--green)}
+.sw::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw.on::after{left:16px}
+
+/* ── ENTITY CARD ── */
+.entity-card{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;cursor:pointer;transition:all .12s}
+.entity-card:hover{border-color:var(--blue-l);background:var(--blue-ll)}
+.entity-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+
+/* ── REPORT ── */
+.report-box{background:var(--surface2);border:1px solid var(--border);padding:18px;border-radius:var(--r-sm);white-space:pre-wrap;font-family:Consolas,monospace;font-size:11px;line-height:1.65;max-height:480px;overflow-y:auto;color:var(--text2)}
+
+/* ── PREDICTION CARD ── */
+.prediction-card{background:linear-gradient(135deg,#faf5ff,#ede9fe);border:1px solid #c4b5fd;border-radius:var(--r);padding:16px;margin-bottom:12px}
+.prediction-label{font-size:10px;font-weight:800;color:#6d28d9;letter-spacing:.06em;text-transform:uppercase}
+.prediction-dest{font-size:20px;font-weight:800;color:#4c1d95;margin-top:6px}
+.confidence-bar{height:8px;background:#e8dffe;border-radius:8px;margin:10px 0;overflow:hidden}
+.confidence-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.prediction-reason{font-size:11px;color:#5b21b6;line-height:1.5;margin-top:8px}
+
+/* ── BEHAVIOURAL ── */
+.behaviour-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;border-left:4px solid var(--border2)}
+.behaviour-card.high{border-left-color:var(--orange)}
+.behaviour-card.critical{border-left-color:var(--red)}
+.behaviour-card.medium{border-left-color:var(--amber)}
+.behaviour-name{font-size:14px;font-weight:800;color:var(--text)}
+.behaviour-entity{font-size:11px;color:var(--text3);margin-top:2px}
+.behaviour-desc{font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;background:var(--surface2);padding:10px;border-radius:var(--r-sm)}
+.behaviour-evidence{margin-top:10px}
+.behaviour-evidence-item{font-size:11px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.behaviour-evidence-item:last-child{border-bottom:none}
+
+/* ── REQUEST STATUS FLOW ── */
+.status-flow{display:flex;align-items:center;gap:0;margin:14px 0;overflow-x:auto;padding-bottom:4px}
+.status-step{display:flex;align-items:center;gap:0;flex-shrink:0}
+.status-node{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;background:var(--surface3);color:var(--text3);border:1px solid var(--border);white-space:nowrap}
+.status-node.done{background:var(--green-l);color:#065f46;border-color:#a7f3d0}
+.status-node.current{background:var(--blue-l);color:var(--navy);border-color:#93c5fd}
+.status-arrow{color:var(--border2);padding:0 3px;font-size:12px}
+
+/* ── SENTINEL GUIDE ── */
+#sentinel-wrap{position:fixed;bottom:24px;right:24px;z-index:100}
+.sentinel-btn{width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(30,58,138,.35);background:transparent;padding:0;transition:all .2s;animation:sentinelIdle 4s ease-in-out infinite}
+@keyframes sentinelIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.sentinel-panel{width:320px;background:#fff;border-radius:16px;box-shadow:var(--sh-lg);border:1px solid var(--blue-l);margin-bottom:12px;overflow:hidden;animation:panelAppear .2s ease}
+@keyframes panelAppear{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.sentinel-panel-head{background:linear-gradient(135deg,#1e3a8a,#2563eb);padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.sentinel-panel-head b{color:#fff;font-size:13px;font-weight:700}
+.sentinel-panel-body{padding:16px}
+.sentinel-msg{font-size:13px;color:var(--text2);line-height:1.6}
+.sentinel-highlight{font-size:12px;color:var(--blue);background:var(--blue-ll);padding:8px 10px;border-radius:var(--r-sm);margin-top:10px;border-left:3px solid var(--blue)}
+.sentinel-actions{display:flex;gap:8px;margin-top:14px}
+.sentinel-tour-step{font-size:10px;color:var(--text3);text-align:center;margin-top:8px}
+.sentinel-avatar{width:58px;height:58px}
+
+/* ── BIOMETRIC MODAL ── */
+.bio-modal{text-align:center;padding:30px}
+.scan-circle{width:120px;height:120px;border:2px solid var(--sky);border-radius:50%;margin:12px auto;display:grid;place-items:center;position:relative;box-shadow:0 0 30px rgba(14,165,233,.15)}
+.scan-circle::before,.scan-circle::after{content:'';position:absolute;border-radius:50%;border:1px solid rgba(14,165,233,.4);animation:scanRing 2s ease-out infinite}
+.scan-circle::before{inset:-12px}.scan-circle::after{inset:-24px;animation-delay:.4s}
+@keyframes scanRing{0%{transform:scale(.88);opacity:.8}100%{transform:scale(1.12);opacity:0}}
+.scan-icon{font-size:50px;color:var(--blue)}
+.scan-line{height:3px;width:240px;background:linear-gradient(90deg,transparent,var(--sky),transparent);margin:10px auto;animation:scanLine 1.4s linear infinite}
+@keyframes scanLine{from{transform:translateX(-70px)}to{transform:translateX(70px)}}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.filter-bar select{padding:6px 10px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:12px;background:#fff;color:var(--text);outline:none;cursor:pointer}
+.filter-bar select:focus{border-color:var(--blue)}
+.filter-search{padding:6px 10px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:12px;background:#fff;outline:none;min-width:180px}
+.filter-search:focus{border-color:var(--blue)}
+.filter-count{font-size:11px;color:var(--text3);margin-left:auto;font-weight:500}
+
+/* ── EMPTY STATE ── */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;color:var(--text3)}
+.empty-state .icon{font-size:48px;opacity:.4;margin-bottom:16px}
+.empty-state h3{font-size:16px;font-weight:700;color:var(--text2);margin-bottom:8px}
+.empty-state p{font-size:13px;line-height:1.6;max-width:300px}
+
+/* ── NEW INVESTIGATION ── */
+.inv-form{max-width:560px;margin:0 auto}
+.inv-step{display:flex;align-items:center;gap:8px;margin-bottom:24px}
+.inv-step-num{width:28px;height:28px;border-radius:50%;background:var(--blue-l);color:var(--navy);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.inv-step-text{font-size:13px;font-weight:600;color:var(--text)}
+.seed-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.seed-type-btn{padding:14px 10px;border:2px solid var(--border);border-radius:var(--r);text-align:center;cursor:pointer;transition:all .15s;background:#fff}
+.seed-type-btn:hover{border-color:var(--blue-l);background:var(--blue-ll)}
+.seed-type-btn.active{border-color:var(--blue);background:var(--blue-ll)}
+.seed-type-btn .icon{font-size:22px;margin-bottom:6px}
+.seed-type-btn b{display:block;font-size:12px;font-weight:700;color:var(--text)}
+.seed-type-btn small{display:block;font-size:10px;color:var(--text3);margin-top:2px}
+.loading-state{text-align:center;padding:40px 20px}
+.loading-spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── EVIDENCE ── */
+.evidence-status{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.es-collected{background:#dbeafe;color:#1e40af}
+.es-verified{background:#d1fae5;color:#065f46}
+.es-reviewed{background:#fef3c7;color:#92400e}
+.es-attached{background:#dcfce7;color:#166534}
+
+/* ── DATA PROVENANCE ── */
+.prov-label{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;border:1px solid}
+.prov-observed{color:#166534;background:#dcfce7;border-color:#bbf7d0}
+.prov-detected{color:#713f12;background:#fef9c3;border-color:#fef08a}
+.prov-predicted{color:#6b21a8;background:#f3e8ff;border-color:#e9d5ff}
+.prov-sample{color:#0369a1;background:#e0f2fe;border-color:#bae6fd}
+
+/* ── RISK CONTRIBUTORS ── */
+.risk-contrib{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px}
+.risk-contrib:last-child{border-bottom:none}
+.risk-contrib-bar{height:4px;background:var(--border);border-radius:4px;margin-top:4px;overflow:hidden;width:100px}
+.risk-contrib-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--orange),var(--red));border-radius:4px;transition:width .4s ease}
+.risk-contrib-val{font-weight:800;color:var(--red);font-size:13px;min-width:36px;text-align:right}
+
+/* ── MISC ── */
+.section-title{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text3);text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.sep{height:1px;background:var(--border);margin:14px 0}
+.data-tag{font-size:9px;font-weight:700;letter-spacing:.04em;padding:2px 6px;border-radius:4px;display:inline-flex}
+.dt-sample{background:#e0f2fe;color:#0369a1}
+.info-box{background:var(--blue-ll);border:1px solid var(--blue-l);border-radius:var(--r-sm);padding:12px;font-size:12px;color:var(--navy);line-height:1.6;margin-bottom:14px}
+.warn-box{background:var(--amber-l);border:1px solid #fde68a;border-radius:var(--r-sm);padding:12px;font-size:12px;color:#78350f;line-height:1.6;margin-bottom:14px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1280px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1100px){.sidebar{width:200px}.main{margin-left:200px;width:calc(100% - 200px)}.topbar-case{display:none}}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}.sidebar.mobile-open{transform:none}
+  .main{margin-left:0;width:100%;padding:14px 14px 60px}
+  .hamburger{display:flex}.topbar-brand span{display:none}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .workspace{grid-template-columns:1fr}
+  .workspace-left,.workspace-right{display:none}
+  .drawer{width:100%;right:-100%}
+  .sentinel-panel{width:calc(100vw - 48px);right:0}
+}
+@media(max-width:600px){.kpi-grid{grid-template-columns:1fr}.page-head{flex-direction:column}.topbar-search{display:none}}
+
+/* ── ACCESSIBILITY ── */
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-card">
+    <img src="chandigarh-police-logo.png" style="width:100px;height:78px;object-fit:contain" alt="Chandigarh Police">
+    <div style="font-size:22px;font-weight:900;color:var(--navy);margin-top:12px">CHANDIGARH POLICE</div>
+    <div style="font-size:13px;color:var(--text2);font-weight:500;margin-top:3px">Financial Cyber Intelligence Division</div>
+    <div style="margin-top:28px;font-weight:900;font-size:28px;color:var(--navy);letter-spacing:.06em">ChainSentinel</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:4px">Financial Crime Investigation Platform</div>
+    <div class="splash-status" id="splashStatus">Initializing secure intelligence environment…</div>
+    <div class="splash-dots"><i class="splash-dot"></i><i class="splash-dot"></i><i class="splash-dot"></i><i class="splash-dot"></i><i class="splash-dot"></i></div>
+    <div class="splash-bar"><i></i></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<section id="login" class="hidden">
+  <div class="login-shell">
+    <div class="login-top">
+      <img src="chandigarh-police-logo.png" class="login-logo" alt="Chandigarh Police">
+      <div class="login-brand">ChainSentinel</div>
+      <div class="login-tag">Financial Crime Investigation Platform • Chandigarh Police</div>
+    </div>
+    <div class="login-body">
+      <div class="login-h">Secure Investigator Authentication</div>
+      <div class="login-sub">Financial Cyber Intelligence Division • Authorized personnel only</div>
+      <label class="form-label">OFFICER ID</label>
+      <input id="officerId" class="form-field" value="CP-FCI-042" placeholder="Enter officer ID" autocomplete="username">
+      <label class="form-label">PASSWORD</label>
+      <input id="password" class="form-field" type="password" value="demo123" placeholder="Enter password" autocomplete="current-password">
+      <div class="login-actions">
+        <button class="btn btn-primary" id="loginBtn" style="justify-content:center">🔐 &nbsp;SECURE LOGIN</button>
+        <button class="btn btn-ghost" id="fingerBtn" style="justify-content:center">◉ &nbsp;Fingerprint</button>
+      </div>
+      <div class="login-bio">
+        <div class="login-bio-icon">♢</div>
+        <div class="login-bio-text">Simulated Biometric Sign-In</div>
+        <div class="login-bio-sub">Demo only — no biometric data is collected</div>
+      </div>
+      <div class="login-security">🔒 Authorized Personnel Only &nbsp;•&nbsp; Session encrypted &nbsp;•&nbsp; Audit logging enabled</div>
+      <div class="login-demo">Demo credentials are pre-filled for the hackathon prototype</div>
+    </div>
+  </div>
+</section>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <img src="chandigarh-police-logo.png" class="topbar-logo" alt="Chandigarh Police">
+    <div class="topbar-brand"><b>ChainSentinel</b><span>FINANCIAL CRIME INVESTIGATION</span></div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-case" id="topbarCase">
+      <span class="topbar-case-label">ACTIVE CASE</span>
+      <span class="topbar-case-id" id="topbarCaseId">CS-2026-001</span>
+    </div>
+    <div class="topbar-search">
+      <span class="topbar-search-icon">⌕</span>
+      <input id="globalSearch" placeholder="Search wallet, transaction, case, entity…" aria-label="Global search">
+    </div>
+    <div class="topbar-right">
+      <div class="sys-status">SYSTEM ONLINE</div>
+      <button class="btn-icon" id="notifyBtn" aria-label="Notifications" title="Notifications">🔔</button>
+      <div class="topbar-profile">
+        <div class="topbar-avatar" id="topbarAvatar">IO</div>
+        <div><b id="roleName">INVESTIGATING OFFICER</b><small id="officerName">CP-FCI-042</small></div>
+      </div>
+      <button class="btn-icon" id="logoutBtn" aria-label="Logout" title="Logout">↪</button>
+    </div>
+  </header>
+  <!-- LAYOUT -->
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main" id="main"></main>
+  </div>
+</div>
+
+<!-- DRAWER -->
+<div id="drawer" class="drawer" role="complementary" aria-label="Entity intelligence panel"></div>
+<!-- MODAL -->
+<div id="modalRoot"></div>
+<!-- TOAST -->
+<div id="toastRoot" aria-live="polite"></div>
+
+<!-- SENTINEL GUIDE -->
+<div id="sentinel-wrap">
+  <div class="sentinel-panel hidden" id="sentinelPanel">
+    <div class="sentinel-panel-head">
+      <b>🛡 Sentinel Guide</b>
+      <button class="btn-icon" onclick="closeSentinel()" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.2);color:#fff" aria-label="Close guide">✕</button>
+    </div>
+    <div class="sentinel-panel-body">
+      <div class="sentinel-msg" id="sentinelMsg">Welcome to ChainSentinel!</div>
+      <div class="sentinel-highlight hidden" id="sentinelHighlight"></div>
+      <div class="sentinel-actions" id="sentinelActions"></div>
+      <div class="sentinel-tour-step hidden" id="sentinelTourStep"></div>
+    </div>
+  </div>
+  <button class="sentinel-btn" id="sentinelBtn" onclick="toggleSentinel()" aria-label="Open Sentinel Guide" title="Sentinel Guide">
+    <svg class="sentinel-avatar" viewBox="0 0 58 58" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="29" cy="29" r="29" fill="#1e3a8a"/>
+      <ellipse cx="29" cy="28" rx="17" ry="16" fill="#fde8d0"/>
+      <ellipse cx="29" cy="14" rx="17" ry="8" fill="#0f172a"/>
+      <rect x="12" y="12" width="34" height="9" rx="3" fill="#0f172a"/>
+      <ellipse cx="20" cy="27" rx="5.5" ry="6.5" fill="white"/>
+      <ellipse cx="38" cy="27" rx="5.5" ry="6.5" fill="white"/>
+      <circle cx="20" cy="27" r="3.5" fill="#2563eb"/>
+      <circle cx="38" cy="27" r="3.5" fill="#2563eb"/>
+      <circle cx="19" cy="25.5" r="1.2" fill="white"/>
+      <circle cx="37" cy="25.5" r="1.2" fill="white"/>
+      <circle cx="20" cy="27" r="1.8" fill="#0f172a"/>
+      <circle cx="38" cy="27" r="1.8" fill="#0f172a"/>
+      <path d="M13,22 Q20,18 27,22" stroke="#0f172a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M31,22 Q38,18 45,22" stroke="#0f172a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M22,36 Q29,40 36,36" stroke="#c07050" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <ellipse cx="14" cy="28" rx="3" ry="4.5" fill="#fde8d0"/>
+      <ellipse cx="44" cy="28" rx="3" ry="4.5" fill="#fde8d0"/>
+      <ellipse cx="22" cy="33" rx="4" ry="2.5" fill="#f9a8a8" opacity=".35"/>
+      <ellipse cx="36" cy="33" rx="4" ry="2.5" fill="#f9a8a8" opacity=".35"/>
+      <rect x="14" y="41" width="30" height="17" rx="8" fill="#1e3a8a"/>
+      <rect x="24" y="41" width="10" height="11" fill="white"/>
+      <path d="M26,41 L29,47 L32,41" fill="#2563eb"/>
+      <rect x="15" y="44" width="10" height="7" rx="2.5" fill="#3b82f6"/>
+      <text x="20" y="50" text-anchor="middle" fill="white" font-size="5" font-weight="bold" font-family="sans-serif">CS</text>
+    </svg>
+  </button>
+</div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════
+//  CHAIN SENTINEL — Complete Implementation
+//  Single-file, zero-dependency investigation platform
+//  Sample / Simulated Data Only — Not a production system
+// ═══════════════════════════════════════════════════════════
+
+// ─── SAMPLE DATA (Single Source of Truth) ───────────────────
+const CS = {
+  case: {
+    id:'CS-2026-001',
+    title:'Suspected Crypto Investment Fraud & Multi-Layer Fund Movement',
+    status:'INVESTIGATING',
+    priority:'CRITICAL',
+    riskScore:94,
+    riskLevel:'CRITICAL',
+    investigator:'CP-FCI-042',
+    created:'22 Aug 2026, 09:31 IST',
+    lastUpdated:'22 Aug 2026, 12:04 IST',
+    seedType:'wallet',
+    seed:'0x7A3F...B91F',
+    victimRef:'VIC-2026-089',
+    notes:'Victim reported ₹12.4L transferred following an investment fraud call. Funds rapidly moved through multiple crypto wallets before reaching exchange platforms.'
+  },
+  wallets:[
+    {id:'0x7A3F...B91F',chain:'Ethereum',risk:94,riskLevel:'CRITICAL',balance:'₹18,42,190',tx:48,inflow:'₹24,61,000',outflow:'₹11,83,200',first:'14 Mar 2025',last:'22 Aug 2026',type:'Seed Wallet',behaviors:['Dormant Reactivation','Rapid Fan-Out','Multiple Counterparties'],linked:['0x12AB...A8C','0x92CD...11D','0xBB91...3F2','HDFC-4219'],predictedHop:{dest:'Exchange X',conf:78}},
+    {id:'0x12AB...A8C',chain:'TRON',risk:88,riskLevel:'HIGH',balance:'₹9,21,700',tx:31,inflow:'₹12,44,000',outflow:'₹8,72,000',first:'02 May 2026',last:'22 Aug 2026',type:'Transfer Wallet',behaviors:['Rapid Movement','High-Risk Counterparty'],linked:['0x7A3F...B91F','Exchange X']},
+    {id:'0x92CD...11D',chain:'Ethereum',risk:76,riskLevel:'HIGH',balance:'₹6,74,230',tx:19,inflow:'₹8,18,000',outflow:'₹6,24,000',first:'21 Jan 2026',last:'22 Aug 2026',type:'Intermediate Wallet',behaviors:['Layering Indicator'],linked:['0x7A3F...B91F','0x44EF...72B']},
+    {id:'0xBB91...3F2',chain:'Ethereum',risk:81,riskLevel:'HIGH',balance:'₹4,18,400',tx:22,inflow:'₹5,91,000',outflow:'₹4,22,000',first:'08 Jun 2026',last:'22 Aug 2026',type:'Transfer Wallet',behaviors:['Rapid Movement'],linked:['0x7A3F...B91F','Exchange Y']},
+    {id:'0x44EF...72B',chain:'Bitcoin',risk:67,riskLevel:'MEDIUM',balance:'₹3,18,900',tx:14,inflow:'₹4,88,000',outflow:'₹3,97,000',first:'09 Feb 2026',last:'22 Aug 2026',type:'Linked Wallet',behaviors:['Layering Indicator'],linked:['0x92CD...11D','Exchange X']},
+    {id:'HDFC-4219',chain:'Bank',risk:18,riskLevel:'LOW',balance:'—',tx:1,inflow:'—',outflow:'₹12,40,000',first:'19 Aug 2026',last:'22 Aug 2026',type:'Source Bank Account',behaviors:[],linked:['0x7A3F...B91F']}
+  ],
+  transactions:[
+    {id:'TX-CS-001',hash:'0x7a81...93f2',from:'HDFC-4219',to:'0x7A3F...B91F',value:'₹12,40,000',asset:'USDT',chain:'Ethereum',time:'22 Aug 2026 • 09:41 IST',risk:42,prov:'OBSERVED'},
+    {id:'TX-CS-002',hash:'0x12ab...8f22',from:'0x7A3F...B91F',to:'0x12AB...A8C',value:'₹4,82,000',asset:'USDT',chain:'TRON',time:'22 Aug 2026 • 10:07 IST',risk:88,prov:'OBSERVED'},
+    {id:'TX-CS-003',hash:'0x92fe...d17a',from:'0x7A3F...B91F',to:'0x92CD...11D',value:'₹3,74,000',asset:'ETH',chain:'Ethereum',time:'22 Aug 2026 • 10:09 IST',risk:82,prov:'OBSERVED'},
+    {id:'TX-CS-004',hash:'0xb8e1...cc47',from:'0x7A3F...B91F',to:'0xBB91...3F2',value:'₹2,91,000',asset:'USDT',chain:'Ethereum',time:'22 Aug 2026 • 10:11 IST',risk:79,prov:'OBSERVED'},
+    {id:'TX-CS-005',hash:'0x9d22...fa11',from:'0x12AB...A8C',to:'Exchange X',value:'₹4,21,000',asset:'USDT',chain:'TRON',time:'22 Aug 2026 • 10:41 IST',risk:91,prov:'OBSERVED'},
+    {id:'TX-CS-006',hash:'0x4421...7c8d',from:'0x92CD...11D',to:'0x44EF...72B',value:'₹3,18,000',asset:'BTC',chain:'Bitcoin',time:'22 Aug 2026 • 10:52 IST',risk:72,prov:'OBSERVED'},
+    {id:'TX-CS-007',hash:'0xc982...b331',from:'0xBB91...3F2',to:'Exchange Y',value:'₹2,76,000',asset:'USDT',chain:'Ethereum',time:'22 Aug 2026 • 11:03 IST',risk:77,prov:'OBSERVED'},
+    {id:'TX-CS-008',hash:'0xde41...a091',from:'0x44EF...72B',to:'Exchange X',value:'₹2,97,000',asset:'BTC',chain:'Bitcoin',time:'22 Aug 2026 • 11:31 IST',risk:69,prov:'OBSERVED'}
+  ],
+  behaviors:[
+    {id:'BH-001',name:'Dormant Reactivation',severity:'HIGH',entity:'0x7A3F...B91F',timeRange:'14 Mar 2025 – 21 Aug 2026',desc:'The wallet showed minimal transaction activity for approximately 9 months following an earlier period of activity. It was then reactivated with a high-value inflow of ₹12.4L within a 24-hour window. This pattern is an indicator that may warrant further review.',evidence:['Wallet active: 14 Mar 2025','Last activity before reactivation: 19 Nov 2025','Reactivation trigger: TX-CS-001 (₹12.4L inflow)','Dormancy period: ~9 months']},
+    {id:'BH-002',name:'Rapid Fan-Out',severity:'CRITICAL',entity:'0x7A3F...B91F',timeRange:'22 Aug 2026, 10:07–10:11 IST',desc:'The seed wallet distributed funds to three separate destination wallets within a 4-minute window following a large inflow. This pattern — high-value rapid distribution to multiple destinations — is a recognized indicator of layering activity. It does not by itself constitute evidence of criminal activity.',evidence:['TX-CS-002: ₹4.82L to 0x12AB...A8C at 10:07','TX-CS-003: ₹3.74L to 0x92CD...11D at 10:09','TX-CS-004: ₹2.91L to 0xBB91...3F2 at 10:11','Total distributed: ₹11.47L in 4 minutes']},
+    {id:'BH-003',name:'Layering Indicator',severity:'HIGH',entity:'0x7A3F...B91F / Network',timeRange:'22 Aug 2026, 10:07–11:31 IST',desc:'Fund movement follows a multi-hop structure: source account → seed wallet → intermediate wallets → exchange platforms. Three hops are observed before funds reach exchange destinations. Multi-hop fund movement is an indicator associated with layering, and requires investigator assessment.',evidence:['Hop 1: HDFC-4219 → 0x7A3F...B91F','Hop 2: Fan-out to 3 intermediate wallets','Hop 3: Intermediate wallets → Exchange X / Exchange Y','Time span: 1 hour 50 minutes, 8 transactions']},
+    {id:'BH-004',name:'Multiple Counterparties',severity:'MEDIUM',entity:'0x7A3F...B91F',timeRange:'22 Aug 2026',desc:'The seed wallet has interacted with 5 unique counterparty addresses in a single day, including both wallets and exchange deposit addresses. Multiple counterparties can indicate deliberate fragmentation of fund flows.',evidence:['Counterparties: HDFC-4219, 0x12AB, 0x92CD, 0xBB91, Exchange X','All interactions within 22 Aug 2026','Total unique counterparties in 30-day period: 5']},
+    {id:'BH-005',name:'Unusual Velocity',severity:'HIGH',entity:'Network',timeRange:'22 Aug 2026, 09:41–11:31 IST',desc:'₹12.4L was introduced and ₹10.7L was redistributed across 7 outbound transactions within a 110-minute window. High transaction velocity combined with rapid fund redistribution is an indicator of potential financial crime.',evidence:['Total inflow: ₹12.4L (1 transaction)','Total outflow: ₹10.7L (7 transactions)','Time window: 110 minutes','Average transaction size: ₹1.53L']}
+  ],
+  predictions:[
+    {dest:'Exchange X',conf:78,reason:'Similar historical fund-flow patterns from wallets 0x12AB...A8C and 0x44EF...72B indicate a higher probability of remaining funds being consolidated at Exchange X. This prediction is based on observed transaction patterns only.',basis:'Pattern similarity to 3 prior investigated cases',label:'PREDICTED',sources:['TX-CS-005 (Exchange X deposit observed)','TX-CS-008 (Exchange X deposit observed)','Historical pattern analysis']},
+    {dest:'Exchange Z',conf:31,reason:'Minor probability based on cross-case exchange preference patterns. Low confidence — requires additional signal before action.',basis:'Historical cross-case analysis',label:'PREDICTED',sources:['Low-confidence pattern signal']}
+  ],
+  evidence:[
+    {id:'EV-CS-001',type:'Blockchain Transaction Record',source:'Public Blockchain (Ethereum)',case:'CS-2026-001',entity:'0x7A3F...B91F',txRef:'TX-CS-002',collectedAt:'22 Aug 2026, 10:14 IST',collectedBy:'CP-FCI-042',hash:'7a81cd...93f2b4',status:'Verified',notes:'Transaction hash verified against Ethereum mainnet.'},
+    {id:'EV-CS-002',type:'Fund Flow Graph Snapshot',source:'ChainSentinel Platform',case:'CS-2026-001',entity:'Network',txRef:'—',collectedAt:'22 Aug 2026, 10:55 IST',collectedBy:'CP-FCI-042',hash:'a81c22...11b4f9',status:'Collected',notes:'Graph snapshot at time of risk assessment.'},
+    {id:'EV-CS-003',type:'Exchange Response (Partial KYC)',source:'Exchange X (Authorized Channel)',case:'CS-2026-001',entity:'Exchange X',txRef:'TX-CS-005',collectedAt:'22 Aug 2026, 11:42 IST',collectedBy:'CP-FCI-017',hash:'91cdaa...f81144',status:'Reviewed',notes:'Partial KYC information received. Full disclosure pending REQ-CS-001.'},
+    {id:'EV-CS-004',type:'OSINT Reference Capture',source:'Open Source (Public Registry)',case:'CS-2026-001',entity:'0x7A3F...B91F',txRef:'—',collectedAt:'22 Aug 2026, 11:58 IST',collectedBy:'CP-FCI-042',hash:'b88211...c92111',status:'Collected',notes:'Public address reference captured. Unverified — requires corroboration.'},
+    {id:'EV-CS-005',type:'Bank Transfer Record',source:'Authorized Financial Records',case:'CS-2026-001',entity:'HDFC-4219',txRef:'TX-CS-001',collectedAt:'22 Aug 2026, 09:58 IST',collectedBy:'CP-FCI-042',hash:'de4122...a09144',status:'Verified',notes:'Bank transfer record obtained via authorized channel. Source: HDFC Bank (authorized via legal process).'}
+  ],
+  requests:[
+    {id:'REQ-CS-001',org:'Exchange X',info:'Full KYC records and account holder information for deposit addresses EX-A021 and EX-A087',case:'CS-2026-001',legal:'Section 91 CrPC — Production of documents',priority:'CRITICAL',status:'PENDING',created:'22 Aug 2026, 11:25 IST',by:'CP-FCI-042',notes:'Urgent — funds may be withdrawn soon'},
+    {id:'REQ-CS-002',org:'HDFC Bank',info:'Full transaction records for account ••••4219 for the period 01 Aug 2026 – 22 Aug 2026',case:'CS-2026-001',legal:'Section 91 CrPC — Production of documents',priority:'HIGH',status:'RECEIVED',created:'22 Aug 2026, 10:20 IST',by:'CP-FCI-042',notes:'Records received. Under review.'},
+    {id:'REQ-CS-003',org:'Exchange Y',info:'Account holder and KYC information for deposit address linked to TX-CS-007',case:'CS-2026-001',legal:'Section 91 CrPC',priority:'HIGH',status:'SENT',created:'22 Aug 2026, 11:44 IST',by:'CP-FCI-017',notes:''},
+    {id:'REQ-CS-004',org:'Public Address Registry',info:'Attribution data for wallet 0x7A3F...B91F',case:'CS-2026-001',legal:'Open-source — no legal process required',priority:'MEDIUM',status:'VALIDATED',created:'22 Aug 2026, 10:30 IST',by:'CP-FCI-042',notes:'Attribution: unverified pseudonymous identity linked.'}
+  ],
+  timeline:[
+    {time:'09:14',date:'22 Aug 2026',event:'Complaint received from victim',detail:'Victim VIC-2026-089 reported ₹12.4L transferred following investment fraud call.',source:'Case Intake',dot:'blue',ref:''},
+    {time:'09:31',date:'22 Aug 2026',event:'Case CS-2026-001 created',detail:'Investigation opened. Assigned to CP-FCI-042.',source:'Case Management',dot:'blue',ref:''},
+    {time:'09:41',date:'22 Aug 2026',event:'Bank transfer record imported',detail:'₹12.4L outflow from HDFC account ••••4219 to crypto address confirmed.',source:'Authorized Financial Records',dot:'blue',ref:'TX-CS-001'},
+    {time:'10:02',date:'22 Aug 2026',event:'Seed wallet identified',detail:'0x7A3F...B91F identified as primary receiving address.',source:'Blockchain Analysis',dot:'blue',ref:'0x7A3F...B91F'},
+    {time:'10:07',date:'22 Aug 2026',event:'Rapid fan-out detected',detail:'3 outbound transactions in 4 minutes. Behavioural pattern flagged.',source:'Risk Engine',dot:'orange',ref:'BH-002'},
+    {time:'10:14',date:'22 Aug 2026',event:'Evidence EV-CS-001 collected',detail:'Transaction hash verified on Ethereum mainnet.',source:'Evidence Vault',dot:'blue',ref:'EV-CS-001'},
+    {time:'10:20',date:'22 Aug 2026',event:'Data request REQ-CS-002 created',detail:'Bank records requested from HDFC Bank.',source:'Investigator Requests',dot:'blue',ref:'REQ-CS-002'},
+    {time:'10:28',date:'22 Aug 2026',event:'Wallet cluster identified',detail:'4 connected wallets forming layering network.',source:'Entity Correlation',dot:'orange',ref:''},
+    {time:'10:55',date:'22 Aug 2026',event:'Risk score calculated: 94/100 CRITICAL',detail:'Explainable risk assessment completed. 5 behavioural indicators detected.',source:'Risk Engine',dot:'red',ref:''},
+    {time:'11:18',date:'22 Aug 2026',event:'Prediction generated',detail:'Exchange X identified as probable next destination (78% confidence).',source:'Prediction Engine',dot:'purple',ref:''},
+    {time:'11:25',date:'22 Aug 2026',event:'Data request REQ-CS-001 created',detail:'Exchange X KYC request filed. Priority: CRITICAL.',source:'Investigator Requests',dot:'red',ref:'REQ-CS-001'},
+    {time:'11:58',date:'22 Aug 2026',event:'Evidence EV-CS-004 added',detail:'OSINT reference captured for seed wallet.',source:'Evidence Vault',dot:'blue',ref:'EV-CS-004'}
+  ],
+  alerts:[
+    {id:'AL-CS-001',level:'CRITICAL',title:'Rapid Fan-Out Pattern Detected',desc:'Seed wallet 0x7A3F...B91F distributed ₹11.47L to 3 destinations in 4 minutes.',case:'CS-2026-001',risk:94},
+    {id:'AL-CS-002',level:'HIGH',title:'Exchange X Deposit — Funds at Risk',desc:'₹4.21L + ₹2.97L confirmed deposited to Exchange X. KYC request pending.',case:'CS-2026-001',risk:91},
+    {id:'AL-CS-003',level:'HIGH',title:'Dormant Wallet Reactivated',desc:'Wallet 0x7A3F...B91F inactive for 9 months, reactivated with ₹12.4L inflow.',case:'CS-2026-001',risk:87},
+    {id:'AL-CS-004',level:'HIGH',title:'Predictive Alert — Exchange X (78%)',desc:'Pattern analysis indicates high probability of further fund movement to Exchange X.',case:'CS-2026-001',risk:82},
+    {id:'AL-CS-005',level:'MEDIUM',title:'Multi-Hop Layering Indicator',desc:'3-hop fund movement: bank → wallet → intermediaries → exchanges.',case:'CS-2026-001',risk:74}
+  ],
+  cases:[
+    {id:'CS-2026-001',title:'Suspected Crypto Investment Fraud & Multi-Layer Fund Movement',priority:'CRITICAL',status:'INVESTIGATING',wallets:6,exchanges:2,accounts:1,tx:8,funds:'₹12.4L'},
+    {id:'CS-2026-002',title:'Cross-Border Digital Asset Fraud',priority:'HIGH',status:'EVIDENCE REVIEW',wallets:9,exchanges:2,accounts:4,tx:31,funds:'₹84.2L'},
+    {id:'CS-2026-003',title:'Social Engineering Scam Cluster',priority:'HIGH',status:'OPEN',wallets:12,exchanges:4,accounts:6,tx:57,funds:'₹1.1 Cr'},
+    {id:'CS-2026-004',title:'Ponzi Scheme Crypto Wallet Network',priority:'MEDIUM',status:'OPEN',wallets:24,exchanges:3,accounts:8,tx:119,funds:'₹3.7 Cr'}
+  ],
+  riskContributors:[
+    {name:'Rapid fan-out (3 destinations in 4 min)',score:25,max:25},
+    {name:'Dormant account reactivation (9 months)',score:20,max:20},
+    {name:'Multi-hop layering indicator',score:18,max:20},
+    {name:'High-risk counterparty (Exchange X)',score:15,max:15},
+    {name:'Multiple unique counterparties (5)',score:10,max:10},
+    {name:'Unusual transaction velocity (110 min)',score:6,max:10}
+  ]
+};
+
+// ─── STATE ───────────────────────────────────────────────────
+const state={
+  role:'io',page:'dashboard',activeCaseId:'CS-2026-001',
+  drawer:null,selectedWalletId:null,
+  requests:[...CS.requests],
+  evidence:[...CS.evidence],
+  graphFilters:{riskMin:0,type:'all',showPredicted:true},
+  graphTransform:{x:0,y:0,scale:1},graphDragging:false,graphDragStart:{x:0,y:0},
+  filters:{},
+  tableSearch:{},
+  sentinelOpen:false,tourActive:false,tourStep:0,
+  tourDone:localStorage.getItem('cs_tour_done')==='1',
+  newInvLoading:false,
+  workspaceTab:'timeline'
+};
+
+// ─── GRAPH LAYOUT DATA ─────────────────────────────────────
+const GRAPH_NODES=[
+  {id:'HDFC-4219',label:'BANK',sub:'HDFC ••••4219',type:'bank',x:80,y:280,risk:18},
+  {id:'0x7A3F...B91F',label:'WALLET A',sub:'SEED • RISK 94',type:'seed',x:240,y:280,risk:94},
+  {id:'0x12AB...A8C',label:'WALLET B',sub:'RISK 88',type:'wallet',x:430,y:150,risk:88},
+  {id:'0x92CD...11D',label:'WALLET C',sub:'RISK 76',type:'wallet',x:430,y:280,risk:76},
+  {id:'0xBB91...3F2',label:'WALLET D',sub:'RISK 81',type:'wallet',x:430,y:410,risk:81},
+  {id:'Exchange X',label:'EXCH X',sub:'HIGH RISK',type:'exchange',x:660,y:150,risk:90},
+  {id:'0x44EF...72B',label:'WALLET E',sub:'RISK 67',type:'wallet',x:620,y:310,risk:67},
+  {id:'Exchange Y',label:'EXCH Y',sub:'MEDIUM',type:'exchange',x:660,y:430,risk:65},
+  {id:'Exchange X [PREDICTED]',label:'EXCH X',sub:'PREDICTED 78%',type:'predicted',x:870,y:230,risk:0}
+];
+const GRAPH_EDGES=[
+  {from:'HDFC-4219',to:'0x7A3F...B91F',label:'₹12.4L',hot:true,id:'TX-CS-001'},
+  {from:'0x7A3F...B91F',to:'0x12AB...A8C',label:'₹4.82L',hot:true,id:'TX-CS-002'},
+  {from:'0x7A3F...B91F',to:'0x92CD...11D',label:'₹3.74L',hot:true,id:'TX-CS-003'},
+  {from:'0x7A3F...B91F',to:'0xBB91...3F2',label:'₹2.91L',hot:true,id:'TX-CS-004'},
+  {from:'0x12AB...A8C',to:'Exchange X',label:'₹4.21L',hot:true,id:'TX-CS-005'},
+  {from:'0x92CD...11D',to:'0x44EF...72B',label:'₹3.18L',hot:false,id:'TX-CS-006'},
+  {from:'0xBB91...3F2',to:'Exchange Y',label:'₹2.76L',hot:false,id:'TX-CS-007'},
+  {from:'0x44EF...72B',to:'Exchange X',label:'₹2.97L',hot:false,id:'TX-CS-008'},
+  {from:'0x7A3F...B91F',to:'Exchange X [PREDICTED]',label:'PREDICTED',hot:false,predicted:true,id:''}
+];
+
+// ─── NAVIGATION CONFIG ────────────────────────────────────
+const NAV=[
+  {group:'OVERVIEW',key:'dashboard',icon:'◉',label:'Dashboard'},
+  {group:'INVESTIGATION',key:'newinvestigation',icon:'＋',label:'New Investigation'},
+  {group:'INVESTIGATION',key:'cases',icon:'▣',label:'All Cases'},
+  {group:'INVESTIGATION',key:'graph',icon:'⌁',label:'Financial Graph'},
+  {group:'INVESTIGATION',key:'transactions',icon:'↔',label:'Transactions'},
+  {group:'INVESTIGATION',key:'wallets',icon:'◌',label:'Wallet Intelligence'},
+  {group:'INVESTIGATION',key:'entities',icon:'◎',label:'Entity Correlation'},
+  {group:'ANALYSIS',key:'risk',icon:'◈',label:'Risk Analysis'},
+  {group:'ANALYSIS',key:'behaviour',icon:'⟐',label:'Behavioural Analysis',badge:5},
+  {group:'ANALYSIS',key:'predictions',icon:'◁',label:'Predictions'},
+  {group:'INTELLIGENCE',key:'sources',icon:'◫',label:'Data Sources'},
+  {group:'INTELLIGENCE',key:'exchange',icon:'▤',label:'Exchange Intelligence'},
+  {group:'INTELLIGENCE',key:'osint',icon:'⌕',label:'OSINT'},
+  {group:'INTELLIGENCE',key:'crossborder',icon:'⇄',label:'Cross-Border'},
+  {group:'ACTIONS',key:'requests',icon:'✉',label:'Data Requests',badge:1},
+  {group:'ACTIONS',key:'evidence',icon:'▤',label:'Evidence Vault'},
+  {group:'ACTIONS',key:'timeline',icon:'◷',label:'Case Timeline'},
+  {group:'ACTIONS',key:'reports',icon:'≡',label:'Reports'},
+  {group:'SYSTEM',key:'audit',icon:'◴',label:'Audit Logs'},
+  {group:'SYSTEM',key:'team',icon:'♙',label:'Team & Access'},
+  {group:'SYSTEM',key:'settings',icon:'⚙',label:'Settings'}
+];
+
+// ─── UTILITIES ───────────────────────────────────────────────
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function toast(msg,type='',dur=2800){
+  const d=document.createElement('div');
+  d.className='toast'+(type?' '+type:'');
+  const icons={ok:'✓',warn:'⚠',err:'✕','':'ℹ'};
+  d.innerHTML=`<span>${icons[type]||'ℹ'}</span><span>${esc(msg)}</span>`;
+  document.getElementById('toastRoot').appendChild(d);
+  setTimeout(()=>{d.style.opacity='0';d.style.transform='translateY(8px)';d.style.transition='all .2s';setTimeout(()=>d.remove(),200)},dur);
+}
+function badge(level){
+  const map={CRITICAL:'badge-critical',HIGH:'badge-high',MEDIUM:'badge-medium',LOW:'badge-low',PENDING:'badge-blue',SENT:'badge-blue',RECEIVED:'badge-low',VALIDATED:'badge-low',DRAFT:'badge-gray','EVIDENCE REVIEW':'badge-blue',INVESTIGATING:'badge-blue',OPEN:'badge-gray','ADDED TO CASE':'badge-low'};
+  const icons={CRITICAL:'🔴',HIGH:'🟠',MEDIUM:'🟡',LOW:'🟢'};
+  return `<span class="badge ${map[level]||'badge-gray'}">${icons[level]||''}${level}</span>`;
+}
+function riskBadge(score){
+  const lvl=score>=90?'CRITICAL':score>=75?'HIGH':score>=50?'MEDIUM':'LOW';
+  return badge(lvl);
+}
+function provLabel(p){
+  const map={OBSERVED:'prov-observed',DETECTED:'prov-detected',PREDICTED:'prov-predicted',SAMPLE:'prov-sample'};
+  return `<span class="prov-label ${map[p]||'prov-sample'}">${p}</span>`;
+}
+function openModal(title,body){
+  document.getElementById('modalRoot').innerHTML=`<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this)closeModal()"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><b id="modalTitle">${esc(title)}</b><button class="btn-icon" onclick="closeModal()" aria-label="Close modal">✕</button></div><div class="modal-body">${body}</div></div></div>`;
+}
+function closeModal(){document.getElementById('modalRoot').innerHTML=''}
+function openDrawer(title,body){
+  const d=document.getElementById('drawer');
+  d.innerHTML=`<div class="drawer-head"><b>${esc(title)}</b><button class="btn-icon" onclick="closeDrawer()" aria-label="Close panel">✕</button></div><div class="drawer-body">${body}</div>`;
+  d.classList.add('open');
+}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open')}
+
+// ─── SIDEBAR & NAVIGATION ────────────────────────────────────
+function renderSidebar(){
+  const groups={};
+  NAV.forEach(x=>(groups[x.group]??=[]).push(x));
+  let html='';
+  for(const[g,items] of Object.entries(groups)){
+    let visible=items;
+    if(state.role==='analyst')visible=items.filter(i=>!['team','audit'].includes(i.key));
+    if(!visible.length)continue;
+    html+=`<div class="nav-group">${g}</div>`;
+    visible.forEach(n=>{
+      const active=state.page===n.key?'active':'';
+      const bdg=n.badge?`<span class="nav-badge">${n.badge}</span>`:'';
+      html+=`<button class="nav-item ${active}" onclick="go('${n.key}')" aria-current="${active?'page':'false'}"><span class="nav-icon">${n.icon}</span>${n.label}${bdg}</button>`;
+    });
+  }
+  html+=`<div class="nav-bottom"><button class="nav-item" onclick="showRoleModal()"><span class="nav-icon">⚙</span>Role / Demo Access</button><button class="nav-item" onclick="replayTour()"><span class="nav-icon">◉</span>Replay Guide Tour</button></div>`;
+  document.getElementById('sidebar').innerHTML=html;
+}
+function go(page){
+  state.page=page;
+  renderSidebar();
+  renderPage();
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateSentinelContext();
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('mobile-open');
+}
+
+// ─── PAGE HEAD ────────────────────────────────────────────────
+function pageHead(title,sub,actions='',crumb=''){
+  return `<div class="page-head"><div class="page-head-left"><div class="crumb">ChainSentinel ${crumb?'/ '+crumb:''} / ${title.toUpperCase()}</div><h1>${title}</h1>${sub?`<p>${sub}</p>`:''}</div><div class="page-head-right">${actions}</div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PAGE RENDERERS
+// ═══════════════════════════════════════════════════════════
+
+// ─── DASHBOARD ───────────────────────────────────────────────
+function dashboardPage(){
+  const c=CS.case;
+  const alertCount=CS.alerts.filter(a=>a.level==='CRITICAL').length;
+  return pageHead('Investigation Command Center','Live operational overview &nbsp;•&nbsp; <span class="data-tag dt-sample">SAMPLE DATA</span>',
+    `<button class="btn btn-primary" onclick="go('newinvestigation')">＋ &nbsp;New Investigation</button>`)
+  +`<div class="info-box">🔍 <b>Active Investigation:</b> ${c.id} — ${c.title} &nbsp;|&nbsp; Investigator: <b>${c.investigator}</b> &nbsp;|&nbsp; Last updated: ${c.lastUpdated}</div>
+  <div class="kpi-grid">
+    <div class="kpi-card blue"><div class="kpi-label">Active Investigations</div><div class="kpi-value">4</div><div class="kpi-delta">+1 this week</div><div class="kpi-icon">▣</div></div>
+    <div class="kpi-card red"><div class="kpi-label">High-Risk Entities</div><div class="kpi-value">12</div><div class="kpi-delta">Requires review</div><div class="kpi-icon">◈</div></div>
+    <div class="kpi-card amber"><div class="kpi-label">Suspicious Transactions</div><div class="kpi-value">8</div><div class="kpi-delta">In CS-2026-001</div><div class="kpi-icon">↔</div></div>
+    <div class="kpi-card navy"><div class="kpi-label">Pending Data Requests</div><div class="kpi-value">2</div><div class="kpi-delta">REQ-CS-001 urgent</div><div class="kpi-icon">✉</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Evidence Items</div><div class="kpi-value">5</div><div class="kpi-delta">3 verified</div><div class="kpi-icon">▤</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card">
+      <div class="card-head"><b>Fund Flow Intelligence — CS-2026-001</b><button class="btn btn-secondary btn-sm" onclick="go('graph')">Explore Graph →</button></div>
+      <div class="card-body" style="padding:0">${buildGraphHTML('420px',true)}</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><b>Critical Alerts</b><button class="btn btn-ghost btn-sm" onclick="go('alerts')">View All</button></div>
+      <div class="card-body" style="padding:10px">${CS.alerts.slice(0,4).map(alertCard).join('')}</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="card-head"><b>Active Cases</b><button class="btn btn-ghost btn-sm" onclick="go('cases')">All Cases</button></div>
+      <div class="card-body" style="padding:0">
+        <table class="tbl"><thead><tr><th>Case ID</th><th>Priority</th><th>Status</th><th>Funds</th></tr></thead>
+        <tbody>${CS.cases.map(c=>`<tr onclick="openCase('${c.id}')" style="cursor:pointer"><td><b>${c.id}</b><br><small class="tbl-sub">${c.title.slice(0,35)}…</small></td><td>${badge(c.priority)}</td><td>${badge(c.status)}</td><td style="font-weight:700">${c.funds}</td></tr>`).join('')}</tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><b>Investigation Timeline Preview</b><button class="btn btn-ghost btn-sm" onclick="go('timeline')">Full Timeline</button></div>
+      <div class="card-body">${CS.timeline.slice(0,5).map((e,i)=>`
+        <div class="timeline-item">
+          <div class="timeline-time">${e.date.split(' ')[0]}<br>${e.time}</div>
+          <div class="timeline-dot-col"><div class="timeline-dot" style="background:${dotColor(e.dot)}"></div>${i<4?'<div class="timeline-line"></div>':''}</div>
+          <div class="timeline-content"><b>${e.event}</b><p>${e.detail.slice(0,70)}${e.detail.length>70?'…':''}</p></div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── ALERTS ──────────────────────────────────────────────────
+function alertsPage(){
+  return pageHead('Alert Center','Automated risk indicators requiring investigator review',
+    `<button class="btn btn-ghost btn-sm" onclick="toast('Alert rules refreshed','ok')">Refresh Rules</button>`)
+  +`<div style="display:flex;gap:8px;margin-bottom:14px">${[['CRITICAL',1,'red-l','#991b1b'],['HIGH',3,'amber-l','#92400e'],['MEDIUM',1,'surface3','var(--text2)']].map(([l,n,bg,color])=>`<div style="padding:10px 16px;background:var(--${bg});border-radius:var(--r-sm);border:1px solid var(--border);font-size:12px;font-weight:700;color:${color}">${l} &nbsp;<span style="font-size:18px;font-weight:900">${n}</span></div>`).join('')}</div>
+  <div class="card"><div class="card-body" style="padding:12px;display:flex;flex-direction:column;gap:8px">${CS.alerts.map(alertCard).join('')}</div></div>`;
+}
+function alertCard(a){
+  return `<div class="alert-card ${a.level.toLowerCase()}" onclick="openAlert('${a.id}')">
+    <div class="alert-top"><span class="alert-title">${esc(a.title)}</span>${badge(a.level)}</div>
+    <div class="alert-desc">${esc(a.desc)}</div>
+    <div class="alert-meta">Risk ${a.risk}/100 &nbsp;•&nbsp; Case: ${a.case} &nbsp;•&nbsp; Click to investigate →</div>
+  </div>`;
+}
+
+// ─── CASES ───────────────────────────────────────────────────
+function casesPage(){
+  return pageHead('All Cases','Investigation workspace overview — each case is a controlled, auditable workspace',
+    `<button class="btn btn-primary" onclick="go('newinvestigation')">＋ New Investigation</button>`)
+  +`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+  ${CS.cases.map(c=>`<div class="card">
+    <div class="card-body">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        ${badge(c.priority)}
+        <span style="font-size:11px;color:var(--text3)">${badge(c.status)}</span>
+      </div>
+      <h3 style="font-size:17px;font-weight:800;margin:12px 0 4px;color:var(--navy)">${c.id}</h3>
+      <div style="font-size:12px;color:var(--text2);line-height:1.5">${c.title}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px">
+        ${[['Wallets',c.wallets],['Transactions',c.tx],['Funds',c.funds]].map(([l,v])=>`<div style="padding:8px;background:var(--surface2);border-radius:var(--r-sm);text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:600">${l}</div><div style="font-size:14px;font-weight:800;color:var(--text);margin-top:2px">${v}</div></div>`).join('')}
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px" onclick="openCase('${c.id}')">Open Investigation →</button>
+    </div>
+  </div>`).join('')}</div>`;
+}
+
+// ─── NEW INVESTIGATION ────────────────────────────────────────
+function newInvestigationPage(){
+  return pageHead('New Investigation','Start tracing from a wallet address, transaction hash or case ID')
+  +`<div style="max-width:600px">
+  <div class="card"><div class="card-body">
+    <div class="section-title">Step 1 — Select Seed Type</div>
+    <div class="seed-type-grid">
+      <div class="seed-type-btn active" id="stBtn-wallet" onclick="selectSeedType('wallet')"><div class="icon">◌</div><b>Wallet Address</b><small>ETH, BTC, TRON…</small></div>
+      <div class="seed-type-btn" id="stBtn-tx" onclick="selectSeedType('tx')"><div class="icon">↔</div><b>Transaction Hash</b><small>On-chain TX ID</small></div>
+      <div class="seed-type-btn" id="stBtn-case" onclick="selectSeedType('case')"><div class="icon">▣</div><b>Case Reference</b><small>Existing case ID</small></div>
+    </div>
+    <div class="section-title">Step 2 — Enter Seed</div>
+    <input id="seedInput" class="form-field" placeholder="e.g. 0x7A3F...B91F (use sample seed for demo)" style="margin-bottom:12px">
+    <div style="font-size:11px;color:var(--text3);margin-bottom:16px">💡 Demo tip: Enter <b>0x7A3F</b> to load the sample investigation</div>
+    <div class="section-title">Step 3 — Case Details</div>
+    <label class="form-label">Case Reference (optional)</label>
+    <input id="caseRefInput" class="form-field" placeholder="e.g. CS-2026-005 (auto-generated if blank)" style="margin-bottom:10px">
+    <label class="form-label">Priority</label>
+    <select id="casePriority" class="form-field" style="margin-bottom:16px">
+      <option>CRITICAL</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option>
+    </select>
+    <div class="warn-box">⚠️ All data in this prototype is simulated sample data. Only authorized and lawful data sources should be used in production deployment.</div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:14px;padding:13px" onclick="startInvestigation()">🔍 &nbsp;START INVESTIGATION</button>
+  </div></div></div>`;
+}
+
+// ─── GRAPH PAGE ───────────────────────────────────────────────
+function graphPage(){
+  return pageHead('Financial Intelligence Graph','Interactive fund-flow network — trace, correlate and inspect every node',
+    `<button class="btn btn-ghost btn-sm" onclick="traceForward()">Trace Forward</button>
+    <button class="btn btn-secondary btn-sm" onclick="go('newinvestigation')">New Investigation</button>
+    <button class="btn btn-primary btn-sm" onclick="addGraphSnapshot()">Add Snapshot</button>`)
+  +`<div class="card" style="margin-bottom:16px">
+    <div class="card-head">
+      <b>Case ${state.activeCaseId} &nbsp;•&nbsp; Suspected Crypto Investment Fraud</b>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="badge badge-critical">Risk 94/100</span>
+        <span class="prov-label prov-observed">OBSERVED DATA</span>
+        <span class="data-tag dt-sample">SAMPLE</span>
+      </div>
+    </div>
+    ${buildGraphHTML('560px',false)}
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div class="card"><div class="card-head"><b>Graph Legend</b></div><div class="card-body" style="font-size:12px">
+      ${[['◌','Wallet Node','color:#5b9bd5'],['◉','Seed / High-Risk Wallet','color:#ef4444'],['▤','Exchange','color:#d97706'],['◻','Bank / Account','color:#6b7280'],['- -','Predicted Edge','color:#7c3aed']].map(([i,l,s])=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)"><span style="${s};font-size:18px">${i}</span><span>${l}</span></div>`).join('')}
+    </div></div>
+    <div class="card"><div class="card-head"><b>Graph Filters</b></div><div class="card-body">
+      <label class="form-label">Show Risk ≥</label>
+      <select onchange="setGraphFilter('riskMin',this.value)" style="width:100%" class="form-field">
+        <option value="0">All Nodes</option>
+        <option value="70">Risk ≥ 70 (HIGH+)</option>
+        <option value="90">Risk ≥ 90 (CRITICAL)</option>
+      </select>
+      <label class="form-label" style="margin-top:10px">Entity Type</label>
+      <select onchange="setGraphFilter('type',this.value)" style="width:100%" class="form-field">
+        <option value="all">All Types</option>
+        <option value="wallet">Wallets Only</option>
+        <option value="exchange">Exchanges Only</option>
+      </select>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="showPredicted" checked onchange="setGraphFilter('showPredicted',this.checked)" style="cursor:pointer">
+        <label for="showPredicted" style="font-size:12px;cursor:pointer">Show Predicted Hops</label>
+      </div>
+    </div></div>
+    <div class="card"><div class="card-head"><b>Graph Actions</b></div><div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-secondary" style="justify-content:center" onclick="traceForward()">⟶ &nbsp;Trace Forward</button>
+        <button class="btn btn-secondary" style="justify-content:center" onclick="traceBackward()">⟵ &nbsp;Trace Backward</button>
+        <button class="btn btn-ghost" style="justify-content:center" onclick="resetGraph()">↺ &nbsp;Reset Graph</button>
+        <button class="btn btn-ghost" style="justify-content:center" onclick="addGraphSnapshot()">📷 &nbsp;Add to Evidence</button>
+      </div>
+    </div></div>
+  </div>`;
+}
+
+// ─── GRAPH SVG BUILDER ───────────────────────────────────────
+function buildGraphHTML(height='520px',mini=false){
+  const nodes=GRAPH_NODES.filter(n=>{
+    if(state.graphFilters.riskMin>0&&n.type!=='predicted'&&n.risk<state.graphFilters.riskMin)return false;
+    if(state.graphFilters.type!=='all'&&n.type!=='predicted'){
+      if(state.graphFilters.type==='wallet'&&!['wallet','seed'].includes(n.type))return false;
+      if(state.graphFilters.type==='exchange'&&n.type!=='exchange')return false;
+    }
+    if(!state.graphFilters.showPredicted&&n.type==='predicted')return false;
+    return true;
+  });
+  const visIds=new Set(nodes.map(n=>n.id));
+  const edges=GRAPH_EDGES.filter(e=>visIds.has(e.from)&&visIds.has(e.to));
+
+  // Node visual properties
+  function nodeProps(n){
+    const types={
+      bank:{fill:'#1e3a5f',stroke:'#60a5fa',r:22},
+      seed:{fill:'#7f1d1d',stroke:'#fca5a5',r:28},
+      wallet:{fill:'#1e3a5f',stroke:'#7cb9d6',r:24},
+      exchange:{fill:'#451a03',stroke:'#fcd34d',r:26},
+      predicted:{fill:'rgba(109,40,217,.25)',stroke:'#a78bfa',r:22,dash:'6,4'}
+    };
+    return types[n.type]||types.wallet;
+  }
+
+  let edgesSVG='';
+  edges.forEach(e=>{
+    const f=GRAPH_NODES.find(n=>n.id===e.from);
+    const t=GRAPH_NODES.find(n=>n.id===e.to);
+    if(!f||!t)return;
+    const dashAttr=e.predicted?'stroke-dasharray="8,5"':'';
+    const color=e.hot?'#ef7c50':e.predicted?'#a78bfa':'#4a6fa8';
+    const mx=(f.x+t.x)/2, my=(f.y+t.y)/2-20;
+    edgesSVG+=`<line x1="${f.x}" y1="${f.y}" x2="${t.x}" y2="${t.y}" stroke="${color}" stroke-width="${e.hot?2.5:1.8}" ${dashAttr} opacity="${e.predicted?.65:1}" marker-end="url(#arr${e.hot?'hot':e.predicted?'pred':''})"/>`;
+    if(!mini&&e.label){
+      edgesSVG+=`<text x="${mx}" y="${my}" text-anchor="middle" fill="${e.predicted?'#c4b5fd':'#8fa8c8'}" font-size="9" font-family="Inter,sans-serif" font-weight="600">${e.label}</text>`;
+    }
+  });
+
+  let nodesSVG='';
+  nodes.forEach(n=>{
+    const p=nodeProps(n);
+    const dashAttr=p.dash?`stroke-dasharray="${p.dash}"`:'';
+    const onclick=mini?`openWalletDrawer('${n.id}')`:`selectGraphNode('${n.id}')`;
+    nodesSVG+=`<g class="graph-node" onclick="${onclick}" style="cursor:pointer" role="button" aria-label="${n.label}">
+      <circle cx="${n.x}" cy="${n.y}" r="${p.r}" fill="${p.fill}" stroke="${p.stroke}" stroke-width="2" ${dashAttr}/>
+      <text x="${n.x}" y="${n.y+4}" text-anchor="middle" fill="${n.type==='predicted'?'#c4b5fd':'#e0eeff'}" font-size="${mini?8:10}" font-weight="700" font-family="Inter,sans-serif">${n.label}</text>
+      <text x="${n.x}" y="${n.y + (mini ? 14 : 18)}" text-anchor="middle" fill="${n.type==='predicted'?'#a78bfa':'#7aa8c8'}" font-size="${mini?7:8}" font-family="Inter,sans-serif">${n.sub}</text>
+    </g>`;
+  });
+
+  const controls=mini?'':`<div class="graph-controls">
+    <button class="graph-btn" onclick="traceForward()">⟶ Trace Forward</button>
+    <button class="graph-btn" onclick="traceBackward()">⟵ Trace Back</button>
+    <button class="graph-btn" onclick="isolatePath()">⊡ Isolate Path</button>
+    <button class="graph-btn" onclick="resetGraph()">↺ Reset</button>
+  </div>
+  <div class="graph-label-bar">DEMO / SAMPLE DATA &nbsp;•&nbsp; ${state.graphFilters.riskMin>0?'FILTERED':'FULL NETWORK'}</div>
+  <div class="graph-zoom"><button onclick="zoomGraph(1.25)" title="Zoom In">+</button><button onclick="zoomGraph(.8)" title="Zoom Out">−</button></div>`;
+
+  const legend=`<div class="graph-legend">
+    <span>● Wallet</span><span style="color:#fca5a5">● High-Risk/Seed</span><span style="color:#fcd34d">● Exchange</span><span style="color:#a78bfa">- - Predicted</span>
+  </div>`;
+
+  return `<div class="graph-wrap" style="height:${height}">
+    <div class="graph-grid"></div>
+    <svg class="graph-svg" id="graphSvg" viewBox="0 0 980 560" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#4a6fa8"/></marker>
+        <marker id="arrhot" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#ef7c50"/></marker>
+        <marker id="arrpred" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#a78bfa"/></marker>
+      </defs>
+      <g id="graphGroup">${edgesSVG}${nodesSVG}</g>
+    </svg>
+    ${controls}${legend}
+  </div>`;
+}
+
+// ─── GRAPH INTERACTIONS ───────────────────────────────────────
+function initGraphInteraction(){
+  const svg=document.getElementById('graphSvg');
+  if(!svg)return;
+  const g=document.getElementById('graphGroup');
+  let dragging=false,dragStart={x:0,y:0};
+  let transform={x:0,y:0,scale:1};
+  function applyTransform(){g.setAttribute('transform',`translate(${transform.x},${transform.y}) scale(${transform.scale})`);}
+  svg.addEventListener('mousedown',e=>{
+    if(e.target===svg||e.target.tagName==='line'||e.target.tagName==='text'&&!e.target.closest('.graph-node')){
+      dragging=true;dragStart={x:e.clientX-transform.x,y:e.clientY-transform.y};
+      svg.classList.add('dragging');e.preventDefault();
+    }
+  });
+  svg.addEventListener('mousemove',e=>{if(!dragging)return;transform.x=e.clientX-dragStart.x;transform.y=e.clientY-dragStart.y;applyTransform();});
+  svg.addEventListener('mouseup',()=>{dragging=false;svg.classList.remove('dragging');});
+  svg.addEventListener('mouseleave',()=>{dragging=false;svg.classList.remove('dragging');});
+  svg.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const f=e.deltaY<0?1.12:.89;
+    const rect=svg.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+    transform.x=mx-f*(mx-transform.x);transform.y=my-f*(my-transform.y);
+    transform.scale*=f;transform.scale=Math.min(4,Math.max(.25,transform.scale));
+    applyTransform();
+  },{passive:false});
+  // Store transform access
+  svg._transform=transform;svg._applyTransform=applyTransform;
+}
+function zoomGraph(f){
+  const svg=document.getElementById('graphSvg');if(!svg||!svg._transform)return;
+  const t=svg._transform;t.scale*=f;t.scale=Math.min(4,Math.max(.25,t.scale));svg._applyTransform();
+}
+function resetGraph(){
+  const svg=document.getElementById('graphSvg');if(!svg||!svg._transform)return;
+  const t=svg._transform;t.x=0;t.y=0;t.scale=1;svg._applyTransform();
+  toast('Graph reset');
+}
+function setGraphFilter(key,val){
+  state.graphFilters[key]=key==='riskMin'?parseInt(val):key==='showPredicted'?val:val;
+  renderPage();setTimeout(initGraphInteraction,100);
+}
+function selectGraphNode(id){
+  state.selectedWalletId=id;
+  const w=CS.wallets.find(x=>x.id===id)||{id,type:'Entity',risk:0,riskLevel:'LOW',chain:'Unknown',tx:'—',balance:'—',inflow:'—',outflow:'—',first:'—',last:'—',behaviors:[],linked:[]};
+  // Show right panel if on graph page
+  openWalletDrawer(id);
+}
+function traceForward(){toast('Forward trace initiated — suspicious path highlighted','ok');}
+function traceBackward(){toast('Backward trace initiated — upstream path highlighted','ok');}
+function isolatePath(){toast('Critical fund-flow path isolated','ok');}
+function addGraphSnapshot(){
+  const ev={id:`EV-CS-00${state.evidence.length+1}`,type:'Graph Snapshot',source:'ChainSentinel Platform',case:'CS-2026-001',entity:'Network',txRef:'—',collectedAt:'22 Aug 2026, '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+' IST',collectedBy:'CP-FCI-042',hash:'snap'+Math.random().toString(36).slice(2,8),status:'Collected',notes:'Graph snapshot added by investigator.'};
+  state.evidence.push(ev);
+  toast('Graph snapshot saved as evidence','ok');
+}
+
+// ─── TRANSACTIONS ─────────────────────────────────────────────
+function transactionsPage(){
+  let rows=CS.transactions;
+  const search=(state.tableSearch.transactions||'').toLowerCase();
+  const riskFilter=state.filters.txRisk||'all';
+  if(search)rows=rows.filter(t=>t.id.toLowerCase().includes(search)||t.from.toLowerCase().includes(search)||t.to.toLowerCase().includes(search)||t.hash.toLowerCase().includes(search));
+  if(riskFilter!=='all')rows=rows.filter(t=>{
+    if(riskFilter==='critical')return t.risk>=90;
+    if(riskFilter==='high')return t.risk>=75&&t.risk<90;
+    return t.risk<75;
+  });
+  return pageHead('Transaction Intelligence','Inspect individual transfers and supporting risk signals',
+    `<button class="btn btn-ghost btn-sm" onclick="toast('Transaction index refreshed','ok')">↺ Refresh</button>`)
+  +`<div class="card">
+    <div class="filter-bar">
+      <input class="filter-search" placeholder="Search ID, address, hash…" oninput="state.tableSearch.transactions=this.value;renderPage()" value="${state.tableSearch.transactions||''}">
+      <select onchange="state.filters.txRisk=this.value;renderPage()" class="form-field" style="font-size:12px">
+        <option value="all">All Risk Levels</option>
+        <option value="critical" ${state.filters.txRisk==='critical'?'selected':''}>Critical (90+)</option>
+        <option value="high" ${state.filters.txRisk==='high'?'selected':''}>High (75-89)</option>
+        <option value="medium" ${state.filters.txRisk==='medium'?'selected':''}>Medium (&lt;75)</option>
+      </select>
+      <span class="filter-count">Showing ${rows.length} of ${CS.transactions.length} transactions</span>
+    </div>
+    ${rows.length===0?'<div class="empty-state"><div class="icon">↔</div><h3>No transactions match</h3><p>Try adjusting your search or filters</p></div>':''}
+    ${rows.length?`<table class="tbl"><thead><tr><th>ID / Hash</th><th>From</th><th>To</th><th>Value</th><th>Asset</th><th>Chain</th><th>Timestamp</th><th>Risk</th><th>Source</th></tr></thead>
+    <tbody>${rows.map(t=>`<tr onclick="openTxDrawer('${t.id}')" style="cursor:pointer">
+      <td><b>${t.id}</b><br><span class="mono">${t.hash}</span></td>
+      <td><span class="mono">${t.from}</span></td>
+      <td><span class="mono">${t.to}</span></td>
+      <td style="font-weight:700;color:var(--navy)">${t.value}</td>
+      <td>${t.asset}</td><td>${t.chain}</td>
+      <td style="font-size:11px;color:var(--text3)">${t.time}</td>
+      <td>${riskBadge(t.risk)}<br><span style="font-size:10px;color:var(--text3)">${t.risk}/100</span></td>
+      <td>${provLabel(t.prov)}</td>
+    </tr>`).join('')}</tbody></table>`:''}
+  </div>`;
+}
+
+// ─── WALLET INTELLIGENCE ──────────────────────────────────────
+function walletsPage(){
+  let rows=CS.wallets;
+  const search=(state.tableSearch.wallets||'').toLowerCase();
+  if(search)rows=rows.filter(w=>w.id.toLowerCase().includes(search)||w.chain.toLowerCase().includes(search)||w.type.toLowerCase().includes(search));
+  return pageHead('Wallet Intelligence','Searchable wallet profiles with risk indicators and linked entities',
+    `<button class="btn btn-ghost btn-sm" onclick="toast('Wallet index refreshed','ok')">↺ Refresh</button>`)
+  +`<div class="card">
+    <div class="filter-bar">
+      <input class="filter-search" placeholder="Search address, chain, type…" oninput="state.tableSearch.wallets=this.value;renderPage()" value="${state.tableSearch.wallets||''}">
+      <span class="filter-count">Showing ${rows.length} wallets</span>
+    </div>
+    <table class="tbl"><thead><tr><th>Wallet Address</th><th>Chain</th><th>Type</th><th>Risk</th><th>Balance</th><th>Transactions</th><th>Last Seen</th></tr></thead>
+    <tbody>${rows.map(w=>`<tr onclick="openWalletDrawer('${w.id}')" style="cursor:pointer">
+      <td><b class="mono">${w.id}</b></td>
+      <td>${w.chain}</td><td>${w.type}</td>
+      <td>${badge(w.riskLevel)}<br><span style="font-size:10px;color:var(--text3)">${w.risk}/100</span></td>
+      <td style="font-weight:600">${w.balance}</td>
+      <td>${w.tx}</td>
+      <td style="font-size:11px;color:var(--text3)">${w.last}</td>
+    </tr>`).join('')}</tbody></table>
+  </div>`;
+}
+
+// ─── RISK ANALYSIS ────────────────────────────────────────────
+function riskPage(){
+  const c=CS.case;
+  const total=CS.riskContributors.reduce((s,x)=>s+x.score,0);
+  return pageHead('Risk Analysis','Explainable risk scoring — review all contributing indicators before any determination')
+  +`<div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;margin-bottom:16px">
+    <div class="card">
+      <div class="card-head"><b>Case Risk Score — ${c.id}</b></div>
+      <div class="card-body">
+        <div class="risk-box">
+          <div style="font-size:11px;color:#93c5fd;font-weight:600">CALCULATED RISK SCORE</div>
+          <div class="risk-score">${c.riskScore} <span style="font-size:16px;opacity:.6">/ 100</span></div>
+          <div class="risk-level">${c.riskLevel}</div>
+          <div class="risk-bar"><div class="risk-bar-fill" style="width:${c.riskScore}%"></div></div>
+        </div>
+        <div class="section-title">Risk Contributors</div>
+        ${CS.riskContributors.map(rc=>`<div class="risk-contrib">
+          <div style="flex:1"><div style="font-size:12px;font-weight:500">${rc.name}</div>
+            <div class="risk-contrib-bar"><div class="risk-contrib-fill" style="width:${(rc.score/rc.max)*100}%"></div></div>
+          </div>
+          <div class="risk-contrib-val">+${rc.score}</div>
+        </div>`).join('')}
+        <div style="display:flex;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:var(--r-sm);margin-top:10px">
+          <span style="font-size:13px;font-weight:700">Total Score</span>
+          <span style="font-size:13px;font-weight:900;color:var(--red)">${total} / 100</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <div class="card-head"><b>Explainable Assessment</b></div>
+        <div class="card-body">
+          <div class="info-box">The risk score is calculated deterministically from observable transaction patterns. It is a decision-support indicator only and does not constitute evidence of criminal activity. Investigator review is required before any determination.</div>
+          <div class="section-title">Model Safeguards</div>
+          <div class="chip-row">
+            ${['Human review required','Evidence-linked scoring','No identity claim','Confidence tracked','Auditable calculation','Pattern-based only'].map(x=>`<span class="chip">${x}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><b>Risk Level Scale</b></div>
+        <div class="card-body">
+          ${[['CRITICAL','90–100','Highest pattern density, immediate review'],['HIGH','75–89','Significant indicators, prioritize review'],['MEDIUM','50–74','Moderate signals, monitor'],['LOW','0–49','Minimal indicators, low priority']].map(([l,r,d])=>`<div style="display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><span style="flex-shrink:0">${badge(l)}</span><div><div style="font-size:11px;font-weight:700">${r}</div><div style="font-size:11px;color:var(--text3)">${d}</div></div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div class="card-head"><b>Entity Risk Summary</b></div>
+  <table class="tbl"><thead><tr><th>Entity</th><th>Type</th><th>Risk Score</th><th>Level</th><th>Key Indicator</th><th>Action</th></tr></thead>
+  <tbody>${CS.wallets.map(w=>`<tr><td class="mono"><b>${w.id}</b></td><td>${w.type}</td><td>${w.risk}/100</td><td>${badge(w.riskLevel)}</td><td>${w.behaviors[0]||'—'}</td><td><button class="btn btn-ghost btn-xs" onclick="openWalletDrawer('${w.id}')">Inspect</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// ─── BEHAVIOURAL ANALYSIS ─────────────────────────────────────
+function behaviourPage(){
+  return pageHead('Behavioural Analysis','Detected transaction patterns — each is an indicator only, requiring investigator assessment')
+  +`<div class="warn-box">⚠️ <b>Important:</b> The following are detected transaction patterns (indicators and signals). They do not constitute evidence of criminal activity. Use investigative language: "indicator", "pattern", "signal", "requires review".</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+    ${[['CRITICAL',1,'red-l','#991b1b'],['HIGH',3,'amber-l','#92400e'],['MEDIUM',1,'surface3','var(--text2)']].map(([l,n,bg,color])=>`<div style="padding:12px;background:var(--${bg});border-radius:var(--r-sm);text-align:center;border:1px solid var(--border)"><div style="font-size:11px;font-weight:700;color:${color}">${l}</div><div style="font-size:24px;font-weight:900;color:${color};margin-top:4px">${n}</div><div style="font-size:11px;color:var(--text3)">indicators</div></div>`).join('')}
+  </div>
+  ${CS.behaviors.map(b=>`<div class="behaviour-card ${b.severity.toLowerCase()}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div class="behaviour-name">${b.name}</div>
+        <div class="behaviour-entity">Entity: <b>${b.entity}</b> &nbsp;•&nbsp; Period: ${b.timeRange}</div>
+      </div>
+      ${badge(b.severity)}
+    </div>
+    <div class="behaviour-desc">${b.desc}</div>
+    <div class="behaviour-evidence">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:6px">SUPPORTING EVIDENCE</div>
+      ${b.evidence.map(e=>`<div class="behaviour-evidence-item"><span style="color:var(--blue)">→</span>${e}</div>`).join('')}
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-ghost btn-xs" onclick="openWalletDrawer('${b.entity.split(' ')[0]}')">Inspect Entity</button>
+      <button class="btn btn-ghost btn-xs" onclick="go('evidence')">View Evidence</button>
+      <button class="btn btn-ghost btn-xs" onclick="go('timeline')">View Timeline</button>
+    </div>
+  </div>`).join('')}`;
+}
+
+// ─── PREDICTIONS ──────────────────────────────────────────────
+function predictionsPage(){
+  return pageHead('Predictive Fund-Flow','Probabilistic next-hop analysis — clearly separated from observed facts')
+  +`<div class="warn-box">🔮 <b>Predictions are probabilistic estimates, not confirmed facts.</b> All predicted items are labelled ${provLabel('PREDICTED')}. Never treat predictions as confirmed transactions. Investigate before action.</div>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head"><b>Pre-Emptive Alert</b><span class="badge badge-critical">Action Required</span></div>
+        <div class="card-body">
+          <div style="background:linear-gradient(135deg,#fdf4ff,#ede9fe);border:1px solid #c4b5fd;border-radius:var(--r);padding:14px;margin-bottom:12px">
+            <div style="font-size:11px;font-weight:800;color:#6d28d9;letter-spacing:.05em">PRE-EMPTIVE ALERT — HIGH CONFIDENCE PREDICTION</div>
+            <div style="font-size:18px;font-weight:800;color:#4c1d95;margin-top:6px">Potential next destination: <b>Exchange X</b></div>
+            <div style="font-size:13px;font-weight:700;color:#7c3aed;margin-top:4px">Confidence: 78%</div>
+            <div style="font-size:12px;color:#5b21b6;margin-top:8px;line-height:1.5">Observed transaction-flow pattern strongly associates remaining funds with Exchange X based on prior hops TX-CS-005 and TX-CS-008.</div>
+            <button class="btn btn-secondary btn-sm" style="margin-top:12px" onclick="openRequestModal('Exchange X')">Request Exchange X Data</button>
+          </div>
+        </div>
+      </div>
+      <div class="section-title">Predicted Next Hops</div>
+      ${CS.predictions.map(p=>`<div class="prediction-card">
+        <div class="prediction-label">${provLabel('PREDICTED')} &nbsp;LIKELY NEXT HOP</div>
+        <div class="prediction-dest">${p.dest}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+          <div style="flex:1">
+            <div class="confidence-bar"><div class="confidence-fill" style="width:${p.conf}%"></div></div>
+          </div>
+          <div style="font-size:18px;font-weight:900;color:#4c1d95">${p.conf}%</div>
+        </div>
+        <div style="font-size:10px;color:#7c3aed;font-weight:700">CONFIDENCE</div>
+        <div class="prediction-reason">${p.reason}</div>
+        <div style="margin-top:8px;font-size:10px;color:#7c3aed;font-weight:600">Basis: ${p.basis}</div>
+        <div style="margin-top:10px;font-size:10px;color:#5b21b6"><b>Sources:</b> ${p.sources.join(' • ')}</div>
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <div class="card-head"><b>Data Distinction</b></div>
+        <div class="card-body">
+          ${[['OBSERVED','Confirmed facts from blockchain or authorized records.',provLabel('OBSERVED')],
+             ['DETECTED','System-identified patterns from observed data.',provLabel('DETECTED')],
+             ['PREDICTED','Probabilistic estimates — not confirmed.',provLabel('PREDICTED')]
+            ].map(([t,d,lbl])=>`<div style="padding:10px 0;border-bottom:1px solid var(--border)">${lbl}<div style="font-size:11px;color:var(--text2);margin-top:6px;line-height:1.5">${d}</div></div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><b>Observed Facts (for comparison)</b></div>
+        <div class="card-body" style="font-size:12px">
+          ${CS.transactions.filter(t=>t.to==='Exchange X'||t.to==='Exchange Y').map(t=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between">${provLabel('OBSERVED')}<span style="font-weight:700;color:var(--navy)">${t.value}</span></div>
+            <div style="margin-top:4px;color:var(--text2)">${t.from} → <b>${t.to}</b></div>
+            <div style="font-size:10px;color:var(--text3)">${t.time}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── DATA REQUESTS ────────────────────────────────────────────
+function requestsPage(){
+  return pageHead('Data Requests','Track lawful requests for authorized information from third-party organizations',
+    `<button class="btn btn-primary" onclick="openNewRequestModal()">＋ New Request</button>`)
+  +`<div class="card" style="margin-bottom:14px">
+    <div class="card-body" style="padding:10px 16px">
+      <div style="font-size:12px;color:var(--text2)">Request statuses: 
+        ${['DRAFT','PENDING','SENT','RECEIVED','VALIDATED','ADDED TO CASE'].map((s,i)=>`<span style="font-weight:${i<3?'400':'700'};color:var(--${i<2?'text3':i<4?'blue':'green'})">${s}</span>${i<5?' → ':''}`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="card">
+  <table class="tbl"><thead><tr><th>Request ID</th><th>Organization</th><th>Information Requested</th><th>Case</th><th>Priority</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+  <tbody>${state.requests.map(r=>`<tr>
+    <td><b>${r.id}</b></td>
+    <td>${r.org}</td>
+    <td style="max-width:200px;font-size:11px">${r.info.slice(0,60)}${r.info.length>60?'…':''}</td>
+    <td>${r.case}</td>
+    <td>${badge(r.priority)}</td>
+    <td>${badge(r.status)}</td>
+    <td style="font-size:11px;color:var(--text3)">${r.created.split(',')[0]}</td>
+    <td style="display:flex;gap:4px">
+      <button class="btn btn-ghost btn-xs" onclick="openRequestDetail('${r.id}')">View</button>
+      ${r.status==='PENDING'?`<button class="btn btn-secondary btn-xs" onclick="updateRequestStatus('${r.id}','SENT')">Mark Sent</button>`:''}
+      ${r.status==='SENT'?`<button class="btn btn-secondary btn-xs" onclick="updateRequestStatus('${r.id}','RECEIVED')">Mark Received</button>`:''}
+      ${r.status==='RECEIVED'?`<button class="btn btn-secondary btn-xs" onclick="updateRequestStatus('${r.id}','VALIDATED')">Validate</button>`:''}
+    </td>
+  </tr>`).join('')}</tbody></table></div>`;
+}
+
+// ─── EVIDENCE ────────────────────────────────────────────────
+function evidencePage(){
+  return pageHead('Evidence Vault','Forensic evidence records with provenance, integrity hashes and chain-of-custody',
+    `<button class="btn btn-primary" onclick="openAddEvidenceModal()">＋ Add Evidence</button>`)
+  +`<div class="card">
+  <table class="tbl"><thead><tr><th>Evidence ID</th><th>Type</th><th>Source</th><th>Case</th><th>Entity</th><th>Collected</th><th>By</th><th>Hash</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>${state.evidence.map(e=>`<tr>
+    <td><b>${e.id}</b></td>
+    <td style="font-size:11px">${e.type}</td>
+    <td style="font-size:11px">${e.source}</td>
+    <td>${e.case}</td>
+    <td class="mono" style="font-size:10px">${e.entity.slice(0,15)}</td>
+    <td style="font-size:11px;color:var(--text3)">${e.collectedAt.split(',')[0]}</td>
+    <td style="font-size:11px">${e.collectedBy}</td>
+    <td class="mono" style="font-size:10px">${e.hash.slice(0,12)}…</td>
+    <td><span class="evidence-status es-${e.status.toLowerCase().replace(/ /g,'')}">${e.status}</span></td>
+    <td style="display:flex;gap:4px">
+      <button class="btn btn-ghost btn-xs" onclick="openEvidenceDetail('${e.id}')">View</button>
+      <button class="btn btn-ghost btn-xs" onclick="verifyEvidence('${e.id}')">Verify ✓</button>
+    </td>
+  </tr>`).join('')}</tbody></table></div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-head"><b>Chain of Custody Log</b></div>
+    <div class="card-body" style="padding:0">
+    <table class="tbl"><thead><tr><th>Event</th><th>Evidence</th><th>Officer</th><th>Timestamp</th><th>Integrity</th></tr></thead>
+    <tbody>${[
+      ['Collected','EV-CS-001','CP-FCI-042','22 Aug 2026, 10:14 IST','Verified'],
+      ['Reviewed','EV-CS-001','CP-FCI-017','22 Aug 2026, 12:04 IST','Verified'],
+      ['Collected','EV-CS-002','CP-FCI-042','22 Aug 2026, 10:55 IST','Collected'],
+      ['Reviewed','EV-CS-003','CP-FCI-017','22 Aug 2026, 11:42 IST','Reviewed'],
+      ['Collected','EV-CS-005','CP-FCI-042','22 Aug 2026, 09:58 IST','Verified']
+    ].map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td style="font-size:11px;color:var(--text3)">${r[3]}</td><td><span class="badge ${r[4]==='Verified'?'badge-low':'badge-gray'}">${r[4]}</span></td></tr>`).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+
+// ─── CASE TIMELINE ────────────────────────────────────────────
+function timelinePage(){
+  return pageHead('Case Timeline','Chronological reconstruction of investigation activity — auto-built from case data',
+    `<button class="btn btn-primary" onclick="exportTimeline()">Export Timeline</button>`)
+  +`<div style="display:grid;grid-template-columns:1fr 300px;gap:16px">
+  <div class="card"><div class="card-body">
+    ${CS.timeline.map((e,i)=>`<div class="timeline-item">
+      <div class="timeline-time">${e.date.slice(0,6)}<br>${e.time}</div>
+      <div class="timeline-dot-col">
+        <div class="timeline-dot" style="background:${dotColor(e.dot)}"></div>
+        ${i<CS.timeline.length-1?'<div class="timeline-line"></div>':''}
+      </div>
+      <div class="timeline-content">
+        <b>${e.event}</b>
+        <p>${e.detail}</p>
+        <small>Source: ${e.source}${e.ref?` &nbsp;•&nbsp; Ref: <b>${e.ref}</b>`:''}</small>
+      </div>
+    </div>`).join('')}
+  </div></div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="card"><div class="card-head"><b>Timeline Summary</b></div>
+    <div class="card-body" style="font-size:12px">
+      <div class="kv-item" style="margin-bottom:8px"><div class="kv-label">Investigation Start</div><div class="kv-value">22 Aug 2026, 09:14</div></div>
+      <div class="kv-item" style="margin-bottom:8px"><div class="kv-label">Total Events</div><div class="kv-value">${CS.timeline.length}</div></div>
+      <div class="kv-item" style="margin-bottom:8px"><div class="kv-label">Case Duration</div><div class="kv-value">2 hours 44 minutes</div></div>
+      <div class="kv-item"><div class="kv-label">Evidence Collected</div><div class="kv-value">${state.evidence.length} items</div></div>
+    </div></div>
+    <div class="card"><div class="card-head"><b>Event Types</b></div>
+    <div class="card-body">
+      ${[['blue','Case Management / Intake',dotColor('blue')],['orange','Risk & Behavioural Detection',dotColor('orange')],['red','Critical Findings',dotColor('red')],['purple','Predictions',dotColor('purple')]].map(([k,l,c])=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0"><span style="width:10px;height:10px;border-radius:50%;background:${c};flex-shrink:0;display:inline-block"></span><span style="font-size:11px;color:var(--text2)">${l}</span></div>`).join('')}
+    </div></div>
+  </div></div>`;
+}
+function dotColor(d){return{blue:'#2563eb',orange:'#ea580c',red:'#dc2626',purple:'#7c3aed',green:'#059669'}[d]||'#94a3b8';}
+function exportTimeline(){toast('Case timeline exported to report','ok');}
+
+// ─── REPORTS ─────────────────────────────────────────────────
+function reportsPage(){
+  return pageHead('Case Reports','Generate structured intelligence reports from the current investigation',
+    `<button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+    <button class="btn btn-ghost btn-sm" onclick="copyReport()">Copy</button>`)
+  +`<div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
+  <div class="card"><div class="card-head"><b>Report Type</b></div><div class="card-body">
+    ${['Complete Investigation Report','Case Intelligence Summary','Fund Flow Analysis','Transaction Analysis','Behavioural Indicators Report','Evidence Summary','Data Requests Status'].map((x,i)=>`<label style="display:block;padding:9px;border:1.5px solid ${i===0?'var(--blue)':'var(--border)'};border-radius:var(--r-sm);margin-bottom:6px;font-size:12px;cursor:pointer;background:${i===0?'var(--blue-ll)':'#fff'}"><input type="radio" name="report" ${i===0?'checked':''} style="margin-right:8px">${x}</label>`).join('')}
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="generateReport()">Generate</button>
+  </div></div>
+  <div class="card"><div class="card-head"><b>Report Preview</b><span class="data-tag dt-sample">SAMPLE DATA</span></div>
+  <div class="card-body"><div class="report-box" id="reportPreview">Select a report type and click Generate Report.</div></div>
+  </div></div>`;
+}
+function generateReport(){
+  const c=CS.case;
+  const p=document.getElementById('reportPreview');
+  if(!p)return;
+  const now='22 Aug 2026 • 14:36 IST';
+  const divider='═'.repeat(60);
+  p.textContent=`ChainSentinel — COMPLETE INVESTIGATION REPORT
+${divider}
+CASE:        ${c.id}
+TITLE:       ${c.title}
+STATUS:      ${c.status}
+PRIORITY:    ${c.priority}
+RISK SCORE:  ${c.riskScore}/100 — ${c.riskLevel}
+INVESTIGATOR:${c.investigator}
+GENERATED:   ${now}
+
+${divider}
+ 1. CASE OVERVIEW
+${divider}
+Seed Type:   Wallet Address
+Seed:        ${c.seed}
+Created:     ${c.created}
+Last Update: ${c.lastUpdated}
+Victim Ref:  ${c.victimRef}
+
+${divider}
+ 2. INVESTIGATION SEED
+${divider}
+${c.seed} identified as primary receiving address.
+Chain: Ethereum  |  Risk: 94/100  |  Status: CRITICAL
+
+${divider}
+ 3. IDENTIFIED ENTITIES [OBSERVED]
+${divider}
+${CS.wallets.map(w=>`${w.id}
+  Type: ${w.type}  Chain: ${w.chain}  Risk: ${w.risk}/100 ${w.riskLevel}
+  Balance: ${w.balance}  Transactions: ${w.tx}
+  First Seen: ${w.first}  Last Seen: ${w.last}`).join('\n\n')}
+
+${divider}
+ 4. TRANSACTION TIMELINE [OBSERVED]
+${divider}
+${CS.transactions.map(t=>`${t.time}
+  ${t.id} | ${t.hash}
+  ${t.from} → ${t.to}
+  Value: ${t.value} (${t.asset}) | Chain: ${t.chain} | Risk: ${t.risk}/100`).join('\n\n')}
+
+${divider}
+ 5. GRAPH FINDINGS [OBSERVED]
+${divider}
+Fund flow: Bank Account → Seed Wallet → 3 Intermediate Wallets → Exchange X / Exchange Y
+Total traced: ₹12.4L | Time span: 1 hour 50 minutes | Hops: 3
+
+${divider}
+ 6. BEHAVIOURAL INDICATORS [DETECTED]
+${divider}
+${CS.behaviors.map(b=>`${b.name} [${b.severity}]
+  Entity: ${b.entity}
+  Period: ${b.timeRange}
+  Note: ${b.desc.slice(0,120)}…`).join('\n\n')}
+
+${divider}
+ 7. RISK EXPLANATION
+${divider}
+Calculated Score: ${c.riskScore}/100 — ${c.riskLevel}
+Contributors:
+${CS.riskContributors.map(r=>`  ${r.name}: +${r.score}`).join('\n')}
+
+AI outputs are decision-support indicators only.
+Human investigator review is mandatory before any determination.
+
+${divider}
+ 8. PREDICTIVE FINDINGS [PREDICTED — NOT CONFIRMED]
+${divider}
+${CS.predictions.map(p=>`Predicted Next Hop: ${p.dest}
+  Confidence: ${p.conf}%
+  Reason: ${p.reason.slice(0,150)}…
+  BASIS: ${p.basis}
+  IMPORTANT: This is a probabilistic estimate. Do not treat as confirmed.`).join('\n\n')}
+
+${divider}
+ 9. DATA SOURCES
+${divider}
+${['Public Blockchain (Ethereum, TRON, Bitcoin)','Authorized Financial Records (HDFC Bank via legal process)','Exchange Intelligence (Exchange X — partial, authorized)','Open Source Intelligence (public address registry)'].map(s=>'• '+s).join('\n')}
+
+${divider}
+ 10. EVIDENCE
+${divider}
+${state.evidence.map(e=>`${e.id}
+  Type: ${e.type}  Source: ${e.source}
+  Status: ${e.status}  Hash: ${e.hash}
+  Collected: ${e.collectedAt} by ${e.collectedBy}`).join('\n\n')}
+
+${divider}
+ 11. DATA REQUESTS
+${divider}
+${state.requests.map(r=>`${r.id}
+  Organization: ${r.org}  Priority: ${r.priority}
+  Status: ${r.status}  Created: ${r.created}
+  Request: ${r.info}`).join('\n\n')}
+
+${divider}
+ 12. INVESTIGATOR NOTES
+${divider}
+${c.notes}
+
+${divider}
+IMPORTANT LIMITATIONS
+${divider}
+• This report contains SAMPLE / SIMULATED data only.
+• Behavioural indicators are decision-support signals — not proof of criminal activity.
+• Predictions are probabilistic estimates — not confirmed facts.
+• All findings require investigator verification before any enforcement action.
+• AI/risk outputs must be reviewed by a qualified investigator.
+
+${divider}
+ChainSentinel Investigation Platform • Chandigarh Police
+Financial Cyber Intelligence Division • SAMPLE DATA
+${divider}`;
+  toast('Complete investigation report generated','ok');
+}
+function copyReport(){
+  const p=document.getElementById('reportPreview');
+  if(!p||!p.textContent||p.textContent.includes('Select'))return toast('Generate a report first','warn');
+  navigator.clipboard.writeText(p.textContent).then(()=>toast('Report copied to clipboard','ok')).catch(()=>toast('Copy not available in this context','warn'));
+}
+
+// ─── ENTITIES ────────────────────────────────────────────────
+function entitiesPage(){
+  return pageHead('Entity Correlation','Resolve relationships across wallets, accounts, exchanges and intelligence identifiers')
+  +`<div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
+  <div class="card"><div class="card-head"><b>Entity Relationship Map — CS-2026-001</b></div>
+  <div class="card-body" style="padding:0">
+    <div class="graph-wrap" style="height:420px">
+      <div class="graph-grid"></div>
+      <svg viewBox="0 0 800 420" style="width:100%;display:block">
+        <defs><marker id="ea" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#4a6fa8"/></marker></defs>
+        ${[[400,210,230,120],[400,210,570,120],[400,210,230,300],[400,210,570,300],[400,210,680,210]].map(([x1,y1,x2,y2])=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#3b5a8a" stroke-width="1.5" marker-end="url(#ea)"/>`).join('')}
+        <g onclick="openWalletDrawer('0x7A3F...B91F')" style="cursor:pointer"><circle cx="400" cy="210" r="45" fill="#7f1d1d" stroke="#fca5a5" stroke-width="2"/><text x="400" y="205" text-anchor="middle" fill="#fde8d0" font-size="10" font-weight="700" font-family="Inter,sans-serif">SEED WALLET</text><text x="400" y="220" text-anchor="middle" fill="#fca5a5" font-size="8" font-family="Inter,sans-serif">0x7A3F...B91F</text><text x="400" y="233" text-anchor="middle" fill="#fca5a5" font-size="8" font-family="Inter,sans-serif">CRITICAL 94</text></g>
+        ${[['WALLET B','0x12AB...A8C',230,120,'CONFIRMED'],['WALLET D','0xBB91...3F2',570,120,'CONFIRMED'],['BANK','HDFC-4219',230,300,'CONFIRMED'],['WALLET C','0x92CD...11D',570,300,'CONFIRMED'],['EXCHANGE','Exchange X',680,210,'STRONG']].map(([l,id,cx,cy,conf])=>`<g onclick="openWalletDrawer('${id}')" style="cursor:pointer"><circle cx="${cx}" cy="${cy}" r="32" fill="#1e3a5f" stroke="#7cb9d6" stroke-width="1.5"/><text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#e0eeff" font-size="9" font-weight="700" font-family="Inter,sans-serif">${l}</text><text x="${cx}" y="${cy+8}" text-anchor="middle" fill="#7aa8c8" font-size="7" font-family="Inter,sans-serif">${conf}</text></g>`).join('')}
+      </svg>
+    </div>
+  </div></div>
+  <div class="card"><div class="card-head"><b>Linked Identifiers</b></div>
+  <div class="card-body">
+    ${[['Wallet 0x7A3F...B91F','Seed address','CONFIRMED'],['Wallet 0x12AB...A8C','Transfer hop 1','CONFIRMED'],['Exchange Account EX-A021','KYC partial','STRONG'],['Bank Account ••••4219','Source funds','CONFIRMED'],['OSINT reference','Public mention','UNVERIFIED']].map(([id,type,conf])=>`<div class="entity-card" onclick="toast('${id} detail view')"><div class="entity-icon" style="background:var(--blue-ll)">◌</div><div><div style="font-size:12px;font-weight:700">${id}</div><div style="font-size:11px;color:var(--text3)">${type} &nbsp;•&nbsp; <span style="color:var(--${conf==='CONFIRMED'?'green':conf==='STRONG'?'blue':'amber'})">${conf}</span></div></div></div>`).join('')}
+    <div class="warn-box" style="margin-top:10px">Inference is not proof. Review supporting evidence before attribution.</div>
+  </div></div></div>`;
+}
+
+// ─── SOURCES ─────────────────────────────────────────────────
+function sourcesPage(){
+  return pageHead('Data Sources','Multi-source intelligence ingestion with provenance and synchronization state')
+  +`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div class="card"><div class="card-head"><b>Connected Data Sources</b></div>
+  <div class="card-body">
+    ${[['Ethereum Blockchain','Public blockchain','Live',1482,'observed'],
+       ['TRON Network','Public blockchain','2 min ago',891,'observed'],
+       ['Bitcoin Network','Public blockchain','Live',342,'observed'],
+       ['HDFC Bank Records','Authorized financial','Authorized pull',1,'authorized'],
+       ['Exchange X Intelligence','Exchange KYC (partial)','REQ-CS-002',3,'authorized'],
+       ['Sanctions / OFAC Data','Risk intelligence','Daily refresh',0,'sample'],
+       ['OSINT Index','Open source','Continuous',12,'observed']].map(([name,type,sync,records,src])=>`<div class="source-item">
+      <div><b>${name}</b><small>${type} &nbsp;•&nbsp; Sync: ${sync} &nbsp;•&nbsp; ${records} records</small><small style="margin-top:2px">${provLabel(src.toUpperCase())}</small></div>
+      <div class="sw on"></div>
+    </div>`).join('')}
+  </div></div>
+  <div class="card"><div class="card-head"><b>Provenance Controls</b></div>
+  <div class="card-body">
+    <div class="chip-row" style="margin-bottom:14px">
+      <span class="chip">Source attribution</span><span class="chip">Authorization status</span><span class="chip">Last sync timestamp</span><span class="chip">Hash verification</span><span class="chip">Audit trail</span>
+    </div>
+    <div class="warn-box">This prototype uses simulated data only. Production deployment must connect exclusively to lawfully accessible and properly authorized datasets and APIs.</div>
+    <div class="section-title">Data Classification</div>
+    ${[['OBSERVED',provLabel('OBSERVED'),'Confirmed from public blockchain or authorized source'],['AUTHORIZED',provLabel('AUTHORIZED'),'Obtained via legal process from regulated entity'],['DETECTED',provLabel('DETECTED'),'System-identified pattern from observed data'],['PREDICTED',provLabel('PREDICTED'),'Probabilistic estimate — not confirmed'],['SAMPLE',provLabel('SAMPLE'),'Simulated demo data — not real']].map(([t,lbl,d])=>`<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)">${lbl}<span style="font-size:11px;color:var(--text2)">${d}</span></div>`).join('')}
+  </div></div></div>`;
+}
+
+// ─── EXCHANGE INTELLIGENCE ───────────────────────────────────
+function exchangePage(){
+  return pageHead('Exchange Intelligence','Authorized exchange records, deposit clusters and KYC request status')
+  +`<div style="display:grid;gap:12px">
+  ${[['Exchange X','High-risk counterparty identified','REQ-CS-001 PENDING — CRITICAL','2 linked clusters','exchange-x'],
+     ['Exchange Y','Medium-risk counterparty','REQ-CS-003 SENT — HIGH','1 linked cluster','exchange-y'],
+     ['Exchange Z','Low-risk — no confirmed link','No request filed','0 linked clusters','exchange-z']].map(([name,desc,reqStatus,clusters,id])=>`<div class="card"><div class="card-body" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:16px;font-weight:800;color:var(--navy)">${name}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:3px">${desc} &nbsp;•&nbsp; ${clusters}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">Request: ${reqStatus}</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="go('requests')">View Request</button>
+      <button class="btn btn-secondary btn-sm" onclick="openRequestModal('${name}')">Request Data</button>
+    </div>
+  </div></div>`).join('')}</div>`;
+}
+
+// ─── OSINT ───────────────────────────────────────────────────
+function osintPage(){
+  return pageHead('OSINT Intelligence','Open-source references linked to investigation entities')
+  +`<div class="card"><table class="tbl"><thead><tr><th>Reference</th><th>Entity</th><th>Confidence</th><th>Source</th><th>Captured</th><th>Provenance</th></tr></thead>
+  <tbody>${[['Public forum reference to wallet address','0x7A3F...B91F','Probable','Online Forum','22 Aug 2026'],['News article referencing investment scheme','Entity Cluster','Unverified','News Archive','20 Aug 2026'],['Open address registry mention','0x7A3F...B91F','Unverified','Public Registry','19 Aug 2026'],['Social media post referencing returns','Entity Cluster','Low','Social Media','18 Aug 2026']].map(r=>`<tr><td><b>${r[0]}</b></td><td class="mono">${r[1]}</td><td><span class="badge ${r[2]==='Probable'?'badge-medium':'badge-gray'}">${r[2]}</span></td><td>${r[3]}</td><td style="font-size:11px;color:var(--text3)">${r[4]}</td><td>${provLabel('OBSERVED')}</td></tr>`).join('')}</tbody></table></div>
+  <div class="warn-box" style="margin-top:12px">OSINT references are unverified unless corroborated by authorized sources. Do not treat open-source information as confirmed evidence without verification.</div>`;
+}
+
+// ─── CROSS-BORDER ─────────────────────────────────────────────
+function crossborderPage(){
+  return pageHead('Cross-Border Analysis','Jurisdictional linkage view based on attributed transaction and entity data')
+  +`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div class="card"><div class="card-head"><b>Attributed Fund Flow</b><span class="data-tag dt-sample">SAMPLE</span></div>
+  <div class="card-body" style="padding:30px">
+    <div style="display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap">
+      ${[['🇮🇳','INDIA','Source Jurisdiction'],['→',null,null],['🇦🇪','UAE','Probable Exchange Hub'],['→',null,null],['🌐','INTL','Further Analysis Needed']].map(([flag,name,desc])=>name?`<div style="text-align:center;padding:0 10px"><div style="font-size:40px">${flag}</div><div style="font-size:13px;font-weight:800;color:var(--navy);margin-top:6px">${name}</div><div style="font-size:11px;color:var(--text3)">${desc}</div></div>`:`<div style="font-size:28px;color:var(--text3);padding:0 8px">${flag}</div>`).join('')}
+    </div>
+    <div class="warn-box" style="margin-top:20px">Use "attributed jurisdiction" only. Do not assume physical movement of funds. Crypto transactions cross borders instantaneously — jurisdiction attribution requires careful legal analysis.</div>
+  </div></div>
+  <div class="card"><div class="card-head"><b>Jurisdiction Notes</b></div>
+  <div class="card-body">
+    ${[['India','Source bank account HDFC-4219. Primary jurisdiction. Victim funds originated here.','CONFIRMED'],['UAE (Attributed)','Exchange X potentially UAE-registered. Attribution based on KYC partial data.','PROBABLE'],['International','Exchange Y jurisdiction unknown. Further request pending.','UNVERIFIED']].map(([j,d,c])=>`<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">${j}</b><span class="badge ${c==='CONFIRMED'?'badge-low':c==='PROBABLE'?'badge-medium':'badge-gray'}">${c}</span></div><div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5">${d}</div></div>`).join('')}
+  </div></div></div>`;
+}
+
+// ─── AUDIT LOGS ──────────────────────────────────────────────
+function auditPage(){
+  const logs=[
+    ['22 Aug 2026, 14:36','CP-FCI-042','Viewed report preview','CS-2026-001'],
+    ['22 Aug 2026, 12:04','CP-FCI-017','Reviewed evidence','EV-CS-003'],
+    ['22 Aug 2026, 11:58','CP-FCI-042','Added evidence','EV-CS-004'],
+    ['22 Aug 2026, 11:44','CP-FCI-017','Created data request','REQ-CS-003'],
+    ['22 Aug 2026, 11:25','CP-FCI-042','Created data request','REQ-CS-001'],
+    ['22 Aug 2026, 10:55','CP-FCI-042','Risk assessment completed','CS-2026-001'],
+    ['22 Aug 2026, 10:14','CP-FCI-042','Collected evidence','EV-CS-001'],
+    ['22 Aug 2026, 09:58','CP-FCI-042','Imported bank record','EV-CS-005'],
+    ['22 Aug 2026, 09:31','CP-FCI-042','Created case','CS-2026-001'],
+    ['22 Aug 2026, 09:14','CP-FCI-042','Logged in','System']
+  ];
+  return pageHead('Audit Logs','Immutable-style activity history for accountability and integrity')
+  +`<div class="card"><table class="tbl"><thead><tr><th>Timestamp</th><th>Officer</th><th>Action</th><th>Object</th><th>Result</th></tr></thead>
+  <tbody>${logs.map(r=>`<tr><td style="font-size:11px">${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td class="mono">${r[3]}</td><td><span class="badge badge-low">Success</span></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// ─── TEAM ────────────────────────────────────────────────────
+function teamPage(){
+  return pageHead('Team & Access Control','Role-based access for administrative and investigative functions',
+    `<button class="btn btn-primary" onclick="addOfficerModal()">＋ Add Officer</button>`)
+  +`<div class="card"><table class="tbl"><thead><tr><th>Officer ID</th><th>Name</th><th>Role</th><th>Unit</th><th>Status</th><th>Last Active</th><th>Access</th></tr></thead>
+  <tbody>${[
+    ['CP-FCI-042','Insp. Sharma','Investigating Officer','Financial Cyber Intelligence','ONLINE','22 Aug 2026, 14:35'],
+    ['CP-FCI-017','SI Gupta','Financial Analyst','Cyber Crime Division','ONLINE','22 Aug 2026, 12:04'],
+    ['CP-ADMIN-001','DCP Mehta','Administrator','Command & Control','ONLINE','22 Aug 2026, 10:30'],
+    ['CP-ANA-009','HC Verma','Analyst','Intelligence Cell','OFFLINE','20 Aug 2026, 16:22']
+  ].map(r=>`<tr><td class="mono"><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="badge ${r[4]==='ONLINE'?'badge-low':'badge-gray'}">${r[4]}</span></td><td style="font-size:11px;color:var(--text3)">${r[5]}</td><td><button class="btn btn-ghost btn-xs" onclick="toast('Access policy: coming soon')">Manage</button></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+// ─── SETTINGS ────────────────────────────────────────────────
+function settingsPage(){
+  return pageHead('Settings','Profile, preferences and system configuration')
+  +`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div class="card"><div class="card-head"><b>Profile</b></div><div class="card-body">
+    <label class="form-label">Officer ID</label><input class="form-field" value="CP-FCI-042" readonly style="margin-bottom:10px">
+    <label class="form-label">Display Name</label><input class="form-field" value="Insp. Sharma" style="margin-bottom:10px">
+    <label class="form-label">Unit</label><input class="form-field" value="Financial Cyber Intelligence Division" style="margin-bottom:10px">
+    <button class="btn btn-secondary" onclick="toast('Profile saved','ok')">Save Profile</button>
+  </div></div>
+  <div class="card"><div class="card-head"><b>System Preferences</b></div><div class="card-body">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px">Show Sentinel Guide on startup</span><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px">Show prediction notifications</span><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px">Audit log on every action</span><div class="sw on"></div></div>
+    <div style="margin-top:14px"><button class="btn btn-secondary" onclick="replayTour()">▶ Replay Sentinel Tour</button></div>
+    <div style="margin-top:8px"><button class="btn btn-ghost" onclick="toast('Demo reset — refresh to restart')">↺ Reset Demo Data</button></div>
+  </div></div></div>
+  <div class="warn-box" style="margin-top:14px">ChainSentinel prototype — all data is simulated. This is a demonstration system for the hackathon. Do not use for real investigations.</div>`;
+}
+
+// ─── PAGE ROUTER ─────────────────────────────────────────────
+function renderPage(){
+  const pages={
+    dashboard:dashboardPage,newinvestigation:newInvestigationPage,cases:casesPage,alerts:alertsPage,
+    graph:graphPage,transactions:transactionsPage,wallets:walletsPage,entities:entitiesPage,
+    risk:riskPage,behaviour:behaviourPage,predictions:predictionsPage,
+    requests:requestsPage,evidence:evidencePage,timeline:timelinePage,reports:reportsPage,
+    sources:sourcesPage,exchange:exchangePage,osint:osintPage,crossborder:crossborderPage,
+    audit:auditPage,team:teamPage,settings:settingsPage
+  };
+  document.getElementById('main').innerHTML=(pages[state.page]||dashboardPage)();
+  setTimeout(()=>{
+    if(['graph','dashboard','entities'].includes(state.page))initGraphInteraction();
+  },50);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DRAWER & MODAL HANDLERS
+// ═══════════════════════════════════════════════════════════
+
+function openWalletDrawer(id){
+  const w=CS.wallets.find(x=>x.id===id)||{id,chain:'Attributed Identifier',risk:90,riskLevel:'HIGH',balance:'—',tx:'—',inflow:'—',outflow:'—',first:'—',last:'22 Aug 2026',type:'Entity / Account',behaviors:[],linked:[]};
+  const txs=CS.transactions.filter(t=>t.from===id||t.to===id);
+  const prediction=w.predictedHop?`<div class="prediction-card" style="margin-top:10px"><div class="prediction-label">${provLabel('PREDICTED')} &nbsp;PREDICTED NEXT HOP</div><div class="prediction-dest">${w.predictedHop.dest}</div><div style="display:flex;align-items:center;gap:10px;margin-top:8px"><div style="flex:1"><div class="confidence-bar"><div class="confidence-fill" style="width:${w.predictedHop.conf}%"></div></div></div><div style="font-size:16px;font-weight:900;color:#4c1d95">${w.predictedHop.conf}%</div></div></div>`:'';
+  openDrawer('Wallet Intelligence',`
+    <div style="font-weight:800;font-size:16px;font-family:Consolas,monospace">${esc(w.id)}</div>
+    <div style="font-size:12px;color:var(--text2);margin-top:3px">${w.chain} &nbsp;•&nbsp; ${w.type}</div>
+    <div class="risk-box" style="margin-top:14px">
+      <div style="font-size:10px;color:#93c5fd;font-weight:600">RISK SCORE</div>
+      <div class="risk-score">${w.risk}<span style="font-size:14px;opacity:.6"> / 100</span></div>
+      <div class="risk-level">${w.riskLevel}</div>
+      <div class="risk-bar"><div class="risk-bar-fill" style="width:${w.risk}%"></div></div>
+    </div>
+    <div class="kv-grid">
+      <div class="kv-item"><div class="kv-label">Inflow</div><div class="kv-value">${w.inflow}</div></div>
+      <div class="kv-item"><div class="kv-label">Outflow</div><div class="kv-value">${w.outflow}</div></div>
+      <div class="kv-item"><div class="kv-label">Transactions</div><div class="kv-value">${w.tx}</div></div>
+      <div class="kv-item"><div class="kv-label">First Seen</div><div class="kv-value">${w.first}</div></div>
+      <div class="kv-item"><div class="kv-label">Last Seen</div><div class="kv-value">${w.last}</div></div>
+      <div class="kv-item"><div class="kv-label">Connected</div><div class="kv-value">${w.linked.length} entities</div></div>
+    </div>
+    <div class="drawer-section-title">Detected Behavioural Indicators</div>
+    ${w.behaviors.length?w.behaviors.map(b=>`<div class="tag-risk">⚠ ${b}</div>`).join(''):'<div style="font-size:12px;color:var(--text3)">No indicators detected</div>'}
+    ${prediction}
+    ${txs.length?`<div class="drawer-section-title">Related Transactions (${txs.length})</div>${txs.map(t=>`<div style="padding:8px;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:6px;font-size:11px;cursor:pointer" onclick="openTxDrawer('${t.id}')"><div style="display:flex;justify-content:space-between"><b>${t.id}</b><span style="font-weight:700;color:var(--navy)">${t.value}</span></div><div style="color:var(--text3);margin-top:3px">${t.from} → ${t.to}</div></div>`).join('')}`:''}
+    <div class="action-grid">
+      <button class="btn btn-primary" onclick="go('transactions');closeDrawer()">View Transactions</button>
+      <button class="btn btn-ghost" onclick="go('evidence');closeDrawer()">View Evidence</button>
+      <button class="btn btn-secondary" onclick="closeDrawer();openRequestModal('Exchange X')">Request Data</button>
+      <button class="btn btn-ghost" onclick="closeDrawer();go('graph')">Show in Graph</button>
+    </div>
+  `);
+}
+
+function openTxDrawer(id){
+  const t=CS.transactions.find(x=>x.id===id)||CS.transactions[0];
+  openDrawer('Transaction Intelligence',`
+    <div style="font-weight:800;font-size:15px">${t.id}</div>
+    <div class="mono" style="font-size:11px;color:var(--text3)">${t.hash}</div>
+    <div class="risk-box" style="margin-top:14px">
+      <div style="font-size:10px;color:#93c5fd;font-weight:600">RISK SCORE</div>
+      <div class="risk-score">${t.risk}<span style="font-size:14px;opacity:.6"> / 100</span></div>
+      <div class="risk-bar"><div class="risk-bar-fill" style="width:${t.risk}%"></div></div>
+    </div>
+    <div class="kv-grid">
+      <div class="kv-item"><div class="kv-label">From</div><div class="kv-value mono" style="font-size:11px">${t.from}</div></div>
+      <div class="kv-item"><div class="kv-label">To</div><div class="kv-value mono" style="font-size:11px">${t.to}</div></div>
+      <div class="kv-item"><div class="kv-label">Value</div><div class="kv-value">${t.value}</div></div>
+      <div class="kv-item"><div class="kv-label">Asset</div><div class="kv-value">${t.asset}</div></div>
+      <div class="kv-item"><div class="kv-label">Chain</div><div class="kv-value">${t.chain}</div></div>
+      <div class="kv-item"><div class="kv-label">Source</div><div class="kv-value">${provLabel(t.prov)}</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Timestamp: ${t.time}</div>
+    <div class="drawer-section-title">Detected Indicators</div>
+    ${['Rapid movement pattern','Multi-entity transfer','High-risk counterparty'].map(x=>`<div class="tag-risk">⚠ ${x}</div>`).join('')}
+    <div class="action-grid">
+      <button class="btn btn-primary" onclick="traceForward()">⟶ Trace Forward</button>
+      <button class="btn btn-ghost" onclick="traceBackward()">⟵ Trace Back</button>
+      <button class="btn btn-secondary" onclick="addEvidenceFromTx('${t.id}')">Add as Evidence</button>
+      <button class="btn btn-ghost" onclick="go('graph');closeDrawer()">Show in Graph</button>
+    </div>
+  `);
+}
+
+function addEvidenceFromTx(txId){
+  const t=CS.transactions.find(x=>x.id===txId);
+  if(!t)return;
+  const evId=`EV-CS-00${state.evidence.length+1}`;
+  const ev={id:evId,type:'Blockchain Transaction Record',source:`Public Blockchain (${t.chain})`,case:'CS-2026-001',entity:t.from,txRef:txId,collectedAt:'22 Aug 2026, '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+' IST',collectedBy:'CP-FCI-042',hash:t.hash,status:'Collected',notes:`Auto-collected from transaction ${txId}`};
+  state.evidence.push(ev);
+  toast(`Evidence ${evId} created from ${txId}`,'ok');
+  closeDrawer();
+  go('evidence');
+}
+
+// ─── INVESTIGATION FLOW ───────────────────────────────────────
+let seedType='wallet';
+function selectSeedType(type){
+  seedType=type;
+  ['wallet','tx','case'].forEach(t=>{
+    const btn=document.getElementById(`stBtn-${t}`);
+    if(btn)btn.classList.toggle('active',t===type);
+  });
+  const inp=document.getElementById('seedInput');
+  if(inp)inp.placeholder=type==='wallet'?'e.g. 0x7A3F...B91F (use for demo)':type==='tx'?'e.g. TX-CS-001':'e.g. CS-2026-001';
+}
+
+function startInvestigation(){
+  const seed=document.getElementById('seedInput')?.value?.trim();
+  if(!seed){toast('Please enter a seed address, transaction hash or case ID','warn');return;}
+  const main=document.getElementById('main');
+  main.innerHTML=`<div class="loading-state"><div class="loading-spinner"></div><h3 style="font-weight:700;color:var(--text)">Initializing Investigation</h3><p style="color:var(--text3);margin-top:8px">Loading intelligence data for: <b>${esc(seed)}</b></p><div style="margin-top:20px;font-size:12px;color:var(--text3)" id="loadStep">Validating seed…</div></div>`;
+  const steps=['Validating seed input…','Loading blockchain data…','Building entity graph…','Calculating risk scores…','Detecting behavioural patterns…','Generating predictions…','Populating case timeline…','Investigation workspace ready'];
+  let i=0;
+  const iv=setInterval(()=>{
+    const el=document.getElementById('loadStep');
+    if(el&&i<steps.length)el.textContent=steps[i++];
+    if(i>=steps.length){
+      clearInterval(iv);
+      setTimeout(()=>{
+        state.activeCaseId='CS-2026-001';
+        document.getElementById('topbarCaseId').textContent=state.activeCaseId;
+        toast('Investigation CS-2026-001 loaded successfully','ok');
+        go('graph');
+        setTimeout(()=>{
+          if(!state.sentinelOpen){
+            openSentinel();
+            showSentinelMsg('Investigation workspace ready! The graph shows all entities connected to your seed wallet. Click any node to inspect its intelligence.','Click a wallet node in the graph to begin.');
+          }
+        },600);
+      },400);
+    }
+  },300);
+}
+
+function openCase(id){
+  state.activeCaseId=id;
+  document.getElementById('topbarCaseId').textContent=id;
+  toast(`Opened ${id}`,'ok');
+  go('graph');
+}
+
+// ─── REQUEST HANDLERS ─────────────────────────────────────────
+function openNewRequestModal(){openRequestModal('');}
+function openRequestModal(org){
+  openModal('New Data Request',`
+    <div class="info-box">All requests must be based on lawful authority and proper case justification. Requests are logged in the audit trail.</div>
+    <label class="form-label">ORGANIZATION</label>
+    <input id="reqOrg" class="form-field" value="${esc(org)}" placeholder="e.g. Exchange X, HDFC Bank" style="margin-bottom:10px">
+    <label class="form-label">REQUESTED INFORMATION</label>
+    <textarea id="reqInfo" class="form-field" rows="3" placeholder="Describe the information required for the investigation" style="margin-bottom:10px"></textarea>
+    <label class="form-label">CASE</label>
+    <input id="reqCase" class="form-field" value="CS-2026-001" style="margin-bottom:10px">
+    <label class="form-label">LEGAL BASIS</label>
+    <input id="reqLegal" class="form-field" value="Section 91 CrPC — Production of documents" style="margin-bottom:10px">
+    <label class="form-label">PRIORITY</label>
+    <select id="reqPriority" class="form-field" style="margin-bottom:10px"><option>CRITICAL</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option></select>
+    <label class="form-label">NOTES</label>
+    <input id="reqNotes" class="form-field" placeholder="Optional notes" style="margin-bottom:16px">
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitRequest()">Submit Request</button>
+  `);
+}
+
+function submitRequest(){
+  const org=document.getElementById('reqOrg')?.value?.trim();
+  const info=document.getElementById('reqInfo')?.value?.trim();
+  if(!org||!info){toast('Organization and information fields are required','warn');return;}
+  const id=`REQ-CS-00${state.requests.length+1}`;
+  const req={
+    id,org,info,case:'CS-2026-001',
+    legal:document.getElementById('reqLegal')?.value||'',
+    priority:document.getElementById('reqPriority')?.value||'HIGH',
+    status:'PENDING',
+    created:'22 Aug 2026, '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+' IST',
+    by:'CP-FCI-042',notes:document.getElementById('reqNotes')?.value||''
+  };
+  state.requests.push(req);
+  // Add to timeline
+  CS.timeline.push({time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),date:'22 Aug 2026',event:`Data request ${id} created`,detail:`Request to ${org} — ${info.slice(0,60)}`,source:'Investigator Requests',dot:'blue',ref:id});
+  closeModal();
+  toast(`${id} created and logged`,'ok');
+  go('requests');
+}
+
+function updateRequestStatus(id,status){
+  const req=state.requests.find(r=>r.id===id);
+  if(!req)return;
+  req.status=status;
+  CS.timeline.push({time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),date:'22 Aug 2026',event:`Request ${id} status: ${status}`,detail:`Status updated to ${status}`,source:'Investigator Requests',dot:'blue',ref:id});
+  renderPage();
+  toast(`${id} status updated to ${status}`,'ok');
+}
+
+function openRequestDetail(id){
+  const r=state.requests.find(x=>x.id===id);
+  if(!r)return;
+  openModal(`Request ${r.id}`,`
+    <div class="kv-grid">
+      <div class="kv-item"><div class="kv-label">Organization</div><div class="kv-value">${r.org}</div></div>
+      <div class="kv-item"><div class="kv-label">Case</div><div class="kv-value">${r.case}</div></div>
+      <div class="kv-item"><div class="kv-label">Priority</div><div class="kv-value">${r.priority}</div></div>
+      <div class="kv-item"><div class="kv-label">Status</div><div class="kv-value">${badge(r.status)}</div></div>
+      <div class="kv-item"><div class="kv-label">Created</div><div class="kv-value">${r.created}</div></div>
+      <div class="kv-item"><div class="kv-label">By</div><div class="kv-value">${r.by}</div></div>
+    </div>
+    <div class="section-title">Information Requested</div>
+    <div style="background:var(--surface2);padding:12px;border-radius:var(--r-sm);font-size:13px;line-height:1.6">${r.info}</div>
+    <div class="section-title">Legal Basis</div>
+    <div style="font-size:12px;color:var(--text2)">${r.legal}</div>
+    ${r.notes?`<div class="section-title">Notes</div><div style="font-size:12px;color:var(--text2)">${r.notes}</div>`:''}
+    <div class="section-title">Status Flow</div>
+    <div class="status-flow">
+      ${['DRAFT','PENDING','SENT','RECEIVED','VALIDATED','ADDED TO CASE'].map((s,i,arr)=>`<div class="status-step"><div class="status-node ${r.status===s?'current':['DRAFT','PENDING','SENT','RECEIVED','VALIDATED','ADDED TO CASE'].indexOf(r.status)>i?'done':''}">${s}</div>${i<arr.length-1?'<div class="status-arrow">›</div>':''}</div>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      ${r.status==='PENDING'?`<button class="btn btn-primary" onclick="updateRequestStatus('${r.id}','SENT');closeModal()">Mark as Sent</button>`:''}
+      ${r.status==='SENT'?`<button class="btn btn-primary" onclick="updateRequestStatus('${r.id}','RECEIVED');closeModal()">Mark as Received</button>`:''}
+      ${r.status==='RECEIVED'?`<button class="btn btn-primary" onclick="updateRequestStatus('${r.id}','VALIDATED');closeModal()">Validate</button>`:''}
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    </div>
+  `);
+}
+
+// ─── EVIDENCE HANDLERS ────────────────────────────────────────
+function openAddEvidenceModal(){
+  openModal('Add Evidence',`
+    <label class="form-label">EVIDENCE TYPE</label>
+    <select id="evType" class="form-field" style="margin-bottom:10px">
+      <option>Blockchain Transaction Record</option>
+      <option>Fund Flow Graph Snapshot</option>
+      <option>Exchange Response</option>
+      <option>OSINT Reference Capture</option>
+      <option>Bank Transfer Record</option>
+      <option>Other</option>
+    </select>
+    <label class="form-label">SOURCE</label>
+    <input id="evSource" class="form-field" placeholder="e.g. Public Blockchain (Ethereum)" style="margin-bottom:10px">
+    <label class="form-label">RELATED ENTITY</label>
+    <input id="evEntity" class="form-field" placeholder="e.g. 0x7A3F...B91F" style="margin-bottom:10px">
+    <label class="form-label">RELATED TRANSACTION</label>
+    <input id="evTx" class="form-field" placeholder="e.g. TX-CS-001 (optional)" style="margin-bottom:10px">
+    <label class="form-label">NOTES</label>
+    <textarea id="evNotes" class="form-field" rows="2" placeholder="Investigator notes" style="margin-bottom:16px"></textarea>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitEvidence()">Add Evidence</button>
+  `);
+}
+
+function submitEvidence(){
+  const type=document.getElementById('evType')?.value;
+  const source=document.getElementById('evSource')?.value?.trim();
+  if(!source){toast('Source is required','warn');return;}
+  const id=`EV-CS-0${String(state.evidence.length+1).padStart(2,'0')}`;
+  const ev={
+    id,type,source,case:'CS-2026-001',
+    entity:document.getElementById('evEntity')?.value||'—',
+    txRef:document.getElementById('evTx')?.value||'—',
+    collectedAt:'22 Aug 2026, '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+' IST',
+    collectedBy:'CP-FCI-042',
+    hash:'hash'+Math.random().toString(36).slice(2,10),
+    status:'Collected',
+    notes:document.getElementById('evNotes')?.value||''
+  };
+  state.evidence.push(ev);
+  CS.timeline.push({time:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),date:'22 Aug 2026',event:`Evidence ${id} added`,detail:`${type} from ${source}`,source:'Evidence Vault',dot:'blue',ref:id});
+  closeModal();
+  toast(`${id} added to evidence vault`,'ok');
+  go('evidence');
+}
+
+function openEvidenceDetail(id){
+  const e=state.evidence.find(x=>x.id===id);
+  if(!e)return;
+  openModal(`Evidence Detail — ${e.id}`,`
+    <div class="kv-grid">
+      <div class="kv-item"><div class="kv-label">Evidence ID</div><div class="kv-value">${e.id}</div></div>
+      <div class="kv-item"><div class="kv-label">Case</div><div class="kv-value">${e.case}</div></div>
+      <div class="kv-item"><div class="kv-label">Type</div><div class="kv-value">${e.type}</div></div>
+      <div class="kv-item"><div class="kv-label">Source</div><div class="kv-value">${e.source}</div></div>
+      <div class="kv-item"><div class="kv-label">Entity</div><div class="kv-value mono">${e.entity}</div></div>
+      <div class="kv-item"><div class="kv-label">TX Ref</div><div class="kv-value">${e.txRef}</div></div>
+      <div class="kv-item"><div class="kv-label">Collected At</div><div class="kv-value">${e.collectedAt}</div></div>
+      <div class="kv-item"><div class="kv-label">Collected By</div><div class="kv-value">${e.collectedBy}</div></div>
+      <div class="kv-item" style="grid-column:span 2"><div class="kv-label">Integrity Hash</div><div class="kv-value mono">${e.hash}</div></div>
+    </div>
+    <div class="section-title">Status</div>
+    <span class="evidence-status es-${e.status.toLowerCase().replace(/ /g,'')}">${e.status}</span>
+    ${e.notes?`<div class="section-title">Investigator Notes</div><div style="font-size:12px;color:var(--text2);line-height:1.6">${e.notes}</div>`:''}
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-secondary" onclick="verifyEvidence('${e.id}');closeModal()">✓ Verify Integrity</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    </div>
+  `);
+}
+
+function verifyEvidence(id){
+  const e=state.evidence.find(x=>x.id===id);
+  if(e){e.status='Verified';renderPage();}
+  toast(`Integrity verified for ${id}`,'ok');
+}
+
+// ─── MISC MODAL HANDLERS ──────────────────────────────────────
+function openAlert(id){
+  const a=CS.alerts.find(x=>x.id===id)||CS.alerts[0];
+  openModal('Alert Intelligence',`
+    <div class="notice ${a.level.toLowerCase()}"><b>${badge(a.level)} &nbsp; ${a.title}</b><p>${a.desc}</p></div>
+    <div class="kv-grid">
+      <div class="kv-item"><div class="kv-label">Risk Score</div><div class="kv-value">${a.risk}/100</div></div>
+      <div class="kv-item"><div class="kv-label">Case</div><div class="kv-value">${a.case}</div></div>
+    </div>
+    <div class="section-title">Recommended Workflow</div>
+    <div class="chip-row">${['Trace suspicious path','Review evidence','Correlate entities','Create report'].map(x=>`<span class="chip">→ ${x}</span>`).join('')}</div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px" onclick="closeModal();openCase('${a.case}')">Open Investigation →</button>
+  `);
+}
+
+function showRoleModal(){
+  openModal('Role / Demo Access',`
+    <p style="color:var(--text2);font-size:13px;margin-bottom:16px">Switch roles to demonstrate permission-aware navigation.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      ${[['admin','ADMINISTRATOR','⚙'],['io','INVESTIGATING OFFICER','🔍'],['analyst','FINANCIAL ANALYST','📊']].map(([r,l,i])=>`<button class="btn ${state.role===r?'btn-primary':'btn-ghost'}" style="flex-direction:column;gap:6px;padding:16px;height:auto" onclick="setRole('${r}');closeModal()"><span style="font-size:24px">${i}</span><span>${l}</span></button>`).join('')}
+    </div>
+  `);
+}
+
+function setRole(r){
+  state.role=r;
+  const labels={admin:'ADMINISTRATOR',io:'INVESTIGATING OFFICER',analyst:'FINANCIAL ANALYST'};
+  const avatars={admin:'AD',io:'IO',analyst:'FA'};
+  document.getElementById('roleName').textContent=labels[r];
+  document.getElementById('topbarAvatar').textContent=avatars[r];
+  renderSidebar();
+  toast('Role switched: '+labels[r],'ok');
+}
+
+function showNotices(){
+  openModal('Intelligence Notices',`
+    ${CS.alerts.slice(0,3).map((a,i)=>`<div class="notice ${i===0?'critical':'high'}" onclick="closeModal();openAlert('${a.id}')"><b>${badge(a.level)} &nbsp; ${a.title}</b><p>${a.desc}</p><span class="notice-link">OPEN INTELLIGENCE →</span></div>`).join('')}
+    <div class="notice" onclick="closeModal();go('predictions')"><b>🔮 PREDICTION &nbsp; Exchange X — 78% Confidence</b><p>Pattern analysis indicates high probability of further fund movement to Exchange X.</p><span class="notice-link">VIEW PREDICTION →</span></div>
+  `);
+}
+
+function addOfficerModal(){
+  openModal('Add Officer',`
+    <label class="form-label">OFFICER ID</label><input class="form-field" value="CP-FCI-055" style="margin-bottom:10px">
+    <label class="form-label">DISPLAY NAME</label><input class="form-field" placeholder="Full name" style="margin-bottom:10px">
+    <label class="form-label">ROLE</label>
+    <select class="form-field" style="margin-bottom:16px"><option>Investigating Officer</option><option>Financial Analyst</option><option>Analyst</option><option>Administrator</option></select>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="closeModal();toast('Officer added to access directory','ok')">Add Officer</button>
+  `);
+}
+
+// ─── SEARCH ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('globalSearch').addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;
+    const q=e.target.value.trim().toLowerCase();
+    if(!q)return;
+    const wallet=CS.wallets.find(w=>w.id.toLowerCase().includes(q));
+    const tx=CS.transactions.find(t=>t.id.toLowerCase().includes(q)||t.hash.toLowerCase().includes(q));
+    const cas=CS.cases.find(c=>c.id.toLowerCase().includes(q));
+    const alert=CS.alerts.find(a=>a.title.toLowerCase().includes(q));
+    if(wallet){e.target.value='';openWalletDrawer(wallet.id);}
+    else if(tx){e.target.value='';go('transactions');setTimeout(()=>openTxDrawer(tx.id),200);}
+    else if(cas){e.target.value='';openCase(cas.id);}
+    else if(alert){e.target.value='';openAlert(alert.id);}
+    else{openModal('Search Results',`<div class="notice"><b>No exact match found</b><p>Searched: "${esc(q)}"</p><p style="margin-top:8px">Try searching for: <b>0x7A3F</b> (wallet) &nbsp;•&nbsp; <b>TX-CS-001</b> (transaction) &nbsp;•&nbsp; <b>CS-2026-001</b> (case) &nbsp;•&nbsp; <b>rapid</b> (alert)</p></div>`);}
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+//  SENTINEL GUIDE
+// ═══════════════════════════════════════════════════════════
+
+const GUIDE_MSGS={
+  dashboard:{msg:'This is your Investigation Command Center. It shows active investigations, critical alerts, key metrics and a preview of fund flow. Click "New Investigation" to start tracing a wallet or transaction.',tip:'Click on any alert card to see its related investigation.'},
+  newinvestigation:{msg:'Start a new investigation by entering a seed — a wallet address, transaction hash or existing case ID. Enter "0x7A3F" to load the sample investigation.',tip:'After submitting, the investigation workspace will auto-populate with all related data.'},
+  graph:{msg:'This Financial Intelligence Graph shows the flow of funds between wallets, exchanges and bank accounts. Each node represents an entity. Click any node to inspect its intelligence panel.',tip:'Scroll to zoom, click+drag to pan. Red nodes are critical risk. Dashed edges are predictions.'},
+  transactions:{msg:'This page shows all transactions in the current investigation. Use filters to narrow by risk level. Click any row to open the full transaction intelligence panel.',tip:'Use the search box to find specific wallet addresses or transaction IDs.'},
+  wallets:{msg:'Wallet Intelligence lists all wallets linked to the investigation with their risk scores, balances and activity. Click any wallet to inspect its full profile.',tip:'Risk scores are explainable — click a wallet to see the contributing factors.'},
+  risk:{msg:'Risk Analysis shows the explainable risk score for the current case. Each contributor is listed with its point value. The model uses observable patterns only — no entity accusations.',tip:'Risk scores are decision-support indicators. Human investigator review is always required.'},
+  behaviour:{msg:'Behavioural Analysis shows detected transaction patterns — each is an indicator that may warrant review. All descriptions use cautious language: "indicator", "signal", "pattern".',tip:'Review each indicator carefully before drawing conclusions. Patterns are not proof.'},
+  predictions:{msg:'Predictions page shows probable next fund destinations based on pattern analysis. These are clearly labelled as PREDICTED and are probabilistic estimates only — not confirmed facts.',tip:'Never treat predictions as confirmed transactions. Investigate before taking action.'},
+  requests:{msg:'Data Requests tracks authorized information requests to external organizations. Use "New Request" to create a request. Track its status from PENDING through to ADDED TO CASE.',tip:'All requests must have proper legal basis. They are logged in the audit trail.'},
+  evidence:{msg:'Evidence Vault stores forensic evidence records with integrity hashes and chain-of-custody. Use "Add Evidence" to log new items. Click "Verify" to check integrity.',tip:'Each evidence item records who collected it, when, and from which source.'},
+  timeline:{msg:'Case Timeline auto-reconstructs the investigation chronologically from all data events — complaints, transactions detected, patterns found, requests made and evidence collected.',tip:'The timeline is built from the same data as all other pages — it stays consistent.'},
+  reports:{msg:'Generate a structured 12-section investigation report. It clearly separates OBSERVED facts, DETECTED patterns and PREDICTED estimates. Click Generate Report to preview.',tip:'Use Copy to save the report text. The report includes all case data from the investigation.'}
+};
+
+const TOUR_STEPS=[
+  {page:'dashboard',title:'1/6 — Investigation Workspace',msg:'Welcome to ChainSentinel! This dashboard is your command center. It shows active investigations, risk alerts and a fund-flow graph preview.'},
+  {page:'graph',title:'2/6 — Financial Intelligence Graph',msg:'The Financial Graph shows how funds flow between entities. Click any node (wallet, exchange, bank) to inspect its intelligence. Scroll to zoom, drag to pan.'},
+  {page:'risk',title:'3/6 — Risk Analysis',msg:'Risk Analysis shows an explainable score based on observable patterns. Each contributor is listed. Risk scores support the investigator — they are not accusations.'},
+  {page:'behaviour',title:'4/6 — Behavioural Analysis',msg:'Behavioural patterns like Rapid Fan-Out or Dormant Reactivation are detected and explained here. Each is an indicator, not proof. Use investigative language.'},
+  {page:'predictions',title:'5/6 — Predictive Fund-Flow',msg:'Predictions show where funds are likely to move next, based on pattern analysis. They are clearly labelled PREDICTED and separated from observed facts.'},
+  {page:'requests',title:'6/6 — Data Requests & Evidence',msg:'Data Requests and Evidence track the investigative paper trail. All requests require legal basis. Evidence is logged with integrity hashes and chain of custody.'}
+];
+
+function toggleSentinel(){state.sentinelOpen?closeSentinel():openSentinel();}
+function openSentinel(){
+  state.sentinelOpen=true;
+  document.getElementById('sentinelPanel').classList.remove('hidden');
+  updateSentinelContext();
+}
+function closeSentinel(){
+  state.sentinelOpen=false;
+  document.getElementById('sentinelPanel').classList.add('hidden');
+}
+function showSentinelMsg(msg,highlight,actions){
+  const msgEl=document.getElementById('sentinelMsg');
+  const hlEl=document.getElementById('sentinelHighlight');
+  const actEl=document.getElementById('sentinelActions');
+  if(msgEl)msgEl.textContent=msg;
+  if(hlEl){hlEl.textContent=highlight||'';hlEl.classList.toggle('hidden',!highlight);}
+  if(actEl)actEl.innerHTML=actions||'';
+}
+function updateSentinelContext(){
+  if(!state.sentinelOpen||state.tourActive)return;
+  const guide=GUIDE_MSGS[state.page];
+  if(!guide)return;
+  showSentinelMsg(guide.msg,guide.tip,
+    `<button class="btn btn-secondary btn-sm" onclick="closeSentinel()">Got it</button>
+     <button class="btn btn-ghost btn-sm" onclick="replayTour()">Tour</button>`);
+}
+
+function replayTour(){
+  state.tourStep=0;state.tourActive=true;
+  openSentinel();
+  showTourStep();
+}
+
+function showTourStep(){
+  const step=TOUR_STEPS[state.tourStep];
+  if(!step){completeTour();return;}
+  go(step.page);
+  const actEl=document.getElementById('sentinelActions');
+  const stepEl=document.getElementById('sentinelTourStep');
+  showSentinelMsg(step.msg,'',
+    `<button class="btn btn-primary btn-sm" onclick="nextTourStep()">Next →</button>
+     <button class="btn btn-ghost btn-sm" onclick="completeTour()">Skip</button>`);
+  if(stepEl){stepEl.textContent=step.title;stepEl.classList.remove('hidden');}
+}
+
+function nextTourStep(){
+  state.tourStep++;
+  if(state.tourStep>=TOUR_STEPS.length){completeTour();return;}
+  showTourStep();
+}
+
+function completeTour(){
+  state.tourActive=false;state.tourDone=true;
+  localStorage.setItem('cs_tour_done','1');
+  const stepEl=document.getElementById('sentinelTourStep');
+  if(stepEl)stepEl.classList.add('hidden');
+  showSentinelMsg("You're ready to explore ChainSentinel! Click me anytime for contextual help on the current page.",'Use "Replay Tour" in Settings to revisit this walkthrough.',
+    `<button class="btn btn-primary btn-sm" onclick="closeSentinel()">Got it!</button>`);
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────
+function enterApp(){
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  renderSidebar();
+  renderPage();
+  setTimeout(showNotices,600);
+  setTimeout(()=>{
+    if(!state.tourDone){
+      openSentinel();
+      showSentinelMsg("Hi! I'm Sentinel Guide. I can explain how ChainSentinel works and guide you through the interface.",'',
+        `<button class="btn btn-primary btn-sm" onclick="replayTour()">Start Tour</button>
+         <button class="btn btn-ghost btn-sm" onclick="closeSentinel()">Skip</button>`);
+    }
+  },1200);
+}
+
+function doLogin(){
+  const id=document.getElementById('officerId').value.trim();
+  if(!id){toast('Please enter your Officer ID','warn');return;}
+  openModal('Authenticating…',`<div class="bio-modal"><div class="scan-circle"><div class="scan-icon">✓</div></div><div class="scan-line"></div><b id="authText">Verifying credentials…</b><div style="font-size:11px;color:var(--text3);margin-top:8px">Checking role permissions and secure session…</div></div>`);
+  setTimeout(()=>{const el=document.getElementById('authText');if(el)el.textContent='Loading intelligence workspace…';},900);
+  setTimeout(()=>{closeModal();enterApp();},1800);
+}
+
+function showFingerprint(){
+  openModal('Biometric Authentication',`<div class="bio-modal"><div style="font-size:12px;color:var(--text3)">SIMULATED SECURE SCAN</div><div class="scan-circle"><div class="scan-icon">♢</div></div><div class="scan-line"></div><b id="scanText">Scanning biometric pattern…</b><div style="font-size:11px;color:var(--text3);margin-top:8px">No actual fingerprint data is collected in this prototype.</div></div>`);
+  setTimeout(()=>{const el=document.getElementById('scanText');if(el)el.textContent='Verifying officer credentials…';},900);
+  setTimeout(()=>{const el=document.getElementById('scanText');if(el)el.textContent='Identity verified ✓';},1800);
+  setTimeout(()=>{closeModal();enterApp();},2500);
+}
+
+// ─── EVENTS ───────────────────────────────────────────────────
+document.getElementById('loginBtn').onclick=doLogin;
+document.getElementById('fingerBtn').onclick=showFingerprint;
+document.getElementById('notifyBtn').onclick=showNotices;
+document.getElementById('logoutBtn').onclick=()=>{
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login').classList.remove('hidden');
+  state.sentinelOpen=false;
+  document.getElementById('sentinelPanel').classList.add('hidden');
+  toast('Secure session closed');
+};
+document.getElementById('hamburgerBtn').onclick=()=>{
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+};
+
+// Keyboard: Escape closes modal/drawer
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(document.getElementById('modalRoot').innerHTML)closeModal();
+    else if(document.getElementById('drawer').classList.contains('open'))closeDrawer();
+  }
+});
+
+// ─── INIT ─────────────────────────────────────────────────────
+const SPLASH_MSGS=['Initializing secure intelligence environment…','Loading investigation data…','Establishing encrypted session…','ChainSentinel ready'];
+let splashIdx=0;
+const splashIv=setInterval(()=>{
+  const el=document.getElementById('splashStatus');
+  if(el&&splashIdx<SPLASH_MSGS.length)el.textContent=SPLASH_MSGS[splashIdx++];
+},600);
+setTimeout(()=>{
+  clearInterval(splashIv);
+  document.getElementById('splash').style.opacity='0';
+  document.getElementById('splash').style.transition='opacity .4s';
+  setTimeout(()=>{
+    document.getElementById('splash').style.display='none';
+    document.getElementById('login').classList.remove('hidden');
+  },400);
+},2800);
+</script>
+</body>
+</html>

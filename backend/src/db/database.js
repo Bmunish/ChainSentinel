@@ -29,8 +29,7 @@ let _db = null;
 function getDb() {
   if (_db) return _db;
 
-  const isVerbose = process.env.NODE_ENV === 'development';
-  _db = new Database(DB_PATH, { verbose: isVerbose ? console.log : null });
+  _db = new Database(DB_PATH);
 
   // Performance pragmas
   _db.pragma('journal_mode = WAL');

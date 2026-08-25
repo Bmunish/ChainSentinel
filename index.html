@@ -683,8 +683,12 @@ const state={
   workspaceTab:'timeline'
 };
 
-// ─── GRAPH LAYOUT DATA ─────────────────────────────────────
-const GRAPH_NODES=[
+// ─── BACKEND API CONFIG ──────────────────────────────────────
+const API_BASE = 'http://localhost:3001';
+const DEFAULT_SEED = '0xFRAUD_ORIGIN_A1B2C3D4E5F6';
+
+// ─── GRAPH LAYOUT DATA (mutable — replaced by live API) ──────
+let GRAPH_NODES=[
   {id:'HDFC-4219',label:'BANK',sub:'HDFC ••••4219',type:'bank',x:80,y:280,risk:18},
   {id:'0x7A3F...B91F',label:'WALLET A',sub:'SEED • RISK 94',type:'seed',x:240,y:280,risk:94},
   {id:'0x12AB...A8C',label:'WALLET B',sub:'RISK 88',type:'wallet',x:430,y:150,risk:88},
@@ -695,7 +699,7 @@ const GRAPH_NODES=[
   {id:'Exchange Y',label:'EXCH Y',sub:'MEDIUM',type:'exchange',x:660,y:430,risk:65},
   {id:'Exchange X [PREDICTED]',label:'EXCH X',sub:'PREDICTED 78%',type:'predicted',x:870,y:230,risk:0}
 ];
-const GRAPH_EDGES=[
+let GRAPH_EDGES=[
   {from:'HDFC-4219',to:'0x7A3F...B91F',label:'₹12.4L',hot:true,id:'TX-CS-001'},
   {from:'0x7A3F...B91F',to:'0x12AB...A8C',label:'₹4.82L',hot:true,id:'TX-CS-002'},
   {from:'0x7A3F...B91F',to:'0x92CD...11D',label:'₹3.74L',hot:true,id:'TX-CS-003'},
@@ -706,6 +710,163 @@ const GRAPH_EDGES=[
   {from:'0x44EF...72B',to:'Exchange X',label:'₹2.97L',hot:false,id:'TX-CS-008'},
   {from:'0x7A3F...B91F',to:'Exchange X [PREDICTED]',label:'PREDICTED',hot:false,predicted:true,id:''}
 ];
+
+// Live-data flag — set to true once backend responds successfully
+let graphIsLive = false;
+
+// ─── LAYERED GRAPH LAYOUT ENGINE ─────────────────────────────
+// Assigns x/y coordinates to nodes by BFS depth layer.
+// Viewport: 980 × 560 (matches the SVG viewBox).
+function computeLayout(apiNodes, apiEdges, seedAddress) {
+  const VP_W = 960, VP_H = 520, MARGIN_X = 60, MARGIN_Y = 60;
+  // BFS to compute depth from seed
+  const depthMap = new Map();
+  const adj = new Map();
+  apiNodes.forEach(n => adj.set(n.id, []));
+  apiEdges.forEach(e => {
+    if (adj.has(e.source)) adj.get(e.source).push(e.target);
+    if (adj.has(e.target)) adj.get(e.target).push(e.source);
+  });
+  const queue = [seedAddress];
+  depthMap.set(seedAddress, 0);
+  while (queue.length) {
+    const cur = queue.shift();
+    const nbrs = adj.get(cur) || [];
+    nbrs.forEach(nb => {
+      if (!depthMap.has(nb)) {
+        depthMap.set(nb, depthMap.get(cur) + 1);
+        queue.push(nb);
+      }
+    });
+  }
+  // Group nodes by depth layer
+  const layers = new Map();
+  apiNodes.forEach(n => {
+    const d = depthMap.has(n.id) ? depthMap.get(n.id) : 99;
+    if (!layers.has(d)) layers.set(d, []);
+    layers.get(d).push(n.id);
+  });
+  const sortedDepths = Array.from(layers.keys()).sort((a,b)=>a-b);
+  const numLayers = sortedDepths.length;
+  const layerX = (di) => MARGIN_X + (di / Math.max(numLayers - 1, 1)) * (VP_W - 2 * MARGIN_X);
+  const posMap = new Map();
+  sortedDepths.forEach((d, di) => {
+    const group = layers.get(d);
+    const n = group.length;
+    group.forEach((id, i) => {
+      const y = n === 1
+        ? VP_H / 2
+        : MARGIN_Y + (i / (n - 1)) * (VP_H - 2 * MARGIN_Y);
+      posMap.set(id, { x: layerX(di), y: Math.round(y) });
+    });
+  });
+  return posMap;
+}
+
+// ─── NODE TYPE CLASSIFIER ─────────────────────────────────────
+function classifyNodeType(apiNode) {
+  if (!apiNode) return 'wallet';
+  const t = (apiNode.type || '').toLowerCase();
+  if (t === 'mixer')    return 'seed';      // red — high-risk
+  if (t === 'exchange') return 'exchange';
+  if (t === 'bridge')   return 'wallet';
+  if (apiNode.depth === 0) return 'seed';   // always highlight seed
+  if (apiNode.riskScore >= 80) return 'seed';
+  return 'wallet';
+}
+
+// ─── MAP API RESPONSE → RENDERER FORMAT ──────────────────────
+function mapApiToGraph(data, seedAddress) {
+  const { nodes: apiNodes, edges: apiEdges } = data;
+  const posMap = computeLayout(apiNodes, apiEdges, seedAddress);
+
+  const graphNodes = apiNodes.map(n => {
+    const pos = posMap.get(n.id) || { x: 490, y: 280 };
+    const shortId = n.address.length > 14
+      ? n.address.slice(0, 6) + '…' + n.address.slice(-4)
+      : n.address;
+    const sub = n.depth === 0
+      ? `SEED • RISK ${Math.round(n.riskScore)}`
+      : `RISK ${Math.round(n.riskScore)}`;
+    return {
+      id:    n.address,
+      label: n.label || shortId,
+      sub,
+      type:  classifyNodeType(n),
+      x:     pos.x,
+      y:     pos.y,
+      risk:  Math.round(n.riskScore),
+      // Preserve extra metadata for wallet drawer
+      riskFlags: n.riskFlags || [],
+      chain:     n.chain,
+      entity:    n.entity,
+      flagged:   n.flagged,
+    };
+  });
+
+  const graphEdges = apiEdges.map(e => ({
+    from:  e.source,
+    to:    e.target,
+    label: e.label || '',
+    hot:   e.flagged,
+    id:    e.id,
+  }));
+
+  return { graphNodes, graphEdges };
+}
+
+// ─── LIVE BACKEND LOADER ──────────────────────────────────────
+async function loadGraphFromBackend(seedAddress, hops = 3) {
+  seedAddress = seedAddress || DEFAULT_SEED;
+  const url = `${API_BASE}/api/trace/${encodeURIComponent(seedAddress)}?hops=${hops}&direction=both`;
+
+  // Show loading indicator
+  const labelBar = document.querySelector('.graph-label-bar');
+  if (labelBar) labelBar.textContent = '⏳ Loading live graph data…';
+  toast('Fetching live graph from backend…');
+
+  try {
+    const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const json = await resp.json();
+    if (!json.success || !json.data) throw new Error('Unexpected response shape');
+
+    const meta = json.data.meta;
+    const { graphNodes, graphEdges } = mapApiToGraph(json.data, seedAddress);
+
+    // Mutate the global arrays in-place
+    GRAPH_NODES.length = 0;
+    GRAPH_EDGES.length = 0;
+    graphNodes.forEach(n => GRAPH_NODES.push(n));
+    graphEdges.forEach(e => GRAPH_EDGES.push(e));
+    graphIsLive = true;
+
+    // Re-render the page so the SVG picks up the new data
+    renderPage();
+    setTimeout(initGraphInteraction, 100);
+
+    toast(
+      `✅ Live graph loaded — ${meta.totalNodes} nodes, ${meta.totalEdges} edges (${meta.traversalMs}ms)`,
+      'ok', 4000
+    );
+  } catch (err) {
+    console.warn('[ChainSentinel] Backend unreachable — using demo data.', err.message);
+    graphIsLive = false;
+    toast('⚠️ Backend offline — displaying demo data', 'warn', 4000);
+    // Re-render so the label bar reflects demo mode
+    renderPage();
+    setTimeout(initGraphInteraction, 100);
+  }
+}
+
+// ─── AUTO-PROBE BACKEND ON STARTUP ───────────────────────────
+// Silently try the health endpoint; if alive, auto-load the graph.
+(function probeBackend() {
+  fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(2000) })
+    .then(r => r.ok && loadGraphFromBackend(DEFAULT_SEED))
+    .catch(() => { /* backend offline — demo mode */ });
+})();
 
 // ─── NAVIGATION CONFIG ────────────────────────────────────
 const NAV=[
@@ -952,7 +1113,7 @@ function graphPage(){
     </div></div>
     <div class="card"><div class="card-head"><b>Graph Actions</b></div><div class="card-body">
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button class="btn btn-secondary" style="justify-content:center" onclick="traceForward()">⟶ &nbsp;Trace Forward</button>
+        <button class="btn btn-secondary" style="justify-content:center" onclick="traceForward()" id="btnTraceForward">⟶ &nbsp;Load Live Graph</button>
         <button class="btn btn-secondary" style="justify-content:center" onclick="traceBackward()">⟵ &nbsp;Trace Backward</button>
         <button class="btn btn-ghost" style="justify-content:center" onclick="resetGraph()">↺ &nbsp;Reset Graph</button>
         <button class="btn btn-ghost" style="justify-content:center" onclick="addGraphSnapshot()">📷 &nbsp;Add to Evidence</button>
@@ -1019,7 +1180,10 @@ function buildGraphHTML(height='520px',mini=false){
     <button class="graph-btn" onclick="isolatePath()">⊡ Isolate Path</button>
     <button class="graph-btn" onclick="resetGraph()">↺ Reset</button>
   </div>
-  <div class="graph-label-bar">DEMO / SAMPLE DATA &nbsp;•&nbsp; ${state.graphFilters.riskMin>0?'FILTERED':'FULL NETWORK'}</div>
+  <div class="graph-label-bar" id="graphLabelBar">${graphIsLive
+    ? `🟢 LIVE DATA &nbsp;•&nbsp; Seed: ${(DEFAULT_SEED.slice(0,10)+'…')} &nbsp;•&nbsp; ${state.graphFilters.riskMin>0?'FILTERED':'FULL NETWORK'}`
+    : `DEMO / SAMPLE DATA &nbsp;•&nbsp; ${state.graphFilters.riskMin>0?'FILTERED':'FULL NETWORK'}`
+  }</div>
   <div class="graph-zoom"><button onclick="zoomGraph(1.25)" title="Zoom In">+</button><button onclick="zoomGraph(.8)" title="Zoom Out">−</button></div>`;
 
   const legend=`<div class="graph-legend">
@@ -1088,7 +1252,11 @@ function selectGraphNode(id){
   // Show right panel if on graph page
   openWalletDrawer(id);
 }
-function traceForward(){toast('Forward trace initiated — suspicious path highlighted','ok');}
+function traceForward(){
+  // If on the graph page, load the live backend data for the current seed
+  const seed = CS.caseInfo && CS.caseInfo.seed ? CS.caseInfo.seed : DEFAULT_SEED;
+  loadGraphFromBackend(seed, 3);
+}
 function traceBackward(){toast('Backward trace initiated — upstream path highlighted','ok');}
 function isolatePath(){toast('Critical fund-flow path isolated','ok');}
 function addGraphSnapshot(){

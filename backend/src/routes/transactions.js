@@ -9,19 +9,6 @@ const router   = express.Router();
 const { getDb } = require('../db/database');
 
 // ── GET /api/transactions ─────────────────────────────────────────────────────
-/**
- * @route   GET /api/transactions
- * @query   sender     filter by sender address
- * @query   receiver   filter by receiver address
- * @query   token      filter by token
- * @query   flagged    '1' to show only flagged transactions
- * @query   minAmount  minimum USD amount
- * @query   maxAmount  maximum USD amount
- * @query   from       ISO datetime start filter
- * @query   to         ISO datetime end filter
- * @query   page       page number (default 1)
- * @query   limit      page size (default 50)
- */
 router.get('/', (req, res, next) => {
   try {
     const db     = getDb();
@@ -33,18 +20,26 @@ router.get('/', (req, res, next) => {
     const args = [];
 
     if (req.query.sender) {
-      sql += ' AND sender = ?';
-      args.push(req.query.sender);
+      sql += ' AND sender LIKE ?';
+      args.push(`%${req.query.sender}%`);
     }
     if (req.query.receiver) {
-      sql += ' AND receiver = ?';
-      args.push(req.query.receiver);
+      sql += ' AND receiver LIKE ?';
+      args.push(`%${req.query.receiver}%`);
     }
-    if (req.query.token) {
+    if (req.query.wallet) {
+      sql += ' AND (sender LIKE ? OR receiver LIKE ?)';
+      args.push(`%${req.query.wallet}%`, `%${req.query.wallet}%`);
+    }
+    if (req.query.token || req.query.asset) {
       sql += ' AND token = ?';
-      args.push(req.query.token);
+      args.push(req.query.token || req.query.asset);
     }
-    if (req.query.flagged === '1') {
+    if (req.query.chain) {
+      sql += ' AND chain = ?';
+      args.push(req.query.chain);
+    }
+    if (req.query.flagged === '1' || req.query.flagged === 'true') {
       sql += ' AND flagged = 1';
     }
     if (req.query.minAmount) {
@@ -55,22 +50,35 @@ router.get('/', (req, res, next) => {
       sql += ' AND amount <= ?';
       args.push(parseFloat(req.query.maxAmount));
     }
-    if (req.query.from) {
-      sql += ' AND timestamp >= ?';
-      args.push(req.query.from);
-    }
-    if (req.query.to) {
-      sql += ' AND timestamp <= ?';
-      args.push(req.query.to);
-    }
 
     const totalRow  = db.prepare(`SELECT COUNT(*) AS cnt FROM (${sql})`).get(...args);
     const txs       = db.prepare(`${sql} ORDER BY timestamp DESC LIMIT ? OFFSET ?`)
                         .all(...args, limit, offset);
 
+    const formatted = txs.map(t => ({
+      id: t.notes && t.notes.startsWith('TX-') ? t.notes.split(' ')[0] : (t.tx_hash.startsWith('TX-') ? t.tx_hash : `TX-${t.tx_hash.slice(2, 6).toUpperCase()}`),
+      tx_hash: t.tx_hash,
+      hash: t.tx_hash,
+      from: t.sender,
+      to: t.receiver,
+      sender: t.sender,
+      receiver: t.receiver,
+      value: t.value_display || `$${Math.round(t.amount).toLocaleString()}`,
+      amount: t.amount,
+      asset: t.token,
+      token: t.token,
+      chain: t.chain || 'Ethereum',
+      time: t.timestamp.includes('IST') ? t.timestamp : `${t.timestamp.slice(0, 10)} • ${t.timestamp.slice(11, 16)} IST`,
+      timestamp: t.timestamp,
+      risk: t.flagged ? 88 : 42,
+      prov: t.provenance || 'OBSERVED',
+      flagged: t.flagged === 1,
+      notes: t.notes,
+    }));
+
     return res.json({
       success: true,
-      data:    txs,
+      data:    formatted,
       pagination: {
         page,
         limit,
@@ -87,14 +95,35 @@ router.get('/', (req, res, next) => {
 router.get('/:txHash', (req, res, next) => {
   try {
     const db = getDb();
-    const tx = db.prepare('SELECT * FROM transactions WHERE tx_hash = ?')
-                 .get(req.params.txHash);
+    const tx = db.prepare('SELECT * FROM transactions WHERE tx_hash = ? OR id = ? OR notes LIKE ?')
+                 .get(req.params.txHash, req.params.txHash, `%${req.params.txHash}%`);
 
     if (!tx) {
       return res.status(404).json({ error: 'Transaction not found.' });
     }
 
-    return res.json({ success: true, data: tx });
+    return res.json({
+      success: true,
+      data: {
+        id: tx.notes && tx.notes.startsWith('TX-') ? tx.notes.split(' ')[0] : tx.tx_hash,
+        tx_hash: tx.tx_hash,
+        hash: tx.tx_hash,
+        from: tx.sender,
+        to: tx.receiver,
+        sender: tx.sender,
+        receiver: tx.receiver,
+        value: tx.value_display || `$${Math.round(tx.amount).toLocaleString()}`,
+        amount: tx.amount,
+        asset: tx.token,
+        token: tx.token,
+        chain: tx.chain || 'Ethereum',
+        time: tx.timestamp,
+        risk: tx.flagged ? 88 : 42,
+        prov: tx.provenance || 'OBSERVED',
+        flagged: tx.flagged === 1,
+        notes: tx.notes,
+      },
+    });
   } catch (err) {
     next(err);
   }
@@ -108,9 +137,9 @@ router.post('/:txHash/flag', (req, res, next) => {
 
     const result = db.prepare(`
       UPDATE transactions
-      SET flagged = ?, notes = ?
-      WHERE tx_hash = ?
-    `).run(flagged ? 1 : 0, notes, req.params.txHash);
+      SET flagged = ?, notes = coalesce(?, notes)
+      WHERE tx_hash = ? OR notes LIKE ?
+    `).run(flagged ? 1 : 0, notes, req.params.txHash, `%${req.params.txHash}%`);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Transaction not found.' });

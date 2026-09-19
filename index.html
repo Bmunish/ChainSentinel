@@ -1670,33 +1670,40 @@ function dashboardPage(){
   
   return `
   <!-- TOP INVESTIGATION HEADER BANNER -->
-  <div class="police-case-banner animate-fade-in-up stagger-1">
-    <div class="police-banner-head">
+  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6 animate-fade-in-up stagger-1">
+    <div class="flex justify-between items-start mb-4">
       <div>
-        <div class="police-badge-station">
-          <span>🏛️ CHANDIGARH POLICE</span> &nbsp;•&nbsp; <span>STATE CYBER CRIME DIVISION</span>
-        </div>
-        <div class="police-case-title">
-          Case ${c.id}: ${c.title}
-        </div>
-        <div class="police-case-meta">
-          <span>📁 <b>FIR Ref:</b> FIR No. 42/2026</span>
-          <span>👤 <b>Investigating Officer:</b> Insp. ${c.investigator}</span>
-          <span>📅 <b>Incident Logged:</b> ${c.created}</span>
-          <span>🛡️ <b>Risk Status:</b> <span style="color:${(c.riskScore >= 75 ? '#dc2626' : c.riskScore >= 50 ? '#d97706' : '#16a34a')};font-weight:800">${c.riskLevel || (c.riskScore >= 75 ? 'CRITICAL' : c.riskScore >= 50 ? 'HIGH' : 'LOW')} FRAUD RISK (Score ${c.riskScore || 85}/100)</span></span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold tracking-wide border border-slate-200 mb-3">
+          <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+          CHANDIGARH POLICE • CYBER CRIME DIVISION
+        </span>
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Case ${c.id}: ${c.title}</h1>
+        <div class="flex items-center gap-4 mt-2 text-sm text-slate-500 font-medium flex-wrap">
+          <span>FIR Ref: FIR No. 42/2026</span>
+          <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+          <span>IO: Insp. ${c.investigator}</span>
+          <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+          <span>Logged: ${c.created}</span>
         </div>
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-secondary btn-sm ai-pulse-active" onclick="openSaranshDrawer()" style="background:#ffffff;color:#1e3a8a;border:1.5px solid #93c5fd;font-weight:700">
-          🎙️ SARANSH AI Case Explainer
-        </button>
-        <button class="btn btn-primary btn-sm" onclick="go('newinvestigation')" style="background:#2563eb">
-          ＋ New Investigation
-        </button>
+      <div class="flex flex-col items-end gap-3">
+        <div class="px-3 py-1.5 bg-red-50 border border-red-100 text-red-700 font-bold rounded-lg flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+          ${c.riskLevel || (c.riskScore >= 75 ? 'HIGH' : 'EVALUATED')} FRAUD RISK (${c.riskScore || 80}/100)
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn btn-secondary btn-sm ai-pulse-active" onclick="openSaranshDrawer()" style="background:#ffffff;color:#1e3a8a;border:1.5px solid #93c5fd;font-weight:700">
+            🎙️ SARANSH AI Case Explainer
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="go('newinvestigation')" style="background:#2563eb">
+            ＋ New Investigation
+          </button>
+        </div>
       </div>
     </div>
-    <div class="police-case-summary-box">
-      <b>📌 Case Brief for Investigating Officer (IO / SHO):</b> Victim (Ref: <code>${c.victimRef}</code>) was lured into an online crypto investment fraud and transferred <b>₹12,40,000</b>. Stolen funds were transferred to Primary Suspect Seed Wallet (<code>${c.seed}</code>) and rapidly layered across 3 intermediary mule accounts within 4 minutes. Currently, <b>₹7,18,000 (58% of stolen funds)</b> has been identified deposited into <b>Exchange X &amp; Exchange Y</b> where immediate statutory freezing notices under <b>Sec 91 Cr.P.C.</b> should be served.
+    
+    <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700 leading-relaxed">
+      <strong class="text-slate-900">Case Brief:</strong> Victim (Ref: <code>${c.victimRef}</code>) was lured into an online crypto investment fraud and transferred <b>₹12,40,000</b>. Stolen funds were transferred to Primary Suspect Seed Wallet (<code>${c.seed}</code>) and rapidly layered across 3 intermediary mule accounts within 4 minutes. Currently, <b>₹7,18,000 (58% of stolen funds)</b> has been identified deposited into <b>Exchange X &amp; Exchange Y</b>. Immediate statutory freezing notices under <b>Sec 91 Cr.P.C.</b> should be served.
     </div>
   </div>
 

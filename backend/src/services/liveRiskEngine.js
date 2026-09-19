@@ -74,15 +74,16 @@ function aggregateGraphEdges(transactions = []) {
 		const source = String(tx.sender || tx.source || '').trim();
 		const target = String(tx.receiver || tx.target || '').trim();
 		if (!source || !target) return;
-		const key = `${source.toLowerCase()}->${target.toLowerCase()}`;
-		const current = groups.get(key) || { source, target, amount: 0, count: 0 };
+		const token = String(tx.token || tx.token_symbol || 'ETH').trim().toUpperCase();
+		const key = `${source.toLowerCase()}->${target.toLowerCase()}|${token}`;
+		const current = groups.get(key) || { source, target, amount: 0, count: 0, token };
 		current.amount += Number(tx.amount || 0);
 		current.count += 1;
 		groups.set(key, current);
 	});
 	return Array.from(groups.values()).map(edge => ({
 		...edge,
-		label: edge.amount > 0 ? `${edge.amount} ETH (${edge.count} txs)` : `${edge.count} calls ($0.00)`,
+		label: edge.amount > 0 ? `${edge.amount} ${edge.token} (${edge.count} txs)` : `${edge.count} calls (0 ${edge.token})`,
 	}));
 }
 

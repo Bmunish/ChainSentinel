@@ -795,19 +795,19 @@ function computeLayout(apiNodes = [], apiEdges = [], seedAddress = '') {
 
 function classifyNodeType(apiNode) {
   if (!apiNode) return 'wallet';
-  if ((apiNode.role || '').toUpperCase() === 'INFLOW' || (apiNode.group || '').toUpperCase() === 'INFLOW') return 'inflow';
+  const role = (apiNode.role || '').toUpperCase();
   const grp = (apiNode.group || apiNode.category || '').toUpperCase();
-  if (grp === 'VASP') return 'exchange';
-  if (grp === 'BANK') return 'bank';
-  if (grp === 'SEED') return 'seed';
+  if (role === 'SEED' || grp === 'SEED' || apiNode.depth === 0) return 'seed';
+  if (role === 'INFLOW' || grp === 'INFLOW') return 'inflow';
+  if (role === 'EXCHANGE' || grp === 'VASP') return 'exchange';
+  if (role === 'BANK' || grp === 'BANK') return 'bank';
 
   const t = (apiNode.type || '').toLowerCase();
   if (t === 'mixer')    return 'seed';
   if (t === 'exchange') return 'exchange';
   if (t === 'bank')     return 'bank';
   if (t === 'bridge')   return 'wallet';
-  if (apiNode.depth === 0) return 'seed';
-  if (apiNode.riskScore >= 80) return 'seed';
+  if ((apiNode.riskScore || apiNode.risk_score) >= 80) return 'seed';
   return 'wallet';
 }
 
@@ -819,40 +819,62 @@ function mapApiToGraph(data, seedAddress) {
   const graphNodes = apiNodes.map(n => {
     const addr = n.address || n.id || '';
     const pos = posMap.get(addr) || posMap.get(n.id) || { x: 490, y: 280 };
-    const shortId = addr.length > 14
+    const shortId = n.sublabel || (addr.length > 14
       ? addr.slice(0, 6) + '…' + addr.slice(-4)
-      : addr;
+      : addr);
     
     const nodeType = classifyNodeType(n);
     let cleanLabel = n.label || shortId;
     if (/^Node Hop-/i.test(cleanLabel) || /^Target Address$/i.test(cleanLabel)) {
-      cleanLabel = n.depth === 0 ? 'Starting wallet' : nodeType === 'exchange' ? 'Exchange' : nodeType === 'bank' ? 'Bank account' : 'Connected wallet';
+      cleanLabel = (n.role === 'SEED' || n.depth === 0)
+        ? 'Suspect Seed'
+        : nodeType === 'exchange'
+        ? 'Exchange'
+        : nodeType === 'bank'
+        ? 'Bank account'
+        : (n.role === 'INFLOW' ? 'Inflow Source' : 'Recipient Mule');
     }
-    if(cleanLabel.includes('(')) cleanLabel = cleanLabel.split('(')[0].trim();
-    if(cleanLabel.length > 15) cleanLabel = cleanLabel.slice(0, 14) + '…';
+    if (cleanLabel.includes('(')) cleanLabel = cleanLabel.split('(')[0].trim();
 
-    const sub = (n.depth === 0 || n.group === 'SEED')
-      ? `🚨 Suspect Seed (Risk ${Math.round(n.riskScore || n.risk_score || 85)})`
-      : nodeType === 'inflow'
-      ? '💰 Incoming funds'
-      : nodeType === 'exchange'
-      ? `🏢 Target to Freeze`
-      : nodeType === 'bank'
-      ? `🏦 Bank Outflow`
-      : `Risk ${Math.round(n.riskScore || n.risk_score || 50)}/100`;
+    const riskVal = Math.round(n.riskScore ?? n.risk_score ?? (nodeType === 'seed' ? 75 : 50));
+    let sub = '';
+    if (nodeType === 'seed' || n.role === 'SEED' || n.depth === 0) {
+      sub = `🚨 ${shortId} (Risk ${riskVal})`;
+    } else if (nodeType === 'inflow' || n.role === 'INFLOW') {
+      const amt = n.total_transferred ?? n.total_inflow;
+      sub = amt ? `💰 ${shortId} (+${amt} ${n.token || 'ETH'})` : `💰 ${shortId} (Inflow)`;
+    } else if (nodeType === 'exchange' || n.role === 'EXCHANGE') {
+      sub = `🏢 ${shortId} (Target Freeze)`;
+    } else if (nodeType === 'bank') {
+      sub = `🏦 ${shortId} (Bank Outflow)`;
+    } else {
+      const amt = n.total_transferred ?? n.total_outflow;
+      sub = amt ? `🔀 ${shortId} (${amt} ${n.token || 'ETH'})` : `🔀 ${shortId} (Risk ${riskVal})`;
+    }
 
     return {
-      id:    addr,
-      label: cleanLabel,
-      sub,
-      type:  nodeType,
-      x:     pos.x,
-      y:     pos.y,
-      risk:  Math.round(n.riskScore || n.risk_score || 50),
+      id:        addr,
+      address:   addr,
+      label:     cleanLabel,
+      sub:       sub,
+      sublabel:  shortId,
+      type:      nodeType,
+      role:      n.role,
+      x:         pos.x,
+      y:         pos.y,
+      risk:      riskVal,
+      risk_score: riskVal,
+      riskScore:  riskVal,
+      riskLevel: n.risk_level || (riskVal >= 75 ? 'CRITICAL' : riskVal >= 50 ? 'HIGH' : 'LOW'),
       riskFlags: n.riskFlags || [],
-      chain:     n.chain,
+      chain:     n.chain || 'Ethereum',
       entity:    n.entity,
       flagged:   n.flagged,
+      tx_count:  n.tx_count,
+      total_transferred: n.total_transferred,
+      total_inflow: n.total_inflow,
+      total_outflow: n.total_outflow,
+      token:     n.token,
     };
   });
 
@@ -865,15 +887,16 @@ function mapApiToGraph(data, seedAddress) {
     const key = `${from.toLowerCase()}->${to.toLowerCase()}`;
     const txAmount = Number(e.amount ?? e.totalAmount ?? 0);
     const token = e.token || e.token_symbol || 'ETH';
-    const isHot = Boolean(e.flagged || e.hot || e.amount >= 0.25);
+    const isHot = Boolean(e.flagged || e.hot || txAmount >= 0.25 || (e.tx_count || e.txCount || 1) > 2);
     const isPredicted = Boolean(e.predicted);
+    const count = Number(e.tx_count || e.txCount || 1);
 
     if (!edgeMap.has(key)) {
       edgeMap.set(key, {
         from,
         to,
         totalAmount: txAmount,
-        txCount: 1,
+        txCount: count,
         token,
         hot: isHot,
         predicted: isPredicted,
@@ -885,7 +908,7 @@ function mapApiToGraph(data, seedAddress) {
 
     const edge = edgeMap.get(key);
     edge.totalAmount += txAmount;
-    edge.txCount += 1;
+    edge.txCount += count;
     edge.hot = edge.hot || isHot;
     edge.predicted = edge.predicted || isPredicted;
     edge.id = edge.id || (e.id || e.hash || `${from}-${to}`);
@@ -904,7 +927,7 @@ function mapApiToGraph(data, seedAddress) {
     return {
       from: edge.from,
       to: edge.to,
-      label,
+      label: edge.label || label,
       hot: Boolean(edge.hot),
       predicted: Boolean(edge.predicted),
       id: edge.id,
@@ -1747,14 +1770,14 @@ function buildGraphHTML(height='520px', mini=false){
 
     if(e.label){
       let labelText = e.label;
-      if (labelText.length > 16) {
-        labelText = labelText.slice(0, 14) + '…';
+      if (labelText.length > 24) {
+        labelText = labelText.slice(0, 22) + '…';
       }
-      const labelW = mini ? 62 : 78;
-      const labelH = mini ? 16 : 20;
+      const labelW = Math.max(mini ? 70 : 96, labelText.length * 6.5 + 16);
+      const labelH = mini ? 18 : 22;
       edgesSVG += `
         <g class="graph-edge-label">
-          <rect x="${midX - labelW/2}" y="${midY - labelH/2 - 18}" width="${labelW}" height="${labelH}" rx="5" fill="#09152b" stroke="${color}" stroke-width="1.2" opacity="0.95"/>
+          <rect x="${midX - labelW/2}" y="${midY - labelH/2 - 16}" width="${labelW}" height="${labelH}" rx="5" fill="#09152b" stroke="${color}" stroke-width="1.2" opacity="0.95"/>
           <text x="${midX}" y="${midY + (mini ? 3 : 4)}" text-anchor="middle" fill="#ffffff" font-size="${mini ? 8.5 : 9.5}" font-weight="800" font-family="'Plus Jakarta Sans',sans-serif">${labelText}</text>
         </g>
       `;
@@ -1764,18 +1787,18 @@ function buildGraphHTML(height='520px', mini=false){
   let nodesSVG = '';
   nodes.forEach(n => {
     const th = nodeTheme(n);
-    const w = mini ? 108 : 136;
-    const h = mini ? 42 : 50;
+    const w = mini ? 120 : 158;
+    const h = mini ? 46 : 54;
     const rx = 10;
     const dashAttr = th.dash ? `stroke-dasharray="${th.dash}"` : '';
     const onclick = mini ? `openWalletDrawer('${n.id}')` : `selectGraphNode('${n.id}')`;
     
     // Format display label cleanly
     let displayTitle = n.label || n.id;
-    if(displayTitle.length > 14) displayTitle = displayTitle.slice(0, 13) + '…';
+    if(displayTitle.length > 20) displayTitle = displayTitle.slice(0, 19) + '…';
 
-    let displaySub = n.sub || '';
-    if(displaySub.length > 18) displaySub = displaySub.slice(0, 17) + '…';
+    let displaySub = n.sub || n.sublabel || '';
+    if(displaySub.length > 24) displaySub = displaySub.slice(0, 23) + '…';
 
     nodesSVG += `
       <g class="graph-node" onclick="${onclick}" style="cursor:pointer" role="button" aria-label="${n.label}">
@@ -1790,11 +1813,14 @@ function buildGraphHTML(height='520px', mini=false){
         <text x="${n.x - w/2 + (mini ? 16 : 20)}" y="${n.y + (mini ? 4 : 5)}" text-anchor="middle" font-size="${mini ? 11 : 14}">${th.icon}</text>
         
         <!-- Title & Subtitle -->
-        <text x="${n.x - w/2 + (mini ? 32 : 40)}" y="${n.y - (mini ? 2 : 3)}" text-anchor="start" fill="${th.titleColor}" font-size="${mini ? 9.5 : 11.5}" font-weight="800" font-family="'Plus Jakarta Sans',sans-serif">${displayTitle}</text>
-        <text x="${n.x - w/2 + (mini ? 32 : 40)}" y="${n.y + (mini ? 11 : 13)}" text-anchor="start" fill="${th.subColor}" font-size="${mini ? 8 : 9.5}" font-weight="700" font-family="'Plus Jakarta Sans',sans-serif">${displaySub}</text>
+        <text x="${n.x - w/2 + (mini ? 34 : 42)}" y="${n.y - (mini ? 2 : 4)}" text-anchor="start" fill="${th.titleColor}" font-size="${mini ? 10 : 11.5}" font-weight="800" font-family="'Plus Jakarta Sans',sans-serif">${displayTitle}</text>
+        <text x="${n.x - w/2 + (mini ? 34 : 42)}" y="${n.y + (mini ? 12 : 14)}" text-anchor="start" fill="${th.subColor}" font-size="${mini ? 8.5 : 9.5}" font-weight="700" font-family="'Plus Jakarta Sans',sans-serif">${displaySub}</text>
       </g>
     `;
   });
+
+  const activeSeed = (CS.case && CS.case.seed) || (GRAPH_NODES[0] && GRAPH_NODES[0].id) || DEFAULT_SEED;
+  const shortActiveSeed = activeSeed.length > 14 ? activeSeed.slice(0, 6) + '…' + activeSeed.slice(-4) : activeSeed;
 
   const controls = mini ? '' : `<div class="graph-controls">
     <button class="graph-btn active" onclick="replayGraphDiscoveryAnimation()">▶ Play flow</button>
@@ -1804,7 +1830,7 @@ function buildGraphHTML(height='520px', mini=false){
     <button class="graph-btn" onclick="resetGraph()">↺ Reset view</button>
   </div>
   <div class="graph-label-bar" id="graphLabelBar">${graphIsLive
-    ? `🟢 LIVE BLOCKCHAIN FEED &nbsp;•&nbsp; Seed: ${(DEFAULT_SEED.slice(0,10)+'…')} &nbsp;•&nbsp; ${state.graphFilters.riskMin > 0 ? 'FILTERED' : 'FULL TRAIL'}`
+    ? `🟢 LIVE BLOCKCHAIN FEED &nbsp;•&nbsp; Seed: ${shortActiveSeed} &nbsp;•&nbsp; ${GRAPH_NODES.length} Nodes &nbsp;•&nbsp; ${state.graphFilters.riskMin > 0 ? 'FILTERED' : 'FULL TRAIL'}`
     : `🛡️ FORENSIC SIMULATION &nbsp;•&nbsp; ${state.graphFilters.riskMin > 0 ? 'FILTERED' : 'FULL TRAIL'}`
   }</div>
   <div class="graph-zoom">
@@ -1833,6 +1859,132 @@ function buildGraphHTML(height='520px', mini=false){
     ${controls}${legend}
   </div>`;
 }
+
+function renderGraph(graphData) {
+  const svg = document.getElementById('graphSvg');
+  if (!svg || !graphData || !graphData.nodes) return;
+  svg.innerHTML = '';
+
+  const width = svg.clientWidth || 960;
+  const height = svg.clientHeight || 540;
+
+  // 1. Column Positions (Left-to-Right Clean Forensic View)
+  const colX = {
+    0: width * 0.16, // Inflows (Left)
+    1: width * 0.50, // Suspect Seed (Center)
+    2: width * 0.84  // Outflows / Mules (Right)
+  };
+
+  const columns = { 0: [], 1: [], 2: [] };
+  graphData.nodes.forEach(n => {
+    const col = n.tier !== undefined ? n.tier : (n.role === 'INFLOW' ? 0 : n.role === 'SEED' ? 1 : 2);
+    if (!columns[col]) columns[col] = [];
+    columns[col].push(n);
+  });
+
+  // Calculate distinct Y positions per column
+  Object.keys(columns).forEach(colIdx => {
+    const colNodes = columns[colIdx];
+    const spacing = height / (colNodes.length + 1);
+    colNodes.forEach((node, idx) => {
+      node.x = colX[colIdx] || width * 0.5;
+      node.y = spacing * (idx + 1);
+    });
+  });
+
+  const nodeMap = new Map(graphData.nodes.map(n => [(n.id || n.address || '').toLowerCase(), n]));
+
+  // 2. Draw Links with Real Flow Values
+  (graphData.links || []).forEach(link => {
+    const srcId = String(link.source?.id || link.source || link.from || '').toLowerCase();
+    const tgtId = String(link.target?.id || link.target || link.to || '').toLowerCase();
+    const src = nodeMap.get(srcId);
+    const tgt = nodeMap.get(tgtId);
+    if (!src || !tgt) return;
+
+    // Cubic Bezier curve
+    const dx = tgt.x - src.x;
+    const pathD = `M ${src.x} ${src.y} C ${src.x + dx * 0.4} ${src.y}, ${tgt.x - dx * 0.4} ${tgt.y}, ${tgt.x} ${tgt.y}`;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', pathD);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#3B82F6');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('stroke-opacity', '0.8');
+    svg.appendChild(path);
+
+    // Link Center Pill showing Actual Transfer Volume
+    const midX = (src.x + tgt.x) / 2;
+    const midY = (src.y + tgt.y) / 2 - 10;
+
+    const pill = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    pill.setAttribute('x', midX);
+    pill.setAttribute('y', midY);
+    pill.setAttribute('fill', '#38BDF8');
+    pill.setAttribute('font-size', '10px');
+    pill.setAttribute('font-weight', '600');
+    pill.setAttribute('text-anchor', 'middle');
+    pill.textContent = link.label || link.valueDisplay || '';
+    svg.appendChild(pill);
+  });
+
+  // 3. Draw Accurate Forensic Node Cards
+  graphData.nodes.forEach(node => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', `translate(${node.x - 75}, ${node.y - 32})`);
+    g.style.cursor = 'pointer';
+    g.onclick = () => typeof openWalletDrawer === 'function' ? openWalletDrawer(node.address || node.id) : null;
+
+    const isSeed = node.role === 'SEED';
+    const riskVal = node.risk_score || node.riskScore || (isSeed ? 75 : 50);
+    const borderColor = isSeed ? '#EF4444' : (riskVal >= 70 ? '#F97316' : '#10B981');
+    const bgColor = isSeed ? '#2A0B0B' : '#0F172A';
+
+    // Node Box
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('width', '150');
+    rect.setAttribute('height', '64');
+    rect.setAttribute('rx', '8');
+    rect.setAttribute('fill', bgColor);
+    rect.setAttribute('stroke', borderColor);
+    rect.setAttribute('stroke-width', '2');
+    g.appendChild(rect);
+
+    // Node Label
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    title.setAttribute('x', '10');
+    title.setAttribute('y', '18');
+    title.setAttribute('fill', '#FFFFFF');
+    title.setAttribute('font-size', '11px');
+    title.setAttribute('font-weight', '700');
+    title.textContent = node.label || node.id;
+    g.appendChild(title);
+
+    // Address (Truncated)
+    const addr = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    addr.setAttribute('x', '10');
+    addr.setAttribute('y', '34');
+    addr.setAttribute('fill', '#94A3B8');
+    addr.setAttribute('font-size', '10px');
+    addr.setAttribute('font-family', 'monospace');
+    addr.textContent = node.sublabel || node.address || node.id;
+    g.appendChild(addr);
+
+    // Accurate Metric Badge (Risk + TX Count)
+    const metrics = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    metrics.setAttribute('x', '10');
+    metrics.setAttribute('y', '52');
+    metrics.setAttribute('fill', borderColor);
+    metrics.setAttribute('font-size', '10px');
+    metrics.setAttribute('font-weight', '600');
+    metrics.textContent = `Risk: ${riskVal}/100 • ${node.tx_count || 0} txs`;
+    g.appendChild(metrics);
+
+    svg.appendChild(g);
+  });
+}
+window.renderGraph = renderGraph;
 
 // ─── GRAPH INTERACTIONS ───────────────────────────────────────
 function initGraphInteraction(){
@@ -2147,6 +2299,7 @@ function requestsPage(){
     <td style="font-size:11px;color:var(--text3)">${r.created.split(',')[0]}</td>
     <td style="display:flex;gap:4px">
       <button class="btn btn-ghost btn-xs" onclick="openRequestDetail('${r.id}')">View</button>
+      <button class="btn btn-ghost btn-xs" onclick="downloadRequestSection91('${r.id}','${r.case}')" title="Download Section 91 CrPC PDF Subpoena Notice">⚖️ Sec 91 PDF</button>
       ${r.status==='PENDING'?`<button class="btn btn-primary btn-xs" onclick="triggerSandboxFulfillment('${r.id}')">⚡ Simulate Response</button>`:''}
       ${r.status==='SENT'?`<button class="btn btn-secondary btn-xs" onclick="updateRequestStatus('${r.id}','RECEIVED')">Mark Received</button>`:''}
       ${r.status==='RECEIVED'?`<button class="btn btn-secondary btn-xs" onclick="updateRequestStatus('${r.id}','VALIDATED')">Validate</button>`:''}
@@ -2229,32 +2382,51 @@ function timelinePage(){
 function dotColor(d){return{blue:'#2563eb',orange:'#ea580c',red:'#dc2626',purple:'#7c3aed',green:'#059669'}[d]||'#94a3b8';}
 function exportTimeline(){toast('Case timeline exported to report','ok');}
 
-// ─── REPORTS ─────────────────────────────────────────────────
+// ─── HELPER: Dynamically Load jsPDF ─────────────────────────────
+function loadJsPDF(callback) {
+  if (window.jspdf && window.jspdf.jsPDF) {
+    callback();
+    return;
+  }
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  script.onload = () => callback();
+  script.onerror = () => toast('Failed to load PDF library', 'err');
+  document.head.appendChild(script);
+}
+
+// ─── REPORTS PAGE ──────────────────────────────────────────────
 function reportsPage(){
   return pageHead('Case Reports','Generate structured intelligence reports from the current investigation',
-    `<button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
-    <button class="btn btn-ghost btn-sm" onclick="copyReport()">Copy</button>`)
+    `<button type="button" class="btn btn-primary" onclick="generateReport(event)">Generate Report</button>
+    <button type="button" class="btn btn-success" onclick="downloadPDFReport(event)" style="margin-left:8px">📥 Download PDF</button>
+    <button type="button" class="btn btn-warning" onclick="downloadSection91Notice(event)" style="margin-left:8px">⚖️ Sec 91 CrPC Notice</button>
+    <button type="button" class="btn btn-ghost btn-sm" onclick="copyReport(event)" style="margin-left:8px">Copy Text</button>`)
   +`<div style="display:grid;grid-template-columns:280px 1fr;gap:16px">
   <div class="card"><div class="card-head"><b>Report Type</b></div><div class="card-body">
     ${['Complete Investigation Report','Case Intelligence Summary','Fund Flow Analysis','Transaction Analysis','Behavioural Indicators Report','Evidence Summary','Data Requests Status'].map((x,i)=>`<label style="display:block;padding:9px;border:1.5px solid ${i===0?'var(--blue)':'var(--border)'};border-radius:var(--r-sm);margin-bottom:6px;font-size:12px;cursor:pointer;background:${i===0?'var(--blue-ll)':'#fff'}"><input type="radio" name="report" ${i===0?'checked':''} style="margin-right:8px">${x}</label>`).join('')}
-    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="generateReport()">Generate</button>
+    <button type="button" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="generateReport(event)">Generate</button>
   </div></div>
   <div class="card"><div class="card-head"><b>Report Preview</b><span class="data-tag dt-sample">SAMPLE DATA</span></div>
-  <div class="card-body"><div class="report-box" id="reportPreview">Select a report type and click Generate Report.</div></div>
+  <div class="card-body"><div class="report-box" id="reportPreview" style="background:#f8f9fa;padding:16px;border-radius:6px;max-height:600px;overflow-y:auto;font-family:sans-serif;font-size:13px;line-height:1.5;color:#333;">Select a report type and click Generate Report.</div></div>
   </div></div>`;
 }
-async function generateReport(){
-  const p=document.getElementById('reportPreview');
-  if(!p)return;
-  p.textContent='⏳ Contacting backend reporting engine to compile structured investigation dossier…';
+
+// ─── GENERATE REPORT (HTML PREVIEW) ───────────────────────────
+async function generateReport(e){
+  if (e && e.preventDefault) e.preventDefault(); // Stop default form submit / refresh
+  
+  const p = document.getElementById('reportPreview');
+  if(!p) return;
+  p.innerHTML = '⏳ Contacting backend reporting engine to compile structured investigation dossier…';
   
   try {
     const res = await fetch(`${API_BASE}/api/reports/${encodeURIComponent(state.activeCaseId)}`);
     if (res.ok) {
       const json = await res.json();
       if (json.data && json.data.reportText) {
-        p.textContent = json.data.reportText;
-        toast('Complete 17-section investigation report generated from backend','ok');
+        p.innerText = json.data.reportText;
+        toast('Complete investigation report generated from backend','ok');
         return;
       }
     }
@@ -2262,130 +2434,258 @@ async function generateReport(){
     console.warn('[ChainTrace] Falling back to client-side report generator:', err.message);
   }
 
-  const c=CS.case;
-  const now='22 Aug 2026 • 14:36 IST';
-  const divider='═'.repeat(60);
-  p.textContent=`ChainTrace (ChainSentinel) — COMPLETE INVESTIGATION REPORT
-SIH PS-26183 | TEKATHON-5.0-2026 | Team: THE ELEMENTS
-${divider}
-CASE:        ${c.id}
-TITLE:       ${c.title}
-STATUS:      ${c.status}
-PRIORITY:    ${c.priority}
-RISK SCORE:  ${c.riskScore}/100 — ${c.riskLevel}
-INVESTIGATOR:${c.investigator}
-GENERATED:   ${now}
+  const c = CS.case;
+  const now = '22 Aug 2026 • 14:36 IST';
 
-${divider}
- 1. CASE OVERVIEW
-${divider}
-Seed Type:   Wallet Address
-Seed:        ${c.seed}
-Created:     ${c.created}
-Last Update: ${c.lastUpdated}
-Victim Ref:  ${c.victimRef}
+  let html = `
+    <div style="border-bottom: 2px solid #0056b3; padding-bottom: 8px; margin-bottom: 16px;">
+      <h2 style="margin:0; color:#0056b3;">ChainTrace (ChainSentinel) — COMPLETE INVESTIGATION REPORT</h2>
+      <div style="font-size: 11px; color: #666; margin-top: 4px;">SIH PS-26183 | TEKATHON-5.0-2026 | Team: THE ELEMENTS</div>
+    </div>
 
-${divider}
- 2. INVESTIGATION SEED
-${divider}
-${c.seed} identified as primary receiving address.
-Chain: Ethereum  |  Risk: 94/100  |  Status: CRITICAL
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #eef2f7; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+      <div><b>CASE ID:</b> ${c.id}</div>
+      <div><b>TITLE:</b> ${c.title}</div>
+      <div><b>STATUS:</b> <span style="color:${c.status==='ACTIVE'?'red':'green'}">${c.status}</span></div>
+      <div><b>PRIORITY:</b> ${c.priority}</div>
+      <div><b>RISK SCORE:</b> <b style="color:red">${c.riskScore}/100 — ${c.riskLevel}</b></div>
+      <div><b>INVESTIGATOR:</b> ${c.investigator}</div>
+      <div><b>GENERATED:</b> ${now}</div>
+      <div><b>VICTIM REF:</b> ${c.victimRef}</div>
+    </div>
 
-${divider}
- 3. IDENTIFIED ENTITIES [OBSERVED]
-${divider}
-${CS.wallets.map(w=>`${w.id}
-  Type: ${w.type}  Chain: ${w.chain}  Risk: ${w.risk}/100 ${w.riskLevel}
-  Balance: ${w.balance}  Transactions: ${w.tx}
-  First Seen: ${w.first}  Last Seen: ${w.last}`).join('\n\n')}
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 4px; color: #333;">1. CASE OVERVIEW & SEED</h3>
+    <p><b>Seed Type:</b> Wallet Address<br>
+    <b>Seed Address:</b> <code>${c.seed}</code><br>
+    <b>Chain:</b> Ethereum | <b>Risk:</b> 94/100 | <b>Status:</b> CRITICAL<br>
+    <b>Created:</b> ${c.created} | <b>Last Update:</b> ${c.lastUpdated}</p>
 
-${divider}
- 4. TRANSACTION TIMELINE [OBSERVED]
-${divider}
-${CS.transactions.map(t=>`${t.time}
-  ${t.id} | ${t.hash}
-  ${t.from} → ${t.to}
-  Value: ${t.value} (${t.asset}) | Chain: ${t.chain} | Risk: ${t.risk}/100`).join('\n\n')}
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 4px; color: #333;">2. IDENTIFIED ENTITIES [OBSERVED]</h3>
+    <table style="width:100%; border-collapse: collapse; font-size: 12px; margin-bottom: 16px;">
+      <thead>
+        <tr style="background:#0056b3; color:white; text-align:left;">
+          <th style="padding:6px;">ID</th><th style="padding:6px;">Type</th><th style="padding:6px;">Chain</th><th style="padding:6px;">Risk</th><th style="padding:6px;">Balance</th><th style="padding:6px;">Tx Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${CS.wallets.map(w=>`
+          <tr style="border-bottom:1px solid #ddd;">
+            <td style="padding:6px;"><code>${w.id}</code></td>
+            <td style="padding:6px;">${w.type}</td>
+            <td style="padding:6px;">${w.chain}</td>
+            <td style="padding:6px; color:red;">${w.risk}/100 ${w.riskLevel}</td>
+            <td style="padding:6px;">${w.balance}</td>
+            <td style="padding:6px;">${w.tx}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
 
-${divider}
- 5. GRAPH FINDINGS [OBSERVED]
-${divider}
-Fund flow: Bank Account → Seed Wallet → 3 Intermediate Wallets → Exchange X / Exchange Y
-Total traced: ₹12.4L | Time span: 1 hour 50 minutes | Hops: 3
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 4px; color: #333;">3. TRANSACTION TIMELINE [OBSERVED]</h3>
+    <ul style="padding-left:20px;">
+      ${CS.transactions.map(t=>`
+        <li style="margin-bottom: 8px;">
+          <b>${t.time}</b> — [${t.id}] <code>${t.hash}</code><br>
+          <span style="color:#555;">${t.from} &rarr; ${t.to}</span> | <b>Value:</b> ${t.value} (${t.asset}) | <b>Risk:</b> ${t.risk}/100
+        </li>
+      `).join('')}
+    </ul>
 
-${divider}
- 6. BEHAVIOURAL INDICATORS [DETECTED]
-${divider}
-${CS.behaviors.map(b=>`${b.name} [${b.severity}]
-  Entity: ${b.entity}
-  Period: ${b.timeRange}
-  Note: ${b.desc.slice(0,120)}…`).join('\n\n')}
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 4px; color: #333;">4. GRAPH FINDINGS & BEHAVIOURAL INDICATORS</h3>
+    <p><b>Fund Flow Path:</b> Bank Account &rarr; Seed Wallet &rarr; 3 Intermediate Wallets &rarr; Exchange X / Exchange Y<br>
+    <b>Total Traced:</b> ₹12.4L | <b>Time Span:</b> 1h 50m | <b>Hops:</b> 3</p>
+    <div>
+      ${CS.behaviors.map(b=>`
+        <div style="background:#fff3cd; border-left:4px solid #ffc107; padding:8px; margin-bottom:8px; border-radius:3px;">
+          <b>${b.name}</b> [Severity: ${b.severity}] — <i>${b.entity} (${b.timeRange})</i><br>
+          <span style="font-size:11px;">${b.desc}</span>
+        </div>
+      `).join('')}
+    </div>
 
-${divider}
- 7. RISK EXPLANATION
-${divider}
-Calculated Score: ${c.riskScore}/100 — ${c.riskLevel}
-Contributors:
-${CS.riskContributors.map(r=>`  ${r.name}: +${r.score}`).join('\n')}
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 4px; color: #333;">5. PREDICTIVE FINDINGS [PROBABILISTIC]</h3>
+    ${CS.predictions.map(p=>`
+      <div style="background:#e2e3e5; padding:8px; border-radius:4px; margin-bottom:8px;">
+        <b>Predicted Next Hop:</b> ${p.dest} (Confidence: ${p.conf}%)<br>
+        <b>Reason:</b> ${p.reason}<br>
+        <small style="color:#666;">BASIS: ${p.basis}</small>
+      </div>
+    `).join('')}
 
-AI outputs are decision-support indicators only.
-Human investigator review is mandatory before any determination.
+    <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 4px; color: #333;">6. INVESTIGATOR NOTES</h3>
+    <p style="background:#f1f1f1; padding:10px; border-radius:4px; font-style:italic;">${c.notes}</p>
 
-${divider}
- 8. PREDICTIVE FINDINGS [PREDICTED — NOT CONFIRMED]
-${divider}
-${CS.predictions.map(p=>`Predicted Next Hop: ${p.dest}
-  Confidence: ${p.conf}%
-  Reason: ${p.reason.slice(0,150)}…
-  BASIS: ${p.basis}
-  IMPORTANT: This is a probabilistic estimate. Do not treat as confirmed.`).join('\n\n')}
+    <div style="margin-top:20px; padding:10px; border:1px dashed #d9534f; color:#a94442; background:#f2dede; font-size:11px; border-radius:4px;">
+      <b>LIMITATIONS & LEGAL NOTICE:</b> AI and predictive findings are decision-support tools only. All evidence requires human verification prior to statutory enforcement.
+    </div>
+  `;
 
-${divider}
- 9. DATA SOURCES
-${divider}
-${['Public Blockchain (Ethereum, TRON, Bitcoin)','Authorized Financial Records (HDFC Bank via legal process)','Exchange Intelligence (Exchange X — partial, authorized)','Open Source Intelligence (public address registry)'].map(s=>'• '+s).join('\n')}
-
-${divider}
- 10. EVIDENCE
-${divider}
-${state.evidence.map(e=>`${e.id}
-  Type: ${e.type}  Source: ${e.source}
-  Status: ${e.status}  Hash: ${e.hash}
-  Collected: ${e.collectedAt} by ${e.collectedBy}`).join('\n\n')}
-
-${divider}
- 11. DATA REQUESTS
-${divider}
-${state.requests.map(r=>`${r.id}
-  Organization: ${r.org}  Priority: ${r.priority}
-  Status: ${r.status}  Created: ${r.created}
-  Request: ${r.info}`).join('\n\n')}
-
-${divider}
- 12. INVESTIGATOR NOTES
-${divider}
-${c.notes}
-
-${divider}
-IMPORTANT LIMITATIONS
-${divider}
-• This report contains SAMPLE / SIMULATED data only.
-• Behavioural indicators are decision-support signals — not proof of criminal activity.
-• Predictions are probabilistic estimates — not confirmed facts.
-• All findings require investigator verification before any enforcement action.
-• AI/risk outputs must be reviewed by a qualified investigator.
-
-${divider}
-ChainSentinel Investigation Platform • Chandigarh Police
-Financial Cyber Intelligence Division • SAMPLE DATA
-${divider}`;
+  p.innerHTML = html;
   toast('Complete investigation report generated','ok');
 }
-function copyReport(){
-  const p=document.getElementById('reportPreview');
-  if(!p||!p.textContent||p.textContent.includes('Select'))return toast('Generate a report first','warn');
-  navigator.clipboard.writeText(p.textContent).then(()=>toast('Report copied to clipboard','ok')).catch(()=>toast('Copy not available in this context','warn'));
+
+// ─── DOWNLOAD PDF REPORT ───────────────────────────────────────
+function downloadPDFReport(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  
+  const p = document.getElementById('reportPreview');
+  if(!p || p.innerText.includes('Select a report type')) {
+    return toast('Generate a report first', 'warn');
+  }
+
+  loadJsPDF(() => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const c = CS.case;
+
+    let y = 15;
+    const margin = 14;
+    const pageWidth = 210;
+    const contentWidth = pageWidth - (margin * 2);
+
+    const addHeader = (title) => {
+      doc.setFillColor(0, 86, 179);
+      doc.rect(margin, y, contentWidth, 7, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, margin + 3, y + 5);
+      y += 10;
+      doc.setTextColor(0, 0, 0);
+    };
+
+    const checkPageBreak = (neededHeight = 15) => {
+      if (y + neededHeight > 280) {
+        doc.addPage();
+        y = 15;
+      }
+    };
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 86, 179);
+    doc.text('ChainTrace — Investigation Dossier', margin, y);
+    y += 6;
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.text('SIH PS-26183 | TEKATHON-5.0-2026 | Team: THE ELEMENTS', margin, y);
+    y += 8;
+
+    doc.setDrawColor(200, 200, 200);
+    doc.setFillColor(245, 247, 250);
+    doc.roundedRect(margin, y, contentWidth, 24, 2, 2, 'FD');
+    
+    doc.setFontSize(8.5);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Case ID: ${c.id}`, margin + 4, y + 6);
+    doc.text(`Status: ${c.status}`, margin + 65, y + 6);
+    doc.text(`Priority: ${c.priority}`, margin + 125, y + 6);
+
+    doc.text(`Risk Score: ${c.riskScore}/100 (${c.riskLevel})`, margin + 4, y + 12);
+    doc.text(`Investigator: ${c.investigator}`, margin + 65, y + 12);
+    doc.text(`Victim Ref: ${c.victimRef}`, margin + 125, y + 12);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Title: ${c.title}`, margin + 4, y + 18);
+    doc.text(`Generated: 22 Aug 2026 • 14:36 IST`, margin + 125, y + 18);
+    y += 30;
+
+    addHeader('1. CASE OVERVIEW & SEED INFORMATION');
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Primary Seed Wallet: ${c.seed}`, margin + 2, y); y += 5;
+    doc.text(`Chain: Ethereum   |   Risk Score: 94/100 (CRITICAL)`, margin + 2, y); y += 5;
+    doc.text(`Created: ${c.created}   |   Last Updated: ${c.lastUpdated}`, margin + 2, y); y += 8;
+
+    checkPageBreak(30);
+    addHeader('2. OBSERVED IDENTIFIED ENTITIES');
+    
+    doc.setFillColor(230, 230, 230);
+    doc.rect(margin, y, contentWidth, 6, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.text('Entity ID', margin + 2, y + 4.5);
+    doc.text('Type', margin + 45, y + 4.5);
+    doc.text('Chain', margin + 75, y + 4.5);
+    doc.text('Risk Level', margin + 105, y + 4.5);
+    doc.text('Balance', margin + 145, y + 4.5);
+    y += 7;
+
+    doc.setFont('helvetica', 'normal');
+    CS.wallets.forEach((w) => {
+      checkPageBreak(7);
+      doc.text(String(w.id), margin + 2, y + 4);
+      doc.text(String(w.type), margin + 45, y + 4);
+      doc.text(String(w.chain), margin + 75, y + 4);
+      doc.text(`${w.risk}/100 ${w.riskLevel}`, margin + 105, y + 4);
+      doc.text(String(w.balance), margin + 145, y + 4);
+      doc.setDrawColor(230, 230, 230);
+      doc.line(margin, y + 5.5, margin + contentWidth, y + 5.5);
+      y += 6.5;
+    });
+    y += 5;
+
+    checkPageBreak(30);
+    addHeader('3. KEY TRANSACTION TIMELINE');
+    CS.transactions.forEach((t) => {
+      checkPageBreak(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`[${t.time}] ${t.id} - Hash: ${t.hash.substring(0, 28)}...`, margin + 2, y);
+      y += 4.5;
+      doc.setFont('helvetica', 'normal');
+      doc.text(`From: ${t.from}  ->  To: ${t.to}`, margin + 4, y);
+      y += 4.5;
+      doc.text(`Value: ${t.value} (${t.asset}) | Risk: ${t.risk}/100`, margin + 4, y);
+      y += 6;
+    });
+    y += 3;
+
+    checkPageBreak(30);
+    addHeader('4. BEHAVIOURAL INDICATORS & RISK');
+    CS.behaviors.forEach((b) => {
+      checkPageBreak(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`• ${b.name} [Severity: ${b.severity}]`, margin + 2, y);
+      y += 4;
+      doc.setFont('helvetica', 'normal');
+      const lines = doc.splitTextToSize(`Entity: ${b.entity} | ${b.desc}`, contentWidth - 6);
+      doc.text(lines, margin + 5, y);
+      y += (lines.length * 4) + 3;
+    });
+
+    checkPageBreak(25);
+    addHeader('5. INVESTIGATOR NOTES & DISCLAIMER');
+    doc.setFont('helvetica', 'italic');
+    const noteLines = doc.splitTextToSize(c.notes, contentWidth - 4);
+    doc.text(noteLines, margin + 2, y);
+    y += (noteLines.length * 4) + 6;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(180, 0, 0);
+    doc.text('NOTICE: Generated for official cybercrime investigation support only.', margin + 2, y);
+
+    doc.save(`Investigation_Report_${c.id}.pdf`);
+    toast('PDF Dossier downloaded successfully', 'ok');
+  });
 }
+
+// ─── DOWNLOAD SECTION 91 NOTICE (BACKEND PDF) ─────────────────
+function downloadSection91Notice(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const caseId = (state && state.activeCaseId) || 'CS-2026-001';
+  window.open(`${API_BASE}/api/reports/${encodeURIComponent(caseId)}/section91`, '_blank');
+  toast('Downloading Section 91 CrPC Subpoena Notice from backend...', 'ok');
+}
+
+function copyReport(e){
+  if (e && e.preventDefault) e.preventDefault();
+  const p=document.getElementById('reportPreview');
+  if(!p||!p.innerText||p.innerText.includes('Select')) return toast('Generate a report first','warn');
+  navigator.clipboard.writeText(p.innerText).then(()=>toast('Report text copied to clipboard','ok')).catch(()=>toast('Copy not available in this context','warn'));
+}
+
 
 // ─── ENTITIES ────────────────────────────────────────────────
 function entitiesPage(){
@@ -3163,6 +3463,12 @@ async function updateRequestStatus(id,status){
   toast(`${id} status updated to ${status}`,'ok');
 }
 
+function downloadRequestSection91(id, caseId) {
+  const cid = caseId || (state && state.activeCaseId) || 'CS-2026-001';
+  window.open(`${API_BASE}/api/reports/${encodeURIComponent(cid)}/section91`, '_blank');
+  toast(`Downloading Section 91 CrPC Notice (${id || cid})...`, 'ok');
+}
+
 function openRequestDetail(id){
   const r=state.requests.find(x=>x.id===id);
   if(!r)return;
@@ -3184,7 +3490,8 @@ function openRequestDetail(id){
     <div class="status-flow">
       ${['DRAFT','PENDING','SENT','RECEIVED','VALIDATED','ADDED TO CASE'].map((s,i,arr)=>`<div class="status-step"><div class="status-node ${r.status===s?'current':['DRAFT','PENDING','SENT','RECEIVED','VALIDATED','ADDED TO CASE'].indexOf(r.status)>i?'done':''}">${s}</div>${i<arr.length-1?'<div class="status-arrow">›</div>':''}</div>`).join('')}
     </div>
-    <div style="display:flex;gap:8px;margin-top:14px">
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-warning" onclick="downloadRequestSection91('${r.id}','${r.case}')">⚖️ Download Section 91 PDF Notice</button>
       ${r.status==='PENDING'?`<button class="btn btn-primary" onclick="updateRequestStatus('${r.id}','SENT');closeModal()">Mark as Sent</button>`:''}
       ${r.status==='SENT'?`<button class="btn btn-primary" onclick="updateRequestStatus('${r.id}','RECEIVED');closeModal()">Mark as Received</button>`:''}
       ${r.status==='RECEIVED'?`<button class="btn btn-primary" onclick="updateRequestStatus('${r.id}','VALIDATED');closeModal()">Validate</button>`:''}

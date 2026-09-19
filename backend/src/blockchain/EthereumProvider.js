@@ -10,6 +10,12 @@ const BlockchainProvider = require('./BlockchainProvider');
 const { getDb } = require('../db/database');
 
 const ETH_USD_RATE = 3400;
+const VERIFIED_TOKEN_CONTRACTS = new Map([
+  ['0xdac17f958d2ee523a2206206994597c13d831ec7', 'USDT'],
+  ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC'],
+  ['0x6b175474e89094c44da98b954eedeac495271d0f', 'DAI'],
+  ['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 'WETH'],
+]);
 
 class EthereumProvider extends BlockchainProvider {
   constructor() {
@@ -113,7 +119,7 @@ class EthereumProvider extends BlockchainProvider {
           ? tokenData.result.map(tx => this._normalizeTokenTx(tx, cleanAddress))
           : [];
         const unique = new Map();
-        [...native, ...tokens].forEach(tx => unique.set(tx.tx_hash, tx));
+        [...native, ...tokens].filter(tx => tx.verified !== false).forEach(tx => unique.set(tx.tx_hash, tx));
         return Array.from(unique.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, limit);
       }
 
@@ -227,7 +233,10 @@ class EthereumProvider extends BlockchainProvider {
     const decimals = parseInt(tx.tokenDecimal, 10) || 18;
     const amount = Number(tx.value || 0) / (10 ** decimals);
     const timestamp = new Date(parseInt(tx.timeStamp, 10) * 1000 || Date.now()).toISOString();
-    const token = tx.tokenSymbol || 'ERC20';
+    const tokenAddress = String(tx.contractAddress || '').toLowerCase();
+    const rawToken = String(tx.tokenSymbol || 'ERC20').normalize('NFKC');
+    const verifiedToken = VERIFIED_TOKEN_CONTRACTS.get(tokenAddress);
+    const token = verifiedToken || (tokenAddress ? 'UNVERIFIED_ERC20' : (/^[A-Z0-9]{2,12}$/i.test(rawToken) ? rawToken.toUpperCase() : 'UNVERIFIED_ERC20'));
     return {
       tx_hash: String(tx.hash || `erc20_${Date.now()}`).toLowerCase(),
       sender: String(tx.from || queryAddress).toLowerCase(),
@@ -242,6 +251,7 @@ class EthereumProvider extends BlockchainProvider {
       fee: 0,
       status: 'CONFIRMED',
       flagged: 0,
+      verified: Boolean(verifiedToken),
     };
   }
 

@@ -212,4 +212,13 @@ describe('ChainTrace REST API Integration Suite', () => {
     expect(res.body.success).toBe(true);
     expect(res.body.data.events.length).toBeGreaterThanOrEqual(4);
   });
+
+  test('GET /api/reports/:caseId/section91 generates and streams Section 91 CrPC PDF', async () => {
+    const res = await request(app).get('/api/reports/CS-2026-001/section91');
+    expect(res.status).toBe(200);
+    expect(res.header['content-type']).toContain('application/pdf');
+    expect(res.header['content-disposition']).toContain('Section91_Notice_CS-2026-001.pdf');
+    expect(res.body.length).toBeGreaterThan(0);
+  });
 });
+

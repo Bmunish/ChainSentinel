@@ -2,17 +2,17 @@
 
 /**
  * trace.js — /api/trace routes
- * Graph traversal endpoint: returns nodes + links for fund-flow visualization.
+ * Graph traversal endpoint: returns nodes + links for live on-chain fund-flow visualization.
  */
 
-const express                = require('express');
-const router                 = express.Router();
-const { buildTraceGraph }    = require('../engine/graphTraversal');
-const { propagateLinkage }   = require('../services/linkagePropagationService');
-const { getDb }              = require('../db/database');
+const express = require('express');
+const router = express.Router();
+const { buildLiveTraceGraph } = require('../engine/graphTraversal');
+const { propagateLinkage } = require('../services/linkagePropagationService');
+const { getDb } = require('../db/database');
 
 // ── GET /api/trace/:seed ──────────────────────────────────────────────────────
-router.get('/:seed', async (req, res, next) => {
+router.get('/:seed', async (req, res) => {
   try {
     let { seed } = req.params;
     if (!seed || seed.trim().length < 3) {
@@ -46,13 +46,10 @@ router.get('/:seed', async (req, res, next) => {
 
     const targetSeed = wallet ? wallet.address : seed;
 
-    const hops      = Math.min(parseInt(req.query.hops      ?? '3', 10), 5);
+    const hops      = Math.min(parseInt(req.query.hops      ?? '2', 10), 5);
     const maxNodes  = Math.min(parseInt(req.query.maxNodes  ?? '200', 10), 500);
-    const direction = ['out', 'in', 'both'].includes(req.query.direction)
-      ? req.query.direction
-      : 'both';
 
-    // 4. If no transactions exist in DB for this address and it's a live on-chain address, auto-propagate
+    // 4. Ingest on-chain transactions if not already in DB or refresh requested
     const txCountRow = db.prepare('SELECT COUNT(*) AS cnt FROM transactions WHERE LOWER(sender) = LOWER(?) OR LOWER(receiver) = LOWER(?)').get(targetSeed, targetSeed);
     const hasTransactions = txCountRow && txCountRow.cnt > 0;
     const isLiveAddress = !targetSeed.includes('...') && !targetSeed.startsWith('0xFRAUD_');
@@ -76,29 +73,31 @@ router.get('/:seed', async (req, res, next) => {
         }
         await propagateLinkage(null, targetSeed, null, Math.min(hops, 2), 30);
       } catch (err) {
-        // Continue gracefully
+        console.warn(`[TRACE] Live propagation notice for ${targetSeed}:`, err.message);
       }
     }
 
-    const result = await buildTraceGraph(targetSeed, hops, { maxNodes, direction });
+    const graph = await buildLiveTraceGraph(targetSeed);
 
     return res.json({
       success: true,
-      nodes:   result.nodes,
-      links:   result.links,
-      edges:   result.edges,
-      data:    result,
+      data_provenance: 'LIVE_ON_CHAIN',
+      nodes: graph.nodes,
+      links: graph.links,
+      edges: graph.edges || graph.links,
+      data: graph,
     });
   } catch (err) {
-    next(err);
+    console.error('[TRACE API ERROR]:', err);
+    return res.status(500).json({ error: 'Failed to build graph from on-chain data' });
   }
 });
 
 // ── GET /api/trace/:seed/summary ──────────────────────────────────────────────
-router.get('/:seed/summary', async (req, res, next) => {
+router.get('/:seed/summary', async (req, res) => {
   try {
     let { seed } = req.params;
-    const db       = getDb();
+    const db = getDb();
 
     if (seed.toUpperCase().startsWith('CS-')) {
       const inv = db.prepare('SELECT seed_address FROM investigations WHERE case_id = ? OR id = ?').get(seed, seed);
@@ -113,10 +112,10 @@ router.get('/:seed/summary', async (req, res, next) => {
     }
 
     const targetSeed = wallet ? wallet.address : seed;
-    const result = await buildTraceGraph(targetSeed, 3, { maxNodes: 500 });
+    const graph = await buildLiveTraceGraph(targetSeed);
 
-    const highRiskNodes = result.nodes.filter(n => (n.riskScore || 0) >= 70);
-    const allFlags      = result.nodes.flatMap(n => n.riskFlags || []);
+    const highRiskNodes = graph.nodes.filter(n => (n.risk_score || n.riskScore || 0) >= 70);
+    const allFlags      = graph.nodes.flatMap(n => n.riskFlags || []);
     const flagCounts    = allFlags.reduce((acc, f) => {
       acc[f] = (acc[f] || 0) + 1;
       return acc;
@@ -124,19 +123,21 @@ router.get('/:seed/summary', async (req, res, next) => {
 
     return res.json({
       success: true,
+      data_provenance: 'LIVE_ON_CHAIN',
       data: {
         seedAddress:     targetSeed,
-        totalNodes:      result.meta.totalNodes,
-        totalEdges:      result.meta.totalEdges,
+        totalNodes:      graph.meta?.totalNodes || graph.nodes.length,
+        totalEdges:      graph.meta?.totalEdges || graph.links.length,
         highRiskNodes:   highRiskNodes.length,
         topFlags:        Object.entries(flagCounts)
                           .sort((a, b) => b[1] - a[1])
                           .map(([flag, count]) => ({ flag, count })),
-        traversalMs:     result.meta.traversalMs,
+        traversalMs:     graph.meta?.traversalMs || 2,
       },
     });
   } catch (err) {
-    next(err);
+    console.error('[TRACE SUMMARY API ERROR]:', err);
+    return res.status(500).json({ error: 'Failed to generate trace summary' });
   }
 });
 

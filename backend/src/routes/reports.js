@@ -15,6 +15,7 @@ const { generateSection91Notice } = require('../services/pdfService');
 function handleSection91PDF(req, res, next) {
   try {
     const caseId = req.params.caseId || req.query.case_id || 'CS-2026-001';
+    const targetWalletAddress = req.query.wallet || req.params.wallet || req.query.address || null;
     const db = getDb();
 
     let inv = db.prepare('SELECT * FROM investigations WHERE case_id = ?').get(caseId);
@@ -24,26 +25,31 @@ function handleSection91PDF(req, res, next) {
         case_number: caseId,
         title: 'Suspected Crypto Investment Fraud & Multi-Layer Fund Movement',
         assigned_investigator: 'CP-FCI-042',
-        seed_address: '0x7A3F...B91F',
+        seed_address: targetWalletAddress || '0x7A3F...B91F',
       };
     } else {
       inv.case_number = inv.case_id;
       inv.assigned_to = inv.assigned_investigator || 'CP-FCI-042';
+      if (targetWalletAddress) {
+        inv.seed_address = targetWalletAddress;
+      }
     }
 
-    const seedWallet = { address: inv.seed_address || '0x7A3F...B91F' };
+    const targetAddr = targetWalletAddress || inv.seed_address || '0x7A3F...B91F';
+    const seedWallet = { address: targetAddr };
+
     const transactions = db.prepare(`
       SELECT tx_hash, amount, token as token_symbol, timestamp 
       FROM transactions 
-      WHERE case_id = ? OR sender = ? OR receiver = ?
+      WHERE case_id = ? OR sender = ? OR receiver = ? OR sender LIKE ? OR receiver LIKE ?
       ORDER BY timestamp DESC LIMIT 20
-    `).all(caseId, inv.seed_address, inv.seed_address);
+    `).all(caseId, targetAddr, targetAddr, `%${targetAddr}%`, `%${targetAddr}%`);
 
     const txList = transactions.length > 0
       ? transactions
       : db.prepare('SELECT tx_hash, amount, token as token_symbol, timestamp FROM transactions ORDER BY timestamp DESC LIMIT 20').all();
 
-    logAudit(req.user?.officer_id || 'CP-FCI-042', `Generated Section 91 CrPC PDF notice for case ${caseId}`, 'PDF Notice', caseId, 'Success');
+    logAudit(req.user?.officer_id || 'CP-FCI-042', `Generated Section 91 CrPC PDF notice for case ${caseId} wallet ${targetAddr}`, 'PDF Notice', caseId, 'Success');
 
     return generateSection91Notice(inv, seedWallet, txList, res);
   } catch (err) {
@@ -60,6 +66,7 @@ router.get('/:caseId/pdf', handleSection91PDF);
 router.get('/:caseId?', (req, res, next) => {
   try {
     const caseId = req.params.caseId || req.query.case_id || 'CS-2026-001';
+    const targetWalletAddress = req.query.wallet || req.query.address || null;
     const db = getDb();
 
     const inv = db.prepare('SELECT * FROM investigations WHERE case_id = ?').get(caseId) || {
@@ -75,6 +82,11 @@ router.get('/:caseId?', (req, res, next) => {
       created_at: '22 Aug 2026, 09:31 IST',
       notes: 'Victim reported ₹12.4L transferred following an investment fraud call.',
     };
+
+    if (targetWalletAddress) {
+      inv.seed_address = targetWalletAddress;
+    }
+
 
     const wallets = db.prepare('SELECT * FROM wallets LIMIT 20').all();
     const txs = db.prepare('SELECT * FROM transactions LIMIT 20').all();

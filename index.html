@@ -1771,38 +1771,42 @@ function dashboardPage(){
   </div>
 
   <!-- POLICE ACTION COMMAND BAR (BIG INTUITIONAL BUTTONS) -->
-  <div class="police-action-bar animate-fade-in-up stagger-2">
-    <div class="action-btn-police primary-action" onclick="openSec91Modal('Exchange X', '0x12AB...A8C', '₹4,21,000')" role="button" tabindex="0">
-      <div class="action-btn-police-icon">📄</div>
-      <div class="action-btn-police-text">
-        <b>Generate Sec 91 CrPC Notice</b>
-        <span class="action-btn-police-sub">Auto-filled statutory notice for Exchange X</span>
+  <div class="grid grid-cols-4 gap-4 mb-8 animate-fade-in-up stagger-2">
+    <!-- Action 1: Sec 91 Notice -->
+    <button onclick="triggerSection91()" class="group relative bg-white border-2 border-blue-500 rounded-xl p-4 text-left transition-all duration-200 hover:bg-blue-50 active:scale-95 hover:shadow-md">
+      <div class="text-blue-700 font-bold mb-1 flex items-center justify-between">
+        <span>Generate Sec 91 Notice</span>
+        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
       </div>
-    </div>
+      <div class="text-xs text-blue-600/80 font-medium">Auto-fill statutory notice for Exchange X</div>
+    </button>
 
-    <div class="action-btn-police" onclick="openEmergencyFreezeModal('Exchange X', '0x12AB...A8C', '₹4,21,000')" role="button" tabindex="0">
-      <div class="action-btn-police-icon" style="background:#fee2e2;color:#dc2626">🧊</div>
-      <div class="action-btn-police-text">
-        <b style="color:#b91c1c">Send Emergency Freeze Request</b>
-        <span class="action-btn-police-sub">Alert Exchange Nodal Compliance</span>
+    <!-- Action 2: Emergency Freeze -->
+    <button onclick="openEmergencyFreezeModal('Exchange X', '0x12AB...A8C', '₹4,21,000')" class="group relative bg-white border-2 border-red-500 rounded-xl p-4 text-left transition-all duration-200 hover:bg-red-50 active:scale-95 hover:shadow-md">
+      <div class="text-red-700 font-bold mb-1 flex items-center justify-between">
+        <span>Send Emergency Freeze</span>
+        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
       </div>
-    </div>
+      <div class="text-xs text-red-600/80 font-medium">Alert Exchange Nodal Compliance</div>
+    </button>
 
-    <div class="action-btn-police" onclick="go('reports')" role="button" tabindex="0">
-      <div class="action-btn-police-icon" style="background:#dcfce7;color:#166534">🖨️</div>
-      <div class="action-btn-police-text">
-        <b>Print Court Case Dossier</b>
-        <span class="action-btn-police-sub">Sec 65B electronic evidence ready</span>
+    <!-- Action 3: Court Dossier -->
+    <button onclick="go('reports')" class="group relative bg-white border-2 border-emerald-500 rounded-xl p-4 text-left transition-all duration-200 hover:bg-emerald-50 active:scale-95 hover:shadow-md">
+      <div class="text-emerald-700 font-bold mb-1 flex items-center justify-between">
+        <span>Print Court Dossier</span>
+        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
       </div>
-    </div>
-
-    <div class="action-btn-police" onclick="openSaranshDrawer()" role="button" tabindex="0">
-      <div class="action-btn-police-icon" style="background:#ede9fe;color:#6d28d9">🎙️</div>
-      <div class="action-btn-police-text">
-        <b>SARANSH Case Explainer</b>
-        <span class="action-btn-police-sub">Audio briefing &amp; 3-point summary (Hindi/Eng)</span>
+      <div class="text-xs text-emerald-600/80 font-medium">Sec 65B electronic evidence ready</div>
+    </button>
+    
+    <!-- Action 4: SARANSH AI Drawer -->
+    <button onclick="toggleAIDrawer()" class="group relative bg-white border-2 border-indigo-500 rounded-xl p-4 text-left transition-all duration-200 hover:bg-indigo-50 active:scale-95 hover:shadow-md ai-pulse-active">
+      <div class="text-indigo-700 font-bold mb-1 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+        <span>SARANSH AI Explainer</span>
       </div>
-    </div>
+      <div class="text-xs text-indigo-600/80 font-medium">Audio brief &amp; plain-language summary</div>
+    </button>
   </div>
 
   <!-- FOLLOW THE MONEY — 4-STAGE LINEAR VISUAL FLOWCHART -->
@@ -4540,6 +4544,19 @@ function openSaranshDrawer(){
 
 function openCaseExplainerModal(){
   openSaranshDrawer();
+}
+
+function toggleAIDrawer(){
+  const d = document.getElementById('drawer');
+  if (d && d.classList.contains('open')) {
+    closeDrawer();
+  } else {
+    openSaranshDrawer();
+  }
+}
+
+function triggerSection91(){
+  openSec91Modal('Exchange X', '0x12AB...A8C', '₹4,21,000');
 }
 
 function showNotices(){

@@ -1045,6 +1045,60 @@ img{max-width:100%;height:auto}
 
 <!-- DRAWER -->
 <div id="drawer" class="drawer" role="complementary" aria-label="Entity intelligence panel"></div>
+
+<!-- AI Chat Drawer (Hidden by default, slides in from right) -->
+<div id="aiDrawer" class="fixed top-0 right-0 h-full w-[420px] max-w-full bg-white border-l border-slate-200 shadow-2xl transform translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-50 flex flex-col">
+  
+  <!-- Header -->
+  <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+      </div>
+      <div>
+        <h3 class="font-bold text-slate-900 text-sm">SARANSH Intelligence</h3>
+        <p class="text-xs text-green-600 font-medium flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> System Online</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-1">
+      <button onclick="toggleSaranshVoice()" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-200 rounded-full transition-colors" title="Listen to Voice Briefing">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+      </button>
+      <button onclick="toggleAIDrawer()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full transition-colors" aria-label="Close AI Drawer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick Action Pill Bar -->
+  <div class="px-4 py-2 bg-indigo-50/60 border-b border-indigo-100/60 flex items-center gap-2 overflow-x-auto text-xs">
+    <button onclick="sendQuickPrompt('Summarize stolen funds')" class="bg-white border border-indigo-200 text-indigo-700 font-medium px-2.5 py-1 rounded-full whitespace-nowrap hover:bg-indigo-100/50 transition-colors">💰 Stolen Funds</button>
+    <button onclick="sendQuickPrompt('Where is money freezable?')" class="bg-white border border-indigo-200 text-indigo-700 font-medium px-2.5 py-1 rounded-full whitespace-nowrap hover:bg-indigo-100/50 transition-colors">🛑 Freezable</button>
+    <button onclick="sendQuickPrompt('What are next IO steps?')" class="bg-white border border-indigo-200 text-indigo-700 font-medium px-2.5 py-1 rounded-full whitespace-nowrap hover:bg-indigo-100/50 transition-colors">⚡ Next IO Steps</button>
+  </div>
+
+  <!-- Chat History (Scrollable) -->
+  <div id="chatHistory" class="flex-1 p-4 scroll-container bg-slate-50/50 space-y-4">
+    <!-- Initial Bot Message -->
+    <div class="flex gap-3">
+      <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex-shrink-0 flex items-center justify-center text-xs font-bold shadow-sm">S</div>
+      <div class="bg-white border border-slate-200 p-3.5 rounded-2xl rounded-tl-sm text-sm text-slate-700 shadow-sm leading-relaxed">
+        Officer, I have analyzed the forensic telemetry for <b>Case CS-2026-001</b>. I detected a rapid fan-out across 3 wallets and a convergence at <b>Exchange X &amp; Exchange Y (₹7,18,000 / 58% at risk)</b>. What specific aspect of the ledger would you like me to summarize?
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="p-4 border-t border-slate-200 bg-white">
+    <form id="aiChatForm" class="relative" onsubmit="handleAIChat(event)">
+      <input type="text" id="aiInput" placeholder="Ask SARANSH about this case..." class="w-full bg-slate-100 border border-slate-200 text-slate-900 text-sm rounded-full py-3 pl-4 pr-12 focus:outline-none focus:border-indigo-400 focus:bg-white transition-all shadow-inner">
+      <button type="submit" class="absolute right-1.5 top-1.5 p-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors active:scale-95" aria-label="Send query">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+      </button>
+    </form>
+  </div>
+</div>
+
 <!-- MODAL -->
 <div id="modalRoot"></div>
 <!-- TOAST -->
@@ -4547,12 +4601,90 @@ function openCaseExplainerModal(){
 }
 
 function toggleAIDrawer(){
-  const d = document.getElementById('drawer');
-  if (d && d.classList.contains('open')) {
-    closeDrawer();
+  const drawer = document.getElementById('aiDrawer');
+  if (!drawer) return;
+  if (drawer.classList.contains('translate-x-full')) {
+    drawer.classList.remove('translate-x-full');
+    setTimeout(() => {
+      const inp = document.getElementById('aiInput');
+      if (inp) inp.focus();
+    }, 200);
   } else {
-    openSaranshDrawer();
+    drawer.classList.add('translate-x-full');
   }
+}
+
+function sendQuickPrompt(prompt){
+  const input = document.getElementById('aiInput');
+  if (input) {
+    input.value = prompt;
+    handleAIChat();
+  }
+}
+
+async function handleAIChat(e){
+  if (e && e.preventDefault) e.preventDefault();
+  const input = document.getElementById('aiInput');
+  if (!input) return;
+  const message = input.value.trim();
+  if (!message) return;
+
+  const chatHistory = document.getElementById('chatHistory');
+  if (!chatHistory) return;
+  
+  // Append User Message
+  chatHistory.innerHTML += `
+    <div class="flex gap-3 justify-end animate-fade-in-up">
+      <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-sm text-sm shadow-sm max-w-[85%] leading-relaxed">
+        ${esc(message)}
+      </div>
+    </div>
+  `;
+  input.value = '';
+  chatHistory.scrollTop = chatHistory.scrollHeight;
+
+  // Show Loading Indicator
+  const loadingId = 'loading-' + Date.now();
+  chatHistory.innerHTML += `
+    <div id="${loadingId}" class="flex gap-3 animate-fade-in-up">
+      <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex-shrink-0 flex items-center justify-center text-xs font-bold shadow-sm">S</div>
+      <div class="bg-white border border-slate-200 p-3 rounded-2xl rounded-tl-sm text-sm text-slate-500 shadow-sm flex items-center gap-2">
+        <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+        <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+        <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+      </div>
+    </div>
+  `;
+  chatHistory.scrollTop = chatHistory.scrollHeight;
+
+  // Smart Contextual Response
+  setTimeout(() => {
+    const loader = document.getElementById(loadingId);
+    if (loader) loader.remove();
+    
+    const q = message.toLowerCase();
+    let reply = '';
+    
+    if (q.includes('stolen') || q.includes('funds') || q.includes('loss') || q.includes('rupees') || q.includes('12')) {
+      reply = `<b>Stolen Fund Analysis:</b> Total verified victim loss is <b>₹12,40,000 (15,000 USDT)</b> originated from HDFC Bank ••••4219 into suspect seed wallet <code>0x7A3F...B91F</code>. 100% of the inflow trail is forensically authenticated.`;
+    } else if (q.includes('freeze') || q.includes('exchange') || q.includes('where')) {
+      reply = `<b>Freezable Balances:</b> ₹7,18,000 (58% of stolen funds) is currently residing in 2 target exchanges:<br>• <b>Exchange X:</b> ₹4,21,000 (Account EX-A021)<br>• <b>Exchange Y:</b> ₹2,76,000 (Pending KYC)<br><button class="btn btn-primary btn-sm mt-2" style="background:#2563eb" onclick="triggerSection91()">⚡ Generate Sec 91 Notice</button>`;
+    } else if (q.includes('step') || q.includes('next') || q.includes('sop') || q.includes('io') || q.includes('action')) {
+      reply = `<b>Recommended IO Action Plan:</b><br>1. Dispatch statutory notice u/s 91 CrPC to Exchange X.<br>2. Transmit Emergency Freeze Directive to exchange nodal officer.<br>3. Request IP logs &amp; beneficiary bank accounts for prosecution dossier.`;
+    } else {
+      reply = `Based on on-chain multi-hop telemetry for Case CS-2026-001, funds transited through 3 layering mule wallets before consolidating at Exchange X &amp; Exchange Y. I recommend serving immediate statutory freeze notices under <b>Sec 91 Cr.P.C.</b>`;
+    }
+
+    chatHistory.innerHTML += `
+      <div class="flex gap-3 animate-fade-in-up">
+        <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex-shrink-0 flex items-center justify-center text-xs font-bold shadow-sm">S</div>
+        <div class="bg-white border border-slate-200 p-3.5 rounded-2xl rounded-tl-sm text-sm text-slate-700 shadow-sm border-l-4 border-l-indigo-500 leading-relaxed max-w-[88%]">
+          ${reply}
+        </div>
+      </div>
+    `;
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+  }, 750);
 }
 
 function triggerSection91(){

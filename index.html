@@ -6,27 +6,27 @@
 <title>ChainTrace — Real-Time Crypto Fraud Intelligence Platform | SIH PS-26183</title>
 <meta name="description" content="ChainTrace: Real-Time Identification of Fraud-Linked Cryptocurrency Exchanges from Victim-Reported Suspect Wallet Addresses through Automated Blockchain Analysis. SIH 2026 — Team THE ELEMENTS.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0f4f8;--surface:#fff;--surface2:#f8fafc;--surface3:#f1f5f9;
-  --border:#e2e8f0;--border2:#cbd5e1;
-  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
-  --navy:#1e3a8a;--navy2:#1e40af;--blue:#2563eb;--blue-l:#dbeafe;--blue-ll:#eff6ff;
-  --sky:#0ea5e9;--sky-l:#e0f2fe;
-  --green:#059669;--green-l:#d1fae5;
-  --amber:#d97706;--amber-l:#fef3c7;
-  --orange:#ea580c;--orange-l:#ffedd5;
-  --red:#dc2626;--red-l:#fee2e2;
-  --gold:#b45309;
-  --sh:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);
-  --sh-md:0 4px 6px rgba(0,0,0,.07),0 10px 25px rgba(0,0,0,.05);
-  --sh-lg:0 10px 15px rgba(0,0,0,.08),0 20px 40px rgba(0,0,0,.07);
-  --r:10px;--r-sm:6px;--r-lg:14px;
+  --bg:#f3f6fb;--surface:#ffffff;--surface2:#f8fafc;--surface3:#edf2f7;
+  --border:#dbe3ef;--border2:#cbd5e1;
+  --text:#09152b;--text2:#334155;--text3:#64748b;
+  --navy:#0c2340;--navy2:#163b6b;--blue:#1d4ed8;--blue-l:#dbeafe;--blue-ll:#eff6ff;
+  --sky:#0284c7;--sky-l:#e0f2fe;
+  --green:#047857;--green-l:#d1fae5;--green-dark:#064e3b;
+  --amber:#b45309;--amber-l:#fef3c7;
+  --orange:#c2410c;--orange-l:#ffedd5;
+  --red:#b91c1c;--red-l:#fee2e2;--red-dark:#7f1d1d;
+  --gold:#b45309;--purple:#6d28d9;--purple-l:#ede9fe;
+  --sh:0 1px 3px rgba(15,23,42,.08),0 4px 12px rgba(15,23,42,.04);
+  --sh-md:0 4px 10px rgba(15,23,42,.09),0 12px 28px rgba(15,23,42,.06);
+  --sh-lg:0 12px 24px rgba(15,23,42,.12),0 24px 48px rgba(15,23,42,.08);
+  --r:12px;--r-sm:8px;--r-lg:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;border:none;background:none}
 a{color:inherit;text-decoration:none}
@@ -34,39 +34,48 @@ a{color:inherit;text-decoration:none}
 img{max-width:100%;height:auto}
 
 /* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--r-sm);font-weight:600;font-size:13px;transition:all .15s;white-space:nowrap;cursor:pointer}
-.btn-primary{background:var(--navy);color:#fff;box-shadow:0 1px 2px rgba(30,58,138,.3)}
-.btn-primary:hover{background:var(--navy2);box-shadow:0 2px 8px rgba(30,58,138,.35)}
-.btn-secondary{background:var(--blue-ll);color:var(--navy);border:1px solid var(--blue-l)}
-.btn-secondary:hover{background:var(--blue-l)}
-.btn-ghost{background:var(--surface);color:var(--text2);border:1px solid var(--border)}
-.btn-ghost:hover{background:var(--surface3);color:var(--text)}
-.btn-danger{background:#fee2e2;color:var(--red);border:1px solid #fecaca}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:var(--r-sm);font-weight:700;font-size:13.5px;transition:all .18s;white-space:nowrap;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,var(--navy),#1e40af);color:#fff;box-shadow:0 2px 6px rgba(12,35,64,.35)}
+.btn-primary:hover{background:linear-gradient(135deg,#122f54,#1d4ed8);transform:translateY(-1px);box-shadow:0 4px 12px rgba(29,78,216,.35)}
+.btn-secondary{background:var(--blue-ll);color:var(--blue);border:1.5px solid var(--blue-l)}
+.btn-secondary:hover{background:var(--blue-l);color:var(--navy)}
+.btn-ghost{background:var(--surface);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--surface3);color:var(--text);border-color:var(--border2)}
+.btn-danger{background:var(--red-l);color:var(--red);border:1.5px solid #fecaca}
 .btn-danger:hover{background:#fecaca}
-.btn-sm{padding:6px 11px;font-size:12px}
-.btn-xs{padding:4px 8px;font-size:11px}
-.btn-icon{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface);color:var(--text2)}
-.btn-icon:hover{background:var(--surface3);color:var(--text)}
+.btn-success{background:var(--green-l);color:var(--green);border:1.5px solid #a7f3d0}
+.btn-success:hover{background:#a7f3d0}
+.btn-warning{background:var(--amber-l);color:var(--amber);border:1.5px solid #fde68a}
+.btn-warning:hover{background:#fde68a}
+.btn-sm{padding:7px 13px;font-size:12.5px}
+.btn-xs{padding:5px 9px;font-size:11.5px}
+.btn-icon{width:38px;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--surface);color:var(--text2);transition:all .15s}
+.btn-icon:hover{background:var(--surface3);color:var(--text);border-color:var(--border2)}
 
 /* ── BADGES ── */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.02em}
-.badge-critical{background:#fee2e2;color:#991b1b}
-.badge-high{background:#ffedd5;color:#9a3412}
-.badge-medium{background:#fef3c7;color:#92400e}
-.badge-low{background:#d1fae5;color:#065f46}
-.badge-blue{background:var(--blue-l);color:var(--navy)}
-.badge-gray{background:var(--surface3);color:var(--text2)}
-.badge-observed{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:800;letter-spacing:.03em}
+.badge-critical{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.badge-high{background:#ffedd5;color:#9a3412;border:1px solid #fdba74}
+.badge-medium{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.badge-low{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+.badge-blue{background:var(--blue-l);color:var(--navy);border:1px solid #bfdbfe}
+.badge-gray{background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
+.badge-observed{background:#dcfce7;color:#166534;border:1px solid #86efac}
 .badge-detected{background:#fef9c3;color:#713f12;border:1px solid #fef08a}
-.badge-predicted{background:#f3e8ff;color:#6b21a8;border:1px solid #e9d5ff}
+.badge-predicted{background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe}
+
+/* ── OFFICER MODE BADGE & SWITCH ── */
+.officer-mode-toggle{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0c2340,#1e3a8a);color:#fff;padding:6px 14px;border-radius:24px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.2);transition:all .2s;box-shadow:0 2px 8px rgba(12,35,64,.25)}
+.officer-mode-toggle:hover{background:linear-gradient(135deg,#122f54,#2563eb);border-color:#93c5fd}
+.officer-mode-pill{background:#22c55e;color:#052e16;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:900;text-transform:uppercase}
 
 /* ── SPLASH ── */
 #splash{position:fixed;inset:0;background:#fff;z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0}
 .splash-card{text-align:center}
 .splash-logo{width:110px;height:86px;object-fit:contain;animation:logoPulse 2s ease-in-out infinite}
 @keyframes logoPulse{0%,100%{transform:scale(.97);filter:drop-shadow(0 0 6px rgba(30,58,138,.2))}50%{transform:scale(1.03);filter:drop-shadow(0 0 18px rgba(30,58,138,.45))}}
-.splash-title{font-size:26px;font-weight:900;color:var(--navy);letter-spacing:.03em;margin-top:14px}
-.splash-sub{color:var(--text2);margin-top:4px;font-weight:500;font-size:13px}
+.splash-title{font-size:28px;font-weight:900;color:var(--navy);letter-spacing:.03em;margin-top:14px}
+.splash-sub{color:var(--text2);margin-top:4px;font-weight:600;font-size:13.5px}
 .splash-status{margin-top:20px;color:var(--text3);font-size:13px}
 .splash-dots{display:flex;justify-content:center;gap:7px;margin-top:10px}
 .splash-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);animation:dotAnim 1.1s infinite}
@@ -79,275 +88,272 @@ img{max-width:100%;height:auto}
 /* ── LOGIN ── */
 #login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f0f4ff 0%,#e8f0fe 50%,#f0f7ff 100%);padding:24px}
 #login::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(37,99,235,.06) 0%,transparent 60%),radial-gradient(circle at 80% 50%,rgba(14,165,233,.06) 0%,transparent 60%);pointer-events:none}
-.login-shell{width:460px;background:#fff;border-radius:18px;box-shadow:var(--sh-lg);overflow:hidden;border:1px solid var(--border);position:relative;z-index:1}
-.login-top{background:linear-gradient(150deg,#0f172a,#1e3a8a);padding:28px;text-align:center;border-bottom:3px solid var(--blue)}
+.login-shell{width:480px;background:#fff;border-radius:20px;box-shadow:var(--sh-lg);overflow:hidden;border:1px solid var(--border);position:relative;z-index:1}
+.login-top{background:linear-gradient(150deg,#0a192f,#0c2340,#1e3a8a);padding:30px;text-align:center;border-bottom:3px solid var(--blue)}
 .login-logo{width:90px;height:70px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(14,165,233,.3))}
-.login-brand{color:#fff;font-size:26px;font-weight:900;letter-spacing:.05em;margin-top:10px}
-.login-tag{color:#93c5fd;font-size:12px;font-weight:500;margin-top:4px}
+.login-brand{color:#fff;font-size:28px;font-weight:900;letter-spacing:.05em;margin-top:10px}
+.login-tag{color:#93c5fd;font-size:12.5px;font-weight:600;margin-top:4px}
 .login-body{padding:28px}
-.login-h{font-weight:800;font-size:18px;color:var(--navy)}
-.login-sub{color:var(--text2);font-size:12px;margin-top:4px}
-.form-label{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--text2);margin:16px 0 6px}
-.form-field{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);outline:none;background:var(--surface2);transition:all .15s;font-size:13px}
-.form-field:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.login-h{font-weight:800;font-size:19px;color:var(--navy)}
+.login-sub{color:var(--text2);font-size:12.5px;margin-top:4px}
+.form-label{display:block;font-size:11.5px;font-weight:800;letter-spacing:.06em;color:var(--navy);margin:16px 0 6px;text-transform:uppercase}
+.form-field{width:100%;padding:12px 15px;border:1.5px solid var(--border);border-radius:var(--r-sm);outline:none;background:var(--surface2);transition:all .15s;font-size:14px;color:var(--text)}
+.form-field:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12);background:#fff}
 .form-field::placeholder{color:var(--text3)}
-.login-actions{display:flex;gap:10px;margin-top:18px}
+.login-actions{display:flex;gap:10px;margin-top:20px}
 .login-actions .btn{flex:1;justify-content:center}
 .login-bio{margin-top:14px;border:1px solid var(--border);background:var(--surface2);border-radius:var(--r);padding:14px;text-align:center}
 .login-bio-icon{font-size:30px;color:var(--blue);animation:bioPulse 2s ease-in-out infinite}
 @keyframes bioPulse{50%{transform:scale(1.08);filter:drop-shadow(0 0 8px rgba(37,99,235,.4))}}
 .login-bio-text{font-size:12px;font-weight:600;color:var(--text);margin-top:6px}
 .login-bio-sub{font-size:11px;color:var(--text3);margin-top:3px}
-.login-security{font-size:11px;color:var(--text3);text-align:center;margin-top:14px}
-.login-demo{font-size:11px;color:var(--text3);text-align:center;margin-top:6px}
+.login-security{font-size:11.5px;color:var(--text3);text-align:center;margin-top:14px}
+.login-demo{font-size:11.5px;color:var(--text3);text-align:center;margin-top:6px}
 
 /* ── APP LAYOUT ── */
 #app{min-height:100vh}
-.topbar{height:64px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.topbar-logo{width:38px;height:38px;object-fit:contain;flex-shrink:0}
-.topbar-brand{margin-left:10px;flex-shrink:0}
-.topbar-brand b{display:block;font-size:16px;font-weight:900;color:var(--navy);letter-spacing:.04em}
-.topbar-brand span{display:block;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.06em}
-.topbar-divider{width:1px;height:28px;background:var(--border);margin:0 16px;flex-shrink:0}
+.topbar{height:68px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(15,23,42,.06)}
+.topbar-logo{width:42px;height:42px;object-fit:contain;flex-shrink:0}
+.topbar-brand{margin-left:12px;flex-shrink:0}
+.topbar-brand b{display:block;font-size:17px;font-weight:900;color:var(--navy);letter-spacing:.04em}
+.topbar-brand span{display:block;font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.07em}
+.topbar-divider{width:1px;height:30px;background:var(--border);margin:0 16px;flex-shrink:0}
 .topbar-case{flex-shrink:0;display:flex;align-items:center;gap:8px}
-.topbar-case-label{font-size:10px;color:var(--text3);font-weight:600}
-.topbar-case-id{font-size:13px;font-weight:700;color:var(--navy);background:var(--blue-ll);padding:4px 10px;border-radius:20px;border:1px solid var(--blue-l)}
-.topbar-search{flex:1;max-width:520px;margin:0 20px;position:relative}
-.topbar-search input{width:100%;padding:9px 14px 9px 38px;border:1.5px solid var(--border);border-radius:24px;background:var(--surface2);outline:none;font-size:13px;transition:all .15s}
-.topbar-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.08);background:#fff}
-.topbar-search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none}
+.topbar-case-label{font-size:10.5px;color:var(--text3);font-weight:700}
+.topbar-case-id{font-size:13.5px;font-weight:800;color:var(--navy);background:var(--blue-ll);padding:5px 12px;border-radius:20px;border:1.5px solid var(--blue-l)}
+.topbar-search{flex:1;max-width:440px;margin:0 16px;position:relative}
+.topbar-search input{width:100%;padding:10px 14px 10px 40px;border:1.5px solid var(--border);border-radius:24px;background:var(--surface2);outline:none;font-size:13.5px;transition:all .15s}
+.topbar-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:#fff}
+.topbar-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px;pointer-events:none}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.sys-status{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green);background:var(--green-l);padding:6px 10px;border-radius:20px;border:1px solid #a7f3d0}
-.sys-status::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.sys-status{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:var(--green);background:var(--green-l);padding:6px 12px;border-radius:20px;border:1px solid #a7f3d0}
+.sys-status::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px;cursor:pointer}
-.topbar-profile{display:flex;align-items:center;gap:8px;border-left:1px solid var(--border);padding-left:12px}
-.topbar-profile b{font-size:12px;font-weight:700}
-.topbar-profile small{display:block;color:var(--text3);font-size:10px}
+.topbar-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;display:grid;place-items:center;font-weight:900;font-size:13px;cursor:pointer}
+.topbar-profile{display:flex;align-items:center;gap:10px;border-left:1px solid var(--border);padding-left:14px}
+.topbar-profile b{font-size:12.5px;font-weight:800;color:var(--navy)}
+.topbar-profile small{display:block;color:var(--text3);font-size:10.5px;font-weight:600}
 .hamburger{display:none;flex-direction:column;gap:4px;padding:8px;cursor:pointer}
 .hamburger span{width:20px;height:2px;background:var(--text2);border-radius:2px;transition:all .2s}
 
-.layout{display:flex;min-height:calc(100vh - 64px)}
-.sidebar{width:240px;background:#fff;border-right:1px solid var(--border);padding:12px 8px;position:fixed;top:64px;bottom:0;overflow-y:auto;overflow-x:hidden;transition:transform .25s;z-index:40}
+.layout{display:flex;min-height:calc(100vh - 68px)}
+.sidebar{width:250px;background:#fff;border-right:1px solid var(--border);padding:14px 10px;position:fixed;top:68px;bottom:0;overflow-y:auto;overflow-x:hidden;transition:transform .25s;z-index:40}
 .sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-.nav-group{font-size:10px;letter-spacing:.1em;color:var(--text3);font-weight:700;padding:14px 10px 6px;text-transform:uppercase}
-.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;margin:1px 0;border-radius:var(--r-sm);color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;text-align:left;position:relative}
+.nav-group{font-size:10.5px;letter-spacing:.12em;color:var(--text3);font-weight:800;padding:16px 10px 6px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;margin:2px 0;border-radius:var(--r-sm);color:var(--text2);font-size:13.5px;font-weight:600;transition:all .15s;text-align:left;position:relative}
 .nav-item:hover{background:var(--blue-ll);color:var(--navy)}
-.nav-item.active{background:var(--blue-ll);color:var(--navy);font-weight:700}
-.nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--blue);border-radius:0 3px 3px 0}
-.nav-icon{width:18px;text-align:center;font-size:14px;flex-shrink:0}
-.nav-badge{margin-left:auto;font-size:10px;font-weight:700;background:var(--red-l);color:var(--red);padding:2px 6px;border-radius:10px}
-.nav-bottom{border-top:1px solid var(--border);margin:8px 0 0;padding-top:8px}
+.nav-item.active{background:linear-gradient(90deg,var(--blue-ll),rgba(239,246,255,.5));color:var(--navy);font-weight:800}
+.nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3.5px;background:var(--blue);border-radius:0 3px 3px 0}
+.nav-icon{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10.5px;font-weight:800;background:var(--red-l);color:var(--red);padding:2px 7px;border-radius:10px}
+.nav-bottom{border-top:1px solid var(--border);margin:10px 0 0;padding-top:10px}
 
-.main{margin-left:240px;width:calc(100% - 240px);padding:22px 24px 60px;min-height:calc(100vh - 64px)}
+.main{margin-left:250px;width:calc(100% - 250px);padding:24px 28px 60px;min-height:calc(100vh - 68px)}
 .page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:12px}
-.page-head-left .crumb{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.04em;margin-bottom:4px}
-.page-head-left h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.01em}
-.page-head-left p{font-size:12px;color:var(--text2);margin-top:3px}
-.page-head-right{display:flex;gap:8px;flex-shrink:0;align-items:center}
+.page-head-left .crumb{font-size:11.5px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin-bottom:4px}
+.page-head-left h1{font-size:24px;font-weight:900;color:var(--navy);letter-spacing:-.01em}
+.page-head-left p{font-size:13px;color:var(--text2);margin-top:3px;font-weight:500}
+.page-head-right{display:flex;gap:10px;flex-shrink:0;align-items:center;flex-wrap:wrap}
 
 /* ── CARDS ── */
-.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh)}
-.card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
-.card-head b{font-size:13px;font-weight:700;color:var(--text)}
-.card-body{padding:16px}
-.card-section{padding:14px 16px;border-bottom:1px solid var(--border)}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--border);background:#fff}
+.card-head b{font-size:14px;font-weight:800;color:var(--navy)}
+.card-body{padding:18px}
+.card-section{padding:15px 18px;border-bottom:1px solid var(--border)}
 .card-section:last-child{border-bottom:none}
 
-/* ── KPI CARDS ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
-.kpi-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);position:relative;overflow:hidden}
-.kpi-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--r) 0 0 var(--r)}
-.kpi-card.blue::before{background:var(--blue)}
-.kpi-card.red::before{background:var(--red)}
-.kpi-card.amber::before{background:var(--amber)}
-.kpi-card.green::before{background:var(--green)}
-.kpi-card.navy::before{background:var(--navy)}
-.kpi-label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
-.kpi-value{font-size:26px;font-weight:900;color:var(--text);margin-top:6px;letter-spacing:-.01em}
-.kpi-delta{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500}
-.kpi-icon{position:absolute;right:12px;top:12px;font-size:22px;opacity:.12}
+/* ── EXECUTIVE POLICE CASE BANNER ── */
+.police-case-banner{background:linear-gradient(135deg,#071526 0%,#0c2340 50%,#1e3a8a 100%);border-radius:var(--r-lg);padding:22px 26px;margin-bottom:18px;border:1.5px solid #1e40af;color:#fff;box-shadow:var(--sh-md);position:relative;overflow:hidden}
+.police-case-banner::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 10% 40%,rgba(37,99,235,.2),transparent 50%),radial-gradient(circle at 90% 60%,rgba(14,165,233,.15),transparent 50%);pointer-events:none}
+.police-banner-head{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:2;flex-wrap:wrap;gap:12px}
+.police-badge-station{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:800;letter-spacing:.05em;color:#93c5fd;text-transform:uppercase}
+.police-case-title{font-size:22px;font-weight:900;color:#fff;margin-top:8px;letter-spacing:-.01em}
+.police-case-meta{font-size:13px;color:#cbd5e1;margin-top:6px;display:flex;gap:16px;flex-wrap:wrap}
+.police-case-summary-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:var(--r);padding:14px 18px;margin-top:16px;position:relative;z-index:2;font-size:13.5px;line-height:1.6;color:#e2e8f0}
+.police-case-summary-box b{color:#93c5fd}
+
+/* ── HERO KPI CARDS (HIGH CONTRAST & SENIOR FRIENDLY) ── */
+.hero-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.hero-kpi-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);position:relative;overflow:hidden;transition:all .18s}
+.hero-kpi-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+.hero-kpi-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px}
+.hero-kpi-card.red::before{background:var(--red)}
+.hero-kpi-card.amber::before{background:var(--amber)}
+.hero-kpi-card.blue::before{background:var(--blue)}
+.hero-kpi-card.green::before{background:var(--green)}
+.hero-kpi-top{display:flex;justify-content:space-between;align-items:flex-start}
+.hero-kpi-label{font-size:12px;font-weight:800;color:var(--text3);letter-spacing:.05em;text-transform:uppercase}
+.hero-kpi-icon{font-size:22px;line-height:1}
+.hero-kpi-val{font-size:28px;font-weight:900;color:var(--navy);margin-top:8px;letter-spacing:-.02em}
+.hero-kpi-sub{font-size:12.5px;color:var(--text2);margin-top:5px;font-weight:600;display:flex;align-items:center;gap:5px}
+
+/* ── FOLLOW THE MONEY — 4-STAGE PIPELINE STEPPER ── */
+.pipeline-stepper-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:20px;box-shadow:var(--sh)}
+.pipeline-stepper-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.pipeline-stepper-head h3{font-size:16px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:8px}
+.pipeline-flow-container{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative}
+.pipeline-step-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);padding:16px;position:relative;transition:all .15s;cursor:pointer}
+.pipeline-step-box:hover{background:#fff;border-color:var(--blue);box-shadow:var(--sh-md);transform:translateY(-2px)}
+.pipeline-step-box.stage-1{border-top:4px solid var(--blue)}
+.pipeline-step-box.stage-2{border-top:4px solid var(--red)}
+.pipeline-step-box.stage-3{border-top:4px solid var(--orange)}
+.pipeline-step-box.stage-4{border-top:4px solid #7c3aed;background:linear-gradient(180deg,#faf5ff,#fff)}
+.pipeline-step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:900;margin-bottom:8px}
+.pipeline-step-title{font-size:13.5px;font-weight:800;color:var(--navy)}
+.pipeline-step-entity{font-size:12px;font-weight:700;color:var(--text2);margin-top:3px;font-family:Consolas,monospace;word-break:break-all}
+.pipeline-step-amount{font-size:17px;font-weight:900;color:var(--navy);margin-top:8px}
+.pipeline-step-desc{font-size:11.5px;color:var(--text3);margin-top:4px;line-height:1.4}
+.pipeline-step-status{margin-top:10px;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;padding:3px 8px;border-radius:12px}
+.pss-victim{background:var(--blue-l);color:var(--navy)}
+.pss-suspect{background:var(--red-l);color:var(--red)}
+.pss-mule{background:var(--orange-l);color:var(--orange)}
+.pss-freeze{background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe}
+
+/* ── POLICE ACTION COMMAND BAR ── */
+.police-action-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.action-btn-police{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r);background:#fff;border:1.5px solid var(--border);cursor:pointer;transition:all .18s;text-align:left;box-shadow:var(--sh)}
+.action-btn-police:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--blue)}
+.action-btn-police.primary-action{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;border-color:#1e40af}
+.action-btn-police.primary-action:hover{background:linear-gradient(135deg,#172554,#1d4ed8);border-color:#93c5fd}
+.action-btn-police.primary-action .action-btn-police-icon{background:rgba(255,255,255,.2);color:#fff}
+.action-btn-police.primary-action .action-btn-police-sub{color:#bfdbfe}
+.action-btn-police-icon{width:42px;height:42px;border-radius:10px;background:var(--blue-ll);color:var(--blue);display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.action-btn-police-text b{display:block;font-size:13.5px;font-weight:800}
+.action-btn-police-sub{display:block;font-size:11.5px;color:var(--text3);margin-top:2px}
+
+/* ── INVESTIGATION SOP CHECKLIST ── */
+.sop-checklist-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.sop-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.sop-item{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border);font-size:13px}
+.sop-item.done{background:#f0fdf4;border-color:#bbf7d0}
+.sop-check-circle{width:22px;height:22px;border-radius:50%;background:#22c55e;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900;flex-shrink:0;margin-top:1px}
+.sop-pending-circle{width:22px;height:22px;border-radius:50%;border:2px solid var(--amber);color:var(--amber);display:grid;place-items:center;font-size:11px;font-weight:900;flex-shrink:0;margin-top:1px}
+.sop-content{flex:1}
+.sop-content b{font-size:13px;font-weight:800;color:var(--navy)}
+.sop-content p{font-size:11.5px;color:var(--text2);margin-top:2px}
+.sop-btn-act{font-size:11px;font-weight:800;padding:4px 8px;border-radius:4px;background:var(--blue);color:#fff;margin-top:4px;display:inline-block;cursor:pointer}
 
 /* ── TABLES ── */
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;background:var(--surface2);border-bottom:1px solid var(--border)}
-.tbl td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11px;font-weight:800;color:var(--navy);letter-spacing:.06em;text-transform:uppercase;padding:12px 14px;background:var(--surface2);border-bottom:1.5px solid var(--border)}
+.tbl td{padding:13px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text)}
 .tbl tbody tr{transition:background .1s}
 .tbl tbody tr:hover td{background:var(--blue-ll)}
 .tbl tbody tr:last-child td{border-bottom:none}
-.tbl .mono{font-family:Consolas,monospace;font-size:11px;color:var(--text2)}
+.tbl .mono{font-family:Consolas,monospace;font-size:12px;color:var(--text2);font-weight:600}
 
 /* ── ALERTS ── */
-.alert-card{padding:12px;border:1px solid var(--border);border-radius:var(--r-sm);background:#fff;cursor:pointer;transition:all .15s;border-left:3px solid var(--border2)}
-.alert-card:hover{box-shadow:var(--sh-md);transform:translateX(2px)}
-.alert-card.critical{border-left-color:var(--red)}
-.alert-card.high{border-left-color:var(--orange)}
-.alert-card.medium{border-left-color:var(--amber)}
-.alert-card.low{border-left-color:var(--green)}
+.alert-card{padding:14px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:#fff;cursor:pointer;transition:all .15s;border-left:4px solid var(--border2)}
+.alert-card:hover{box-shadow:var(--sh-md);transform:translateX(3px);border-color:var(--blue-l)}
+.alert-card.critical{border-left-color:var(--red);background:#fffdfd}
+.alert-card.high{border-left-color:var(--orange);background:#fffbf8}
+.alert-card.medium{border-left-color:var(--amber);background:#fffef9}
+.alert-card.low{border-left-color:var(--green);background:#f9fdfa}
 .alert-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.alert-title{font-size:12px;font-weight:700;color:var(--text)}
-.alert-desc{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.5}
-.alert-meta{font-size:10px;color:var(--text3);margin-top:4px}
+.alert-title{font-size:13px;font-weight:800;color:var(--navy)}
+.alert-desc{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.55}
+.alert-meta{font-size:11px;color:var(--text3);margin-top:6px;font-weight:600}
 
 /* ── GRAPH ── */
-.graph-wrap{background:linear-gradient(160deg,#0d1b2e,#0a1628);border-radius:var(--r);position:relative;overflow:hidden;border:1px solid #1e3a5f;user-select:none}
-.graph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.graph-wrap{background:linear-gradient(160deg,#0a1628 0%,#0f223a 100%);border-radius:var(--r);position:relative;overflow:hidden;border:1.5px solid #1e3a5f;user-select:none;box-shadow:inset 0 2px 8px rgba(0,0,0,.3)}
+.graph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 .graph-svg{display:block;width:100%;cursor:grab}
 .graph-svg.dragging{cursor:grabbing}
-.graph-controls{position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:5}
-.graph-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#c8d8e8;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
-.graph-btn:hover{background:rgba(255,255,255,.16);color:#fff}
-.graph-btn.active{background:rgba(37,99,235,.4);border-color:rgba(37,99,235,.6);color:#93c5fd}
-.graph-legend{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.35);padding:8px 12px;border-radius:8px;color:#8faacc;font-size:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;z-index:5}
-.graph-label-bar{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.3);padding:6px 10px;border-radius:8px;color:#8faacc;font-size:10px;z-index:5}
-.graph-zoom{position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:4px;z-index:5}
-.graph-zoom button{width:28px;height:28px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#c8d8e8;border-radius:5px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.graph-zoom button:hover{background:rgba(255,255,255,.2)}
+.graph-controls{position:absolute;top:14px;left:14px;display:flex;gap:8px;flex-wrap:wrap;z-index:5}
+.graph-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#e2e8f0;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}
+.graph-btn:hover{background:rgba(255,255,255,.2);color:#fff}
+.graph-btn.active{background:rgba(37,99,235,.5);border-color:#60a5fa;color:#fff}
+.graph-legend{position:absolute;bottom:14px;left:14px;background:rgba(10,22,40,.85);padding:9px 15px;border-radius:8px;color:#cbd5e1;font-size:11.5px;font-weight:600;display:flex;gap:14px;align-items:center;flex-wrap:wrap;z-index:5;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
+.graph-label-bar{position:absolute;top:14px;right:14px;background:rgba(10,22,40,.85);padding:7px 12px;border-radius:8px;color:#cbd5e1;font-size:11.5px;font-weight:700;z-index:5;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
+.graph-zoom{position:absolute;bottom:14px;right:14px;display:flex;flex-direction:column;gap:5px;z-index:5}
+.graph-zoom button{width:32px;height:32px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:900}
+.graph-zoom button:hover{background:rgba(255,255,255,.25)}
+.ai-graph-shell{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:14px}
+.ai-graph-panel{background:linear-gradient(160deg,#081426,#10294a);border:1px solid #1e3a5f;border-radius:var(--r);min-height:640px;position:relative;overflow:hidden}
+.ai-graph-canvas{height:640px;width:100%;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:32px 32px}
+.ai-graph-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.ai-graph-tools .form-field{margin:0;min-width:150px}
+.ai-graph-status{font-size:11px;color:var(--text3);margin:8px 0 14px;min-height:16px}
+.ai-graph-detail{min-height:260px}
+.ai-graph-detail h3{font-size:16px;color:var(--navy);margin:0 0 6px}
+.ai-graph-detail p{font-size:12px;line-height:1.55;color:var(--text2)}
+.ai-graph-chip{display:inline-flex;padding:4px 8px;border-radius:12px;background:var(--blue-ll);color:var(--navy);font-size:10px;font-weight:800;margin:3px 3px 0 0}
+@media(max-width:900px){.ai-graph-shell{grid-template-columns:1fr}.ai-graph-canvas{height:520px}.ai-graph-panel{min-height:520px}}
 
 /* ── DRAWER ── */
-.drawer{position:fixed;right:-460px;top:64px;bottom:0;width:460px;background:#fff;box-shadow:-8px 0 30px rgba(0,0,0,.12);z-index:45;transition:right .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;border-left:1px solid var(--border)}
+.drawer{position:fixed;right:-480px;top:68px;bottom:0;width:480px;background:#fff;box-shadow:-8px 0 35px rgba(0,0,0,.15);z-index:45;transition:right .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;border-left:1.5px solid var(--border)}
 .drawer.open{right:0}
-.drawer-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:2}
-.drawer-head b{font-size:14px;font-weight:700}
-.drawer-body{padding:18px}
+.drawer-head{padding:18px 20px;border-bottom:1.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:2}
+.drawer-head b{font-size:16px;font-weight:900;color:var(--navy)}
+.drawer-body{padding:20px}
 .drawer-section{margin-bottom:20px}
-.drawer-section-title{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
+.drawer-section-title{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--navy);text-transform:uppercase;margin-bottom:12px}
 
 /* ── RISK BOX ── */
-.risk-box{padding:16px;border-radius:var(--r);background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;text-align:center;margin-bottom:16px}
-.risk-score{font-size:36px;font-weight:900;letter-spacing:-.02em}
-.risk-level{font-size:11px;font-weight:800;letter-spacing:.08em;margin-top:2px;opacity:.9}
-.risk-bar{height:6px;background:rgba(255,255,255,.15);border-radius:8px;margin-top:12px;overflow:hidden}
+.risk-box{padding:18px;border-radius:var(--r);background:linear-gradient(135deg,#0c2340,#1e3a8a);color:#fff;text-align:center;margin-bottom:16px;box-shadow:var(--sh)}
+.risk-score{font-size:40px;font-weight:900;letter-spacing:-.02em}
+.risk-level{font-size:12px;font-weight:900;letter-spacing:.1em;margin-top:2px;color:#93c5fd}
+.risk-bar{height:7px;background:rgba(255,255,255,.18);border-radius:8px;margin-top:14px;overflow:hidden}
 .risk-bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#f59e0b,#f97316,#ef4444);transition:width .6s ease}
 
 /* ── KV GRID ── */
-.kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
-.kv-item{padding:10px;background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border)}
-.kv-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-.kv-value{font-size:13px;font-weight:700;color:var(--text);margin-top:2px}
+.kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.kv-item{padding:11px 13px;background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border)}
+.kv-label{font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.kv-value{font-size:14px;font-weight:800;color:var(--navy);margin-top:3px}
 
 /* ── TAGS ── */
-.tag-risk{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:var(--r-sm);background:var(--red-l);color:#991b1b;border:1px solid #fecaca;font-size:11px;font-weight:600;margin:5px 0}
+.tag-risk{display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:var(--r-sm);background:var(--red-l);color:#991b1b;border:1px solid #fecaca;font-size:12px;font-weight:700;margin:6px 0}
 .tag-risk.medium{background:var(--amber-l);color:#92400e;border-color:#fde68a}
 .tag-risk.low{background:var(--green-l);color:#065f46;border-color:#a7f3d0}
 .tag-risk.predicted{background:#f3e8ff;color:#6b21a8;border-color:#e9d5ff}
-.chip-row{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:5px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:11px;font-weight:500;color:var(--text2)}
-
-/* ── ACTION GRID ── */
-.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
-.action-grid .btn{justify-content:center;font-size:11px}
 
 /* ── MODAL ── */
-.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:80;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.modal{width:min(700px,95vw);max-height:88vh;overflow-y:auto;background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-lg);border:1px solid var(--border)}
-.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:2;border-radius:var(--r-lg) var(--r-lg) 0 0}
-.modal-head b{font-size:15px;font-weight:700}
-.modal-body{padding:20px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(12,35,64,.6);z-index:80;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.modal{width:min(760px,95vw);max-height:88vh;overflow-y:auto;background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-lg);border:1.5px solid var(--border)}
+.modal-head{padding:18px 24px;border-bottom:1.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:2;border-radius:var(--r-lg) var(--r-lg) 0 0}
+.modal-head b{font-size:17px;font-weight:900;color:var(--navy)}
+.modal-body{padding:24px}
 
-/* ── NOTICE ── */
-.notice{border:1px solid var(--border);border-left:4px solid var(--blue);padding:12px;border-radius:var(--r-sm);margin-bottom:9px;cursor:pointer;transition:all .12s}
-.notice:hover{box-shadow:var(--sh)}
-.notice.critical{border-left-color:var(--red);background:#fff9f9}
-.notice.high{border-left-color:var(--orange);background:#fffaf6}
-.notice b{font-size:12px;font-weight:700}
-.notice p{font-size:11px;color:var(--text2);margin:5px 0 0;line-height:1.5}
-.notice-link{font-size:10px;color:var(--blue);font-weight:700;margin-top:6px;display:block}
+/* ── NOTICE UNDER SEC 91 CRPC FORMATTING ── */
+.legal-notice-paper{background:#fff;border:2px solid #0c2340;border-radius:8px;padding:32px;font-family:'Times New Roman',serif;line-height:1.6;color:#111;position:relative;box-shadow:var(--sh-md)}
+.legal-notice-header{text-align:center;border-bottom:2px double #0c2340;padding-bottom:16px;margin-bottom:18px}
+.legal-notice-header h2{font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#0c2340}
+.legal-notice-header p{font-size:13px;font-weight:bold;margin-top:3px}
+.legal-notice-body{font-size:13.5px;text-align:justify}
+.legal-notice-footer{display:flex;justify-content:space-between;margin-top:32px;padding-top:20px}
 
 /* ── TOAST ── */
-.toast{position:fixed;right:20px;bottom:80px;background:#0f172a;color:#fff;padding:11px 16px;border-radius:var(--r);box-shadow:var(--sh-lg);z-index:200;font-size:12px;font-weight:500;border-left:3px solid var(--sky);animation:slideUp .2s ease;display:flex;align-items:center;gap:8px;max-width:340px}
+.toast{position:fixed;right:24px;bottom:80px;background:#0c2340;color:#fff;padding:12px 18px;border-radius:var(--r);box-shadow:var(--sh-lg);z-index:200;font-size:13px;font-weight:600;border-left:4px solid var(--sky);animation:slideUp .2s ease;display:flex;align-items:center;gap:10px;max-width:360px}
 .toast.ok{border-left-color:var(--green)}
 .toast.warn{border-left-color:var(--amber)}
 .toast.err{border-left-color:var(--red)}
 @keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
 
 /* ── TIMELINE ── */
-.timeline-item{display:grid;grid-template-columns:80px 16px 1fr;gap:12px;min-height:64px;padding:4px 0}
-.timeline-time{font-size:10px;color:var(--text3);font-weight:700;padding-top:3px;line-height:1.4}
+.timeline-item{display:grid;grid-template-columns:84px 18px 1fr;gap:12px;min-height:64px;padding:4px 0}
+.timeline-time{font-size:11px;color:var(--text3);font-weight:800;padding-top:3px;line-height:1.4}
 .timeline-dot-col{position:relative;display:flex;flex-direction:column;align-items:center}
-.timeline-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0}
-.timeline-line{flex:1;width:1px;background:var(--border2);margin-top:2px;opacity:.6}
-.timeline-content{padding-bottom:12px}
-.timeline-content b{font-size:12px;font-weight:700;color:var(--text)}
-.timeline-content p{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.5}
-.timeline-content small{font-size:10px;color:var(--text3);margin-top:2px;display:block}
+.timeline-dot{width:12px;height:12px;border-radius:50%;margin-top:4px;flex-shrink:0;box-shadow:0 0 0 3px #fff}
+.timeline-line{flex:1;width:1.5px;background:var(--border2);margin-top:2px}
+.timeline-content{padding-bottom:14px}
+.timeline-content b{font-size:13px;font-weight:800;color:var(--navy)}
+.timeline-content p{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.55}
 
-/* ── INVESTIGATION WORKSPACE ── */
-.workspace{display:grid;grid-template-columns:260px 1fr 300px;gap:0;height:calc(100vh - 64px - 44px);min-height:500px}
-.workspace-left{border-right:1px solid var(--border);overflow-y:auto;background:#fff;padding:14px}
-.workspace-center{overflow:hidden;position:relative;background:var(--bg)}
-.workspace-right{border-left:1px solid var(--border);overflow-y:auto;background:#fff;transition:transform .25s}
-.workspace-right.empty{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--text3);text-align:center;padding:20px}
-.workspace-tabs{border-bottom:1px solid var(--border);background:#fff;display:flex;padding:0 16px}
-.workspace-tab{padding:10px 14px;font-size:12px;font-weight:600;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
-.workspace-tab.active{color:var(--navy);border-bottom-color:var(--blue)}
+/* ── RESPONSIVE ── */
+@media(max-width:1280px){.hero-kpi-grid{grid-template-columns:repeat(2,1fr)}.pipeline-flow-container{grid-template-columns:repeat(2,1fr)}.police-action-bar{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}.sidebar.mobile-open{transform:none}
+  .main{margin-left:0;width:100%;padding:16px 16px 60px}
+  .hamburger{display:flex}.topbar-brand span{display:none}
+  .hero-kpi-grid{grid-template-columns:1fr}
+  .pipeline-flow-container{grid-template-columns:1fr}
+  .police-action-bar{grid-template-columns:1fr}
+  .drawer{width:100%;right:-100%}
+  .topbar-search{display:none}
+}
 
-/* ── SOURCE ITEM ── */
-.source-item{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;background:#fff}
-.source-item b{font-size:12px;font-weight:700}
-.source-item small{display:block;color:var(--text3);font-size:11px;margin-top:2px}
-.sw{width:32px;height:18px;border-radius:20px;background:var(--border2);position:relative;transition:.2s;cursor:pointer;flex-shrink:0}
-.sw.on{background:var(--green)}
-.sw::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.sw.on::after{left:16px}
-
-/* ── ENTITY CARD ── */
-.entity-card{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:8px;cursor:pointer;transition:all .12s}
-.entity-card:hover{border-color:var(--blue-l);background:var(--blue-ll)}
-.entity-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-
-/* ── REPORT ── */
-.report-box{background:var(--surface2);border:1px solid var(--border);padding:18px;border-radius:var(--r-sm);white-space:pre-wrap;font-family:Consolas,monospace;font-size:11px;line-height:1.65;max-height:480px;overflow-y:auto;color:var(--text2)}
-
-/* ── PREDICTION CARD ── */
-.prediction-card{background:linear-gradient(135deg,#faf5ff,#ede9fe);border:1px solid #c4b5fd;border-radius:var(--r);padding:16px;margin-bottom:12px}
-.prediction-label{font-size:10px;font-weight:800;color:#6d28d9;letter-spacing:.06em;text-transform:uppercase}
-.prediction-dest{font-size:20px;font-weight:800;color:#4c1d95;margin-top:6px}
-.confidence-bar{height:8px;background:#e8dffe;border-radius:8px;margin:10px 0;overflow:hidden}
-.confidence-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#7c3aed,#a78bfa)}
-.prediction-reason{font-size:11px;color:#5b21b6;line-height:1.5;margin-top:8px}
-
-/* ── BEHAVIOURAL ── */
-.behaviour-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;border-left:4px solid var(--border2)}
-.behaviour-card.high{border-left-color:var(--orange)}
-.behaviour-card.critical{border-left-color:var(--red)}
-.behaviour-card.medium{border-left-color:var(--amber)}
-.behaviour-name{font-size:14px;font-weight:800;color:var(--text)}
-.behaviour-entity{font-size:11px;color:var(--text3);margin-top:2px}
-.behaviour-desc{font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;background:var(--surface2);padding:10px;border-radius:var(--r-sm)}
-.behaviour-evidence{margin-top:10px}
-.behaviour-evidence-item{font-size:11px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center}
-.behaviour-evidence-item:last-child{border-bottom:none}
-
-/* ── REQUEST STATUS FLOW ── */
-.status-flow{display:flex;align-items:center;gap:0;margin:14px 0;overflow-x:auto;padding-bottom:4px}
-.status-step{display:flex;align-items:center;gap:0;flex-shrink:0}
-.status-node{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;background:var(--surface3);color:var(--text3);border:1px solid var(--border);white-space:nowrap}
-.status-node.done{background:var(--green-l);color:#065f46;border-color:#a7f3d0}
-.status-node.current{background:var(--blue-l);color:var(--navy);border-color:#93c5fd}
-.status-arrow{color:var(--border2);padding:0 3px;font-size:12px}
-
-/* ── SENTINEL GUIDE ── */
-#sentinel-wrap{position:fixed;bottom:24px;right:24px;z-index:100}
-.sentinel-btn{width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(30,58,138,.35);background:transparent;padding:0;transition:all .2s;animation:sentinelIdle 4s ease-in-out infinite}
-@keyframes sentinelIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.sentinel-panel{width:320px;background:#fff;border-radius:16px;box-shadow:var(--sh-lg);border:1px solid var(--blue-l);margin-bottom:12px;overflow:hidden;animation:panelAppear .2s ease}
-@keyframes panelAppear{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
-.sentinel-panel-head{background:linear-gradient(135deg,#1e3a8a,#2563eb);padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.sentinel-panel-head b{color:#fff;font-size:13px;font-weight:700}
-.sentinel-panel-body{padding:16px}
-.sentinel-msg{font-size:13px;color:var(--text2);line-height:1.6}
-.sentinel-highlight{font-size:12px;color:var(--blue);background:var(--blue-ll);padding:8px 10px;border-radius:var(--r-sm);margin-top:10px;border-left:3px solid var(--blue)}
-.sentinel-actions{display:flex;gap:8px;margin-top:14px}
-.sentinel-tour-step{font-size:10px;color:var(--text3);text-align:center;margin-top:8px}
-.sentinel-avatar{width:58px;height:58px}
-
-/* ── BIOMETRIC MODAL ── */
-.bio-modal{text-align:center;padding:30px}
-.scan-circle{width:120px;height:120px;border:2px solid var(--sky);border-radius:50%;margin:12px auto;display:grid;place-items:center;position:relative;box-shadow:0 0 30px rgba(14,165,233,.15)}
-.scan-circle::before,.scan-circle::after{content:'';position:absolute;border-radius:50%;border:1px solid rgba(14,165,233,.4);animation:scanRing 2s ease-out infinite}
-.scan-circle::before{inset:-12px}.scan-circle::after{inset:-24px;animation-delay:.4s}
-@keyframes scanRing{0%{transform:scale(.88);opacity:.8}100%{transform:scale(1.12);opacity:0}}
 .scan-icon{font-size:50px;color:var(--blue)}
 .scan-line{height:3px;width:240px;background:linear-gradient(90deg,transparent,var(--sky),transparent);margin:10px auto;animation:scanLine 1.4s linear infinite}
 @keyframes scanLine{from{transform:translateX(-70px)}to{transform:translateX(70px)}}
@@ -527,6 +533,13 @@ img{max-width:100%;height:auto}
       <input id="globalSearch" placeholder="Search wallet, transaction, case, entity…" aria-label="Global search">
     </div>
     <div class="topbar-right">
+      <button class="officer-mode-toggle" id="modeToggleBtn" onclick="toggleOfficerMode()" title="Toggle between Police Officer Simplified View and Deep Forensic View">
+        <span id="modeLabel">👮 Officer View</span>
+        <span class="officer-mode-pill" id="modePill">SOP ON</span>
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="openCaseExplainerModal()" title="Instant case summary in plain language">
+        🎙️ &nbsp;Explain Case
+      </button>
       <div class="sys-status">SYSTEM ONLINE</div>
       <button class="btn-icon" id="notifyBtn" aria-label="Notifications" title="Notifications">🔔</button>
       <div class="topbar-profile">
@@ -594,6 +607,7 @@ img{max-width:100%;height:auto}
   </button>
 </div>
 
+<script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
 <script>
 'use strict';
 // ═══════════════════════════════════════════════════════════
@@ -708,6 +722,7 @@ const CS = {
 // ─── STATE ───────────────────────────────────────────────────
 const state={
   role:'io',page:'dashboard',activeCaseId:'CS-2026-001',
+  officerMode: localStorage.getItem('cs_officer_mode') !== 'false',
   drawer:null,selectedWalletId:null,
   requests:[...CS.requests],
   evidence:[...CS.evidence],
@@ -718,7 +733,8 @@ const state={
   sentinelOpen:false,tourActive:false,tourStep:0,
   tourDone:localStorage.getItem('cs_tour_done')==='1',
   newInvLoading:false,
-  workspaceTab:'timeline'
+  workspaceTab:'timeline',
+  aiGraph:{prompt:'Generate a graph for my project architecture',detail:'medium',data:{nodes:[],edges:[]},selected:null,query:'',layout:'cose'}
 };
 
 // ─── BACKEND API CONFIG ──────────────────────────────────────
@@ -727,18 +743,18 @@ const DEFAULT_SEED = '0x7A3F...B91F';
 
 // ─── GRAPH LAYOUT DATA (mutable — replaced by live API) ──────
 let GRAPH_NODES=[
-  {id:'HDFC-4219',label:'BANK',sub:'HDFC ••••4219',type:'bank',x:80,y:280,risk:18},
-  {id:'0x7A3F...B91F',label:'WALLET A',sub:'SEED • RISK 94',type:'seed',x:240,y:280,risk:94},
-  {id:'0x12AB...A8C',label:'WALLET B',sub:'RISK 88',type:'wallet',x:430,y:150,risk:88},
-  {id:'0x92CD...11D',label:'WALLET C',sub:'RISK 76',type:'wallet',x:430,y:280,risk:76},
-  {id:'0xBB91...3F2',label:'WALLET D',sub:'RISK 81',type:'wallet',x:430,y:410,risk:81},
-  {id:'Exchange X',label:'EXCH X',sub:'HIGH RISK',type:'exchange',x:660,y:150,risk:90},
-  {id:'0x44EF...72B',label:'WALLET E',sub:'RISK 67',type:'wallet',x:620,y:310,risk:67},
-  {id:'Exchange Y',label:'EXCH Y',sub:'MEDIUM',type:'exchange',x:660,y:430,risk:65},
-  {id:'Exchange X [PREDICTED]',label:'EXCH X',sub:'PREDICTED 78%',type:'predicted',x:870,y:230,risk:0}
+  {id:'HDFC-4219',label:'HDFC Bank',sub:'Victim Account',type:'bank',x:80,y:280,risk:18},
+  {id:'0x7A3F...B91F',label:'Suspect Seed',sub:'Mule A (Risk 94)',type:'seed',x:240,y:280,risk:94},
+  {id:'0x12AB...A8C',label:'Mule B',sub:'Layer 2 (Risk 88)',type:'wallet',x:430,y:150,risk:88},
+  {id:'0x92CD...11D',label:'Mule C',sub:'Layer 2 (Risk 76)',type:'wallet',x:430,y:280,risk:76},
+  {id:'0xBB91...3F2',label:'Mule D',sub:'Layer 2 (Risk 81)',type:'wallet',x:430,y:410,risk:81},
+  {id:'Exchange X',label:'Exchange X',sub:'Freeze Target',type:'exchange',x:660,y:150,risk:90},
+  {id:'0x44EF...72B',label:'Mule E',sub:'Hop 3 (Risk 67)',type:'wallet',x:620,y:310,risk:67},
+  {id:'Exchange Y',label:'Exchange Y',sub:'Freeze Target',type:'exchange',x:660,y:430,risk:65},
+  {id:'Exchange X [PREDICTED]',label:'Exchange X',sub:'Predicted 78%',type:'predicted',x:870,y:230,risk:0}
 ];
 let GRAPH_EDGES=[
-  {from:'HDFC-4219',to:'0x7A3F...B91F',label:'₹12.4L',hot:true,id:'TX-CS-001'},
+  {from:'HDFC-4219',to:'0x7A3F...B91F',label:'₹12.40L',hot:true,id:'TX-CS-001'},
   {from:'0x7A3F...B91F',to:'0x12AB...A8C',label:'₹4.82L',hot:true,id:'TX-CS-002'},
   {from:'0x7A3F...B91F',to:'0x92CD...11D',label:'₹3.74L',hot:true,id:'TX-CS-003'},
   {from:'0x7A3F...B91F',to:'0xBB91...3F2',label:'₹2.91L',hot:true,id:'TX-CS-004'},
@@ -753,52 +769,38 @@ let GRAPH_EDGES=[
 let graphIsLive = false;
 
 // ─── LAYERED GRAPH LAYOUT ENGINE ─────────────────────────────
-function computeLayout(apiNodes, apiEdges, seedAddress) {
-  const VP_W = 960, VP_H = 520, MARGIN_X = 60, MARGIN_Y = 60;
-  const depthMap = new Map();
-  const adj = new Map();
-  apiNodes.forEach(n => adj.set(n.id, []));
-  apiEdges.forEach(e => {
-    if (adj.has(e.source)) adj.get(e.source).push(e.target);
-    if (adj.has(e.target)) adj.get(e.target).push(e.source);
-  });
-  const queue = [seedAddress];
-  depthMap.set(seedAddress, 0);
-  while (queue.length) {
-    const cur = queue.shift();
-    const nbrs = adj.get(cur) || [];
-    nbrs.forEach(nb => {
-      if (!depthMap.has(nb)) {
-        depthMap.set(nb, depthMap.get(cur) + 1);
-        queue.push(nb);
-      }
-    });
-  }
-  const layers = new Map();
-  apiNodes.forEach(n => {
-    const d = depthMap.has(n.id) ? depthMap.get(n.id) : 99;
-    if (!layers.has(d)) layers.set(d, []);
-    layers.get(d).push(n.id);
-  });
-  const sortedDepths = Array.from(layers.keys()).sort((a,b)=>a-b);
-  const numLayers = sortedDepths.length;
-  const layerX = (di) => MARGIN_X + (di / Math.max(numLayers - 1, 1)) * (VP_W - 2 * MARGIN_X);
+function computeLayout(apiNodes = [], apiEdges = [], seedAddress = '') {
+  const tierX = { 0: 130, 1: 390, 2: 680, 3: 870 };
+  const tierGroups = new Map();
   const posMap = new Map();
-  sortedDepths.forEach((d, di) => {
-    const group = layers.get(d);
-    const n = group.length;
-    group.forEach((id, i) => {
-      const y = n === 1
-        ? VP_H / 2
-        : MARGIN_Y + (i / (n - 1)) * (VP_H - 2 * MARGIN_Y);
-      posMap.set(id, { x: layerX(di), y: Math.round(y) });
+
+  apiNodes.forEach(node => {
+    const id = node.id || node.address;
+    const tier = Number.isInteger(node.tier) ? node.tier : (node.depth || 1);
+    if (!tierGroups.has(tier)) tierGroups.set(tier, []);
+    tierGroups.get(tier).push(id);
+  });
+
+  tierGroups.forEach((group, tier) => {
+    group.forEach((id, index) => {
+      posMap.set(id, {
+        x: tierX[tier] || tierX[2],
+        y: Math.round(280 + (index - (group.length - 1) / 2) * 92),
+      });
     });
   });
+
   return posMap;
 }
 
 function classifyNodeType(apiNode) {
   if (!apiNode) return 'wallet';
+  if ((apiNode.role || '').toUpperCase() === 'INFLOW' || (apiNode.group || '').toUpperCase() === 'INFLOW') return 'inflow';
+  const grp = (apiNode.group || apiNode.category || '').toUpperCase();
+  if (grp === 'VASP') return 'exchange';
+  if (grp === 'BANK') return 'bank';
+  if (grp === 'SEED') return 'seed';
+
   const t = (apiNode.type || '').toLowerCase();
   if (t === 'mixer')    return 'seed';
   if (t === 'exchange') return 'exchange';
@@ -810,25 +812,43 @@ function classifyNodeType(apiNode) {
 }
 
 function mapApiToGraph(data, seedAddress) {
-  const { nodes: apiNodes, edges: apiEdges } = data;
+  const apiNodes = data.nodes || [];
+  const apiEdges = data.edges || data.links || [];
   const posMap = computeLayout(apiNodes, apiEdges, seedAddress);
 
   const graphNodes = apiNodes.map(n => {
-    const pos = posMap.get(n.id) || { x: 490, y: 280 };
-    const shortId = n.address.length > 14
-      ? n.address.slice(0, 6) + '…' + n.address.slice(-4)
-      : n.address;
-    const sub = n.depth === 0
-      ? `SEED • RISK ${Math.round(n.riskScore || 85)}`
-      : `RISK ${Math.round(n.riskScore || 50)}`;
+    const addr = n.address || n.id || '';
+    const pos = posMap.get(addr) || posMap.get(n.id) || { x: 490, y: 280 };
+    const shortId = addr.length > 14
+      ? addr.slice(0, 6) + '…' + addr.slice(-4)
+      : addr;
+    
+    const nodeType = classifyNodeType(n);
+    let cleanLabel = n.label || shortId;
+    if (/^Node Hop-/i.test(cleanLabel) || /^Target Address$/i.test(cleanLabel)) {
+      cleanLabel = n.depth === 0 ? 'Starting wallet' : nodeType === 'exchange' ? 'Exchange' : nodeType === 'bank' ? 'Bank account' : 'Connected wallet';
+    }
+    if(cleanLabel.includes('(')) cleanLabel = cleanLabel.split('(')[0].trim();
+    if(cleanLabel.length > 15) cleanLabel = cleanLabel.slice(0, 14) + '…';
+
+    const sub = (n.depth === 0 || n.group === 'SEED')
+      ? `🚨 Suspect Seed (Risk ${Math.round(n.riskScore || n.risk_score || 85)})`
+      : nodeType === 'inflow'
+      ? '💰 Incoming funds'
+      : nodeType === 'exchange'
+      ? `🏢 Target to Freeze`
+      : nodeType === 'bank'
+      ? `🏦 Bank Outflow`
+      : `Risk ${Math.round(n.riskScore || n.risk_score || 50)}/100`;
+
     return {
-      id:    n.address,
-      label: n.label || shortId,
+      id:    addr,
+      label: cleanLabel,
       sub,
-      type:  classifyNodeType(n),
+      type:  nodeType,
       x:     pos.x,
       y:     pos.y,
-      risk:  Math.round(n.riskScore || 50),
+      risk:  Math.round(n.riskScore || n.risk_score || 50),
       riskFlags: n.riskFlags || [],
       chain:     n.chain,
       entity:    n.entity,
@@ -836,13 +856,61 @@ function mapApiToGraph(data, seedAddress) {
     };
   });
 
-  const graphEdges = apiEdges.map(e => ({
-    from:  e.source,
-    to:    e.target,
-    label: e.label || e.valueDisplay || '',
-    hot:   e.flagged,
-    id:    e.id,
-  }));
+  const edgeMap = new Map();
+  apiEdges.forEach(e => {
+    const from = String(e.source || e.from || '').trim();
+    const to = String(e.target || e.to || '').trim();
+    if (!from || !to) return;
+
+    const key = `${from.toLowerCase()}->${to.toLowerCase()}`;
+    const txAmount = Number(e.amount ?? e.totalAmount ?? 0);
+    const token = e.token || e.token_symbol || 'ETH';
+    const isHot = Boolean(e.flagged || e.hot || e.amount >= 0.25);
+    const isPredicted = Boolean(e.predicted);
+
+    if (!edgeMap.has(key)) {
+      edgeMap.set(key, {
+        from,
+        to,
+        totalAmount: txAmount,
+        txCount: 1,
+        token,
+        hot: isHot,
+        predicted: isPredicted,
+        id: e.id || e.hash || `${from}-${to}`,
+        label: e.label || e.valueDisplay || '',
+      });
+      return;
+    }
+
+    const edge = edgeMap.get(key);
+    edge.totalAmount += txAmount;
+    edge.txCount += 1;
+    edge.hot = edge.hot || isHot;
+    edge.predicted = edge.predicted || isPredicted;
+    edge.id = edge.id || (e.id || e.hash || `${from}-${to}`);
+    if (!edge.label || edge.label.startsWith('0')) {
+      edge.label = e.label || e.valueDisplay || '';
+    }
+  });
+
+  const graphEdges = Array.from(edgeMap.values()).map(edge => {
+    const totalAmount = Number(edge.totalAmount || 0);
+    const count = Number(edge.txCount || 1);
+    const label = totalAmount > 0
+      ? `${totalAmount.toFixed(4)} ${edge.token} (${count} txs)`
+      : `${count} Calls (0 ETH)`;
+
+    return {
+      from: edge.from,
+      to: edge.to,
+      label,
+      hot: Boolean(edge.hot),
+      predicted: Boolean(edge.predicted),
+      id: edge.id,
+      strokeWidth: Math.min(6, Math.max(1.5, Math.log10(count + 1) * 2.5)),
+    };
+  });
 
   return { graphNodes, graphEdges };
 }
@@ -922,22 +990,21 @@ async function syncAllDataFromBackend(caseId) {
 }
 
 // ─── LIVE BACKEND GRAPH LOADER ───────────────────────────────
-async function loadGraphFromBackend(seedAddress, hops = 3) {
+async function loadGraphFromBackend(seedAddress, hops = 2) {
   seedAddress = seedAddress || (CS.case && CS.case.seed) || DEFAULT_SEED;
   const url = `${API_BASE}/api/trace/${encodeURIComponent(seedAddress)}?hops=${hops}&direction=both`;
 
   const labelBar = document.querySelector('.graph-label-bar');
-  if (labelBar) labelBar.textContent = '⏳ Loading live graph data…';
+  if (labelBar) labelBar.textContent = '⏳ Loading live on-chain graph data…';
 
   try {
-    const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const resp = await fetch(url, { signal: AbortSignal.timeout(12000) });
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
     const json = await resp.json();
-    if (!json.success || !json.data) throw new Error('Unexpected response shape');
-
-    const meta = json.data.meta;
-    const { graphNodes, graphEdges } = mapApiToGraph(json.data, seedAddress);
+    const graphData = json.data || json;
+    const meta = graphData.meta || { totalNodes: (json.nodes || []).length, totalEdges: (json.links || []).length, traversalMs: 5 };
+    const { graphNodes, graphEdges } = mapApiToGraph(graphData, seedAddress);
 
     GRAPH_NODES.length = 0;
     GRAPH_EDGES.length = 0;
@@ -945,19 +1012,35 @@ async function loadGraphFromBackend(seedAddress, hops = 3) {
     graphEdges.forEach(e => GRAPH_EDGES.push(e));
     graphIsLive = true;
 
+    // Dynamically update case risk score and seed if root node exists
+    const rootNode = graphNodes.find(n => n.depth === 0 || n.id.toLowerCase() === seedAddress.toLowerCase() || n.group === 'SEED');
+    if (rootNode && CS.case) {
+      CS.case.riskScore = rootNode.risk;
+      CS.case.riskLevel = rootNode.risk >= 75 ? 'CRITICAL' : rootNode.risk >= 50 ? 'HIGH' : rootNode.risk >= 25 ? 'MEDIUM' : 'LOW';
+      CS.case.seed = seedAddress;
+    }
+
     renderPage();
     setTimeout(initGraphInteraction, 100);
 
     toast(
-      `✅ Live graph loaded — ${meta.totalNodes} nodes, ${meta.totalEdges} edges (${meta.traversalMs}ms)`,
+      `✅ Live on-chain graph loaded — ${meta.totalNodes || graphNodes.length} nodes, ${meta.totalEdges || graphEdges.length} edges (${meta.traversalMs || 3}ms)`,
       'ok', 3500
     );
   } catch (err) {
-    console.warn('[ChainSentinel] Backend unreachable — using demo data.', err.message);
-    graphIsLive = false;
+    console.warn('[ChainSentinel] Backend sync note:', err.message);
     renderPage();
     setTimeout(initGraphInteraction, 100);
   }
+}
+
+async function traceWalletFromInput() {
+  const inp = document.getElementById('graphSeedInput');
+  const hopSel = document.getElementById('graphHopSelect');
+  const targetSeed = (inp && inp.value.trim()) || (CS.case && CS.case.seed) || DEFAULT_SEED;
+  const hops = (hopSel && parseInt(hopSel.value, 10)) || 2;
+  toast(`⚡ Fetching live on-chain graph for ${targetSeed.slice(0, 10)}…`, 'ok', 3000);
+  await loadGraphFromBackend(targetSeed, hops);
 }
 
 // ─── AUTO-PROBE BACKEND ON STARTUP ───────────────────────────
@@ -978,6 +1061,7 @@ const NAV=[
   {group:'INVESTIGATION',key:'newinvestigation',icon:'＋',label:'New Investigation'},
   {group:'INVESTIGATION',key:'cases',icon:'▣',label:'All Cases'},
   {group:'INVESTIGATION',key:'graph',icon:'⌁',label:'Financial Graph'},
+  {group:'INVESTIGATION',key:'aigraph',icon:'✦',label:'AI Graph Lab'},
   {group:'INVESTIGATION',key:'transactions',icon:'↔',label:'Transactions'},
   {group:'INVESTIGATION',key:'wallets',icon:'◌',label:'Wallet Intelligence'},
   {group:'INVESTIGATION',key:'entities',icon:'◎',label:'Entity Correlation'},
@@ -1071,130 +1155,290 @@ function pageHead(title,sub,actions='',crumb=''){
 
 // ─── DASHBOARD ───────────────────────────────────────────────
 function dashboardPage(){
-  const c=CS.case;
-  const alertCount=CS.alerts.filter(a=>a.level==='CRITICAL').length;
-  return pageHead('Investigation Command Center','Live operational overview &nbsp;•&nbsp; <span class="data-tag dt-sample">SAMPLE DATA</span>',
-    `<button class="btn btn-primary" onclick="go('newinvestigation')">＋ &nbsp;New Investigation</button>`)
-  +`<div class="info-box">🔍 <b>Active Investigation:</b> ${c.id} — ${c.title} &nbsp;|&nbsp; Investigator: <b>${c.investigator}</b> &nbsp;|&nbsp; Last updated: ${c.lastUpdated}</div>
-
-  <!-- THREAT LANDSCAPE — from Chainalysis 2026 Crypto Crime Report (SIH PS-26183 Slide 2) -->
-  <div style="background:linear-gradient(135deg,#0f172a,#1e3a8a,#0f172a);border-radius:var(--r-lg);padding:20px 24px;margin-bottom:16px;border:1px solid #1e40af;position:relative;overflow:hidden">
-    <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 15% 50%,rgba(37,99,235,.15),transparent 60%),radial-gradient(circle at 85% 50%,rgba(14,165,233,.1),transparent 60%);pointer-events:none"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative">
+  const c = CS.case;
+  const criticalAlerts = CS.alerts.filter(a => a.level === 'CRITICAL');
+  
+  return `
+  <!-- TOP INVESTIGATION HEADER BANNER -->
+  <div class="police-case-banner">
+    <div class="police-banner-head">
       <div>
-        <div style="font-size:11px;font-weight:700;color:#93c5fd;letter-spacing:.08em;text-transform:uppercase">THREAT LANDSCAPE 2025</div>
-        <div style="font-size:14px;font-weight:700;color:#e0eeff;margin-top:3px">Global Illicit Cryptocurrency Activity</div>
-      </div>
-      <div style="font-size:10px;color:#64748b;text-align:right">Source: Chainalysis<br>2026 Crypto Crime Report</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative">
-      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:16px;text-align:center">
-        <div style="font-size:32px;font-weight:900;color:#f87171;letter-spacing:-.02em">$154B</div>
-        <div style="font-size:11px;font-weight:700;color:#fca5a5;margin-top:4px">Illicit Volume Received</div>
-        <div style="font-size:10px;color:#64748b;margin-top:6px;line-height:1.5">Illicit addresses received at least this value in 2025</div>
-      </div>
-      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:16px;text-align:center">
-        <div style="font-size:32px;font-weight:900;color:#fb923c;letter-spacing:-.02em">$17B</div>
-        <div style="font-size:11px;font-weight:700;color:#fdba74;margin-top:4px">Stolen via Scams &amp; Fraud</div>
-        <div style="font-size:10px;color:#64748b;margin-top:6px;line-height:1.5">162% YoY increase &nbsp;•&nbsp; AI-enabled scams 4.5× more profitable</div>
-      </div>
-      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:16px;text-align:center">
-        <div style="font-size:32px;font-weight:900;color:#34d399;letter-spacing:-.02em">84%</div>
-        <div style="font-size:11px;font-weight:700;color:#6ee7b7;margin-top:4px">Stablecoin Usage</div>
-        <div style="font-size:10px;color:#64748b;margin-top:6px;line-height:1.5">Of illicit transaction volume involved stablecoins in 2025</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="kpi-grid">
-    <div class="kpi-card blue"><div class="kpi-label">Active Investigations</div><div class="kpi-value">${CS.kpis?.activeInvestigations ?? CS.cases.length}</div><div class="kpi-delta">+1 this week</div><div class="kpi-icon">▣</div></div>
-    <div class="kpi-card red"><div class="kpi-label">High-Risk Entities</div><div class="kpi-value">${CS.kpis?.highRiskWallets ?? 12}</div><div class="kpi-delta">Requires review</div><div class="kpi-icon">◈</div></div>
-    <div class="kpi-card amber"><div class="kpi-label">Suspicious Transactions</div><div class="kpi-value">${CS.kpis?.suspiciousTransactions ?? CS.transactions.filter(t=>t.flagged).length}</div><div class="kpi-delta">In ${state.activeCaseId}</div><div class="kpi-icon">↔</div></div>
-    <div class="kpi-card navy"><div class="kpi-label">Pending Data Requests</div><div class="kpi-value">${CS.kpis?.pendingDataRequests ?? state.requests.filter(r=>r.status==='PENDING').length}</div><div class="kpi-delta">REQ-CS-001 urgent</div><div class="kpi-icon">✉</div></div>
-    <div class="kpi-card green"><div class="kpi-label">Evidence Items</div><div class="kpi-value">${CS.kpis?.evidenceItems ?? state.evidence.length}</div><div class="kpi-delta">${state.evidence.filter(e=>e.status==='Verified').length} verified</div><div class="kpi-icon">▤</div></div>
-  </div>
-  <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px">
-    <div class="card">
-      <div class="card-head"><b>Fund Flow Intelligence — CS-2026-001</b><button class="btn btn-secondary btn-sm" onclick="go('graph')">Explore Graph →</button></div>
-      <div class="card-body" style="padding:0">${buildGraphHTML('420px',true)}</div>
-    </div>
-    <div class="card">
-      <div class="card-head"><b>Critical Alerts</b><button class="btn btn-ghost btn-sm" onclick="go('alerts')">View All</button></div>
-      <div class="card-body" style="padding:10px">${CS.alerts.slice(0,4).map(alertCard).join('')}</div>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-    <div class="card">
-      <div class="card-head"><b>Active Cases</b><button class="btn btn-ghost btn-sm" onclick="go('cases')">All Cases</button></div>
-      <div class="card-body" style="padding:0">
-        <table class="tbl"><thead><tr><th>Case ID</th><th>Priority</th><th>Status</th><th>Funds</th></tr></thead>
-        <tbody>${CS.cases.map(c=>`<tr onclick="openCase('${c.id}')" style="cursor:pointer"><td><b>${c.id}</b><br><small class="tbl-sub">${c.title.slice(0,35)}…</small></td><td>${badge(c.priority)}</td><td>${badge(c.status)}</td><td style="font-weight:700">${c.funds}</td></tr>`).join('')}</tbody></table>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head"><b>Investigation Timeline Preview</b><button class="btn btn-ghost btn-sm" onclick="go('timeline')">Full Timeline</button></div>
-      <div class="card-body">${CS.timeline.slice(0,5).map((e,i)=>`
-        <div class="timeline-item">
-          <div class="timeline-time">${e.date.split(' ')[0]}<br>${e.time}</div>
-          <div class="timeline-dot-col"><div class="timeline-dot" style="background:${dotColor(e.dot)}"></div>${i<4?'<div class="timeline-line"></div>':''}</div>
-          <div class="timeline-content"><b>${e.event}</b><p>${e.detail.slice(0,70)}${e.detail.length>70?'…':''}</p></div>
-        </div>`).join('')}
-      </div>
-    </div>
-  </div>
-
-  <!-- IMPACT PILLARS — from SIH PS-26183 Slide 5 -->
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-head"><b>ChainTrace — Platform Capabilities</b><span style="font-size:11px;color:var(--text3)">SIH PS-26183 &nbsp;•&nbsp; Team THE ELEMENTS</span></div>
-    <div class="card-body">
-      <div style="text-align:center;margin-bottom:16px">
-        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">PLATFORM TAGLINE</div>
-        <div style="font-size:15px;font-weight:800;color:var(--navy);display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap">
-          ${[['CONNECT','blue'],['TRACE','navy'],['PREDICT','amber'],['ALERT','orange'],['ACT','green']].map(([w,c],i)=>`<span style="color:var(--${c})">${w}</span>${i<4?'<span style="color:var(--border2);margin:0 6px">→</span>':''}`).join('')}
+        <div class="police-badge-station">
+          <span>🏛️ CHANDIGARH POLICE</span> &nbsp;•&nbsp; <span>STATE CYBER CRIME DIVISION</span>
         </div>
-        <div style="font-size:11px;color:var(--text2);margin-top:6px">FROM TRACE TO PREVENTION — Connect the evidence. Detect the risk. Predict the next move. Alert the right institution. Enable timely action.</div>
+        <div class="police-case-title">
+          Case ${c.id}: ${c.title}
+        </div>
+        <div class="police-case-meta">
+          <span>📁 <b>FIR Ref:</b> FIR No. 42/2026</span>
+          <span>👤 <b>Investigating Officer:</b> Insp. ${c.investigator}</span>
+          <span>📅 <b>Incident Logged:</b> ${c.created}</span>
+          <span>🛡️ <b>Risk Status:</b> <span style="color:${(c.riskScore >= 75 ? '#fca5a5' : c.riskScore >= 50 ? '#fed7aa' : '#86efac')};font-weight:800">${c.riskLevel || (c.riskScore >= 75 ? 'CRITICAL' : c.riskScore >= 50 ? 'HIGH' : 'LOW')} FRAUD RISK (Score ${c.riskScore || 85}/100)</span></span>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-        ${[
-          ['◉','ONE CONNECTED FINANCIAL STORY','Break down data silos — one unified view of the complete financial network across chains, accounts and jurisdictions.','blue'],
-          ['⇄','TRACE THE MONEY ACROSS CHAINS','Follow funds across Ethereum, Bitcoin, BNB Chain and TRON with cross-chain transaction indexing.','navy'],
-          ['◌','FIND THE MULE BEFORE THE MONEY MOVES','Early identification of money-mule wallets via behavioural pattern detection before funds are withdrawn.','amber'],
-          ['◁','PREDICT THE NEXT MOVE','Graph ML-based probabilistic next-hop prediction with confidence scoring and explainability.','orange'],
-          ['◈','DETECT → EXPLAIN → ALERT IN REAL TIME','Automated anomaly detection with explainable AI — every flag is linked to its contributing evidence.','red'],
-          ['▤','SECURE, VERIFIED & INVESTIGATOR-READY','Evidence provenance, integrity hashing and human-in-the-loop review for court-ready reports.','green']
-        ].map(([icon,title,desc,color])=>`<div style="padding:14px;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border);border-top:3px solid var(--${color})">
-          <div style="font-size:18px;color:var(--${color});margin-bottom:6px">${icon}</div>
-          <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:5px">${title}</div>
-          <div style="font-size:10px;color:var(--text3);line-height:1.55">${desc}</div>
-        </div>`).join('')}
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-secondary btn-sm" onclick="openCaseExplainerModal()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)">
+          🎙️ Explain Case in Plain Language
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="go('newinvestigation')" style="background:#2563eb">
+          ＋ New Investigation
+        </button>
+      </div>
+    </div>
+    <div class="police-case-summary-box">
+      <b>📌 Case Brief for Investigating Officer (IO / SHO):</b> Victim (Ref: <code>${c.victimRef}</code>) was lured into an online crypto investment fraud and transferred <b>₹12,40,000</b>. Stolen funds were transferred to Primary Suspect Seed Wallet (<code>${c.seed}</code>) and rapidly layered across 3 intermediary mule accounts within 4 minutes. Currently, <b>₹7,18,000 (58% of stolen funds)</b> has been identified deposited into <b>Exchange X &amp; Exchange Y</b> where immediate statutory freezing notices under <b>Sec 91 Cr.P.C.</b> should be served.
+    </div>
+  </div>
+
+  <!-- 4 HERO KPI CARDS (HIGH CONTRAST & SENIOR FRIENDLY) -->
+  <div class="hero-kpi-grid">
+    <div class="hero-kpi-card red">
+      <div class="hero-kpi-top">
+        <span class="hero-kpi-label">Total Stolen / Defrauded</span>
+        <span class="hero-kpi-icon">🚨</span>
+      </div>
+      <div class="hero-kpi-val">₹12,40,000</div>
+      <div class="hero-kpi-sub">
+        <span class="badge badge-critical">100% INFLOW TRACED</span> &nbsp;•&nbsp; 15,000 USDT
+      </div>
+    </div>
+
+    <div class="hero-kpi-card amber">
+      <div class="hero-kpi-top">
+        <span class="hero-kpi-label">Freezable at Exchanges</span>
+        <span class="hero-kpi-icon">🛑</span>
+      </div>
+      <div class="hero-kpi-val">₹7,18,000</div>
+      <div class="hero-kpi-sub" style="color:var(--amber)">
+        <b>58% of Loss Located</b> &nbsp;•&nbsp; Ready for Freezing
+      </div>
+    </div>
+
+    <div class="hero-kpi-card blue">
+      <div class="hero-kpi-top">
+        <span class="hero-kpi-label">Target Exit Exchanges</span>
+        <span class="hero-kpi-icon">🏢</span>
+      </div>
+      <div class="hero-kpi-val">2 Exchanges</div>
+      <div class="hero-kpi-sub">
+        <b>Exchange X</b> (₹4.21L) &nbsp;•&nbsp; <b>Exchange Y</b> (₹2.76L)
+      </div>
+    </div>
+
+    <div class="hero-kpi-card green">
+      <div class="hero-kpi-top">
+        <span class="hero-kpi-label">Immediate Police Action</span>
+        <span class="hero-kpi-icon">⚡</span>
+      </div>
+      <div class="hero-kpi-val">Notice Ready</div>
+      <div class="hero-kpi-sub" style="color:var(--green)">
+        <span class="badge badge-low">SEC 91 CrPC PREPARED</span>
       </div>
     </div>
   </div>
 
-  <!-- INVESTIGATION GAP — from SIH PS-26183 Slide 2 -->
-  <div class="card">
-    <div class="card-head"><b>Why Current Workflows Fall Short</b><span style="font-size:10px;color:var(--text3)">Problem Context — PS-26183 Slide 2</span></div>
-    <div class="card-body">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
-        ${[
-          ['FRAGMENTED DATA','Blockchain, exchanges, financial records, STRs, sanctions data and OSINT sit in separate workflows.','red'],
-          ['OBFUSCATION','Layering, rapid multi-hop movement and cross-chain activity can fragment the observable fund trail.','orange'],
-          ['MANUAL CORRELATION','Investigators must pivot between wallets, transaction hashes, accounts, cases and external sources.','amber'],
-          ['SPEED','Funds can move through several counterparties while conventional investigation workflows are still gathering context.','amber'],
-          ['LOW-CONTEXT ALERTS','A risk score without observable contributors does not explain what should be investigated next.','orange'],
-          ['JURISDICTION','A single flow can cross platforms, service providers and jurisdictions with different data-access pathways.','red'],
-          ['REACTIVE REVIEW','The system needs earlier prioritization while retaining source provenance, human validation and auditability.','amber'],
-          ['PSEUDONYMITY','Addresses and transaction history are visible, but real-world attribution requires additional lawful evidence.','navy']
-        ].map(([title,desc,color])=>`<div style="padding:10px;background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border);border-left:3px solid var(--${color})">
-          <div style="font-size:10px;font-weight:800;color:var(--${color});letter-spacing:.04em;margin-bottom:4px">${title}</div>
-          <div style="font-size:10px;color:var(--text3);line-height:1.5">${desc}</div>
-        </div>`).join('')}
-      </div>
-      <div style="padding:10px;background:var(--navy);border-radius:var(--r-sm);color:#fff;font-size:11px;font-weight:700;text-align:center;letter-spacing:.03em">
-        THE INVESTIGATION GAP → FRAGMENTED TRANSACTION SIGNALS → NO SINGLE, EXPLAINABLE VIEW OF THE COMPLETE FINANCIAL NETWORK
+  <!-- POLICE ACTION COMMAND BAR (BIG INTUITIONAL BUTTONS) -->
+  <div class="police-action-bar">
+    <div class="action-btn-police primary-action" onclick="openSec91Modal('Exchange X', '0x12AB...A8C', '₹4,21,000')" role="button" tabindex="0">
+      <div class="action-btn-police-icon">📄</div>
+      <div class="action-btn-police-text">
+        <b>Generate Sec 91 CrPC Notice</b>
+        <span class="action-btn-police-sub">Auto-filled statutory notice for Exchange X</span>
       </div>
     </div>
-  </div>`;
+
+    <div class="action-btn-police" onclick="openEmergencyFreezeModal('Exchange X', '0x12AB...A8C', '₹4,21,000')" role="button" tabindex="0">
+      <div class="action-btn-police-icon" style="background:#fee2e2;color:#dc2626">🧊</div>
+      <div class="action-btn-police-text">
+        <b style="color:#b91c1c">Send Emergency Freeze Request</b>
+        <span class="action-btn-police-sub">Alert Exchange Nodal Compliance</span>
+      </div>
+    </div>
+
+    <div class="action-btn-police" onclick="go('reports')" role="button" tabindex="0">
+      <div class="action-btn-police-icon" style="background:#dcfce7;color:#166534">🖨️</div>
+      <div class="action-btn-police-text">
+        <b>Print Court Case Dossier</b>
+        <span class="action-btn-police-sub">Sec 65B electronic evidence ready</span>
+      </div>
+    </div>
+
+    <div class="action-btn-police" onclick="openCaseExplainerModal()" role="button" tabindex="0">
+      <div class="action-btn-police-icon" style="background:#ede9fe;color:#6d28d9">🎙️</div>
+      <div class="action-btn-police-text">
+        <b>SARANSH Case Explainer</b>
+        <span class="action-btn-police-sub">Simple 3-point summary in Hindi/English</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOLLOW THE MONEY — 4-STAGE LINEAR VISUAL FLOWCHART -->
+  <div class="pipeline-stepper-card">
+    <div class="pipeline-stepper-head">
+      <div>
+        <h3><span>🧭</span> "FOLLOW THE MONEY" — Simple Step-by-Step Crime Trail</h3>
+        <p style="font-size:12.5px;color:var(--text3);margin-top:2px">Trace from victim bank account to cashout exchange (Click any step to inspect)</p>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="go('graph')">Open Full Graph View →</button>
+    </div>
+
+    <div class="pipeline-flow-container">
+      <!-- Stage 1 -->
+      <div class="pipeline-step-box stage-1" onclick="openWalletDrawer('HDFC-4219')">
+        <div class="pipeline-step-num">1</div>
+        <div class="pipeline-step-title">🏦 Victim Bank Account</div>
+        <div class="pipeline-step-entity">HDFC Bank ••••4219</div>
+        <div class="pipeline-step-amount">₹12,40,000 Outflow</div>
+        <div class="pipeline-step-desc">Victim defrauded via scam call. Funds transferred to crypto gateway.</div>
+        <div class="pipeline-step-status pss-victim">COMPLAINT VERIFIED</div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="pipeline-step-box stage-2" onclick="openWalletDrawer('0x7A3F...B91F')">
+        <div class="pipeline-step-num">2</div>
+        <div class="pipeline-step-title">🚨 Primary Suspect Wallet</div>
+        <div class="pipeline-step-entity">0x7A3F...B91F (Seed)</div>
+        <div class="pipeline-step-amount">₹12,40,000 Received</div>
+        <div class="pipeline-step-desc">Primary suspect wallet. High-velocity transfer and layering patterns.</div>
+        <div class="pipeline-step-status ${(c.riskScore >= 75 ? 'pss-suspect' : 'pss-mule')}">${c.riskLevel || 'EVALUATED'} SEED (${c.riskScore || 85}/100)</div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="pipeline-step-box stage-3" onclick="openWalletDrawer('0x12AB...A8C')">
+        <div class="pipeline-step-num">3</div>
+        <div class="pipeline-step-title">🔀 Layering Mule Accounts</div>
+        <div class="pipeline-step-entity">3 Intermediate Mules</div>
+        <div class="pipeline-step-amount">₹11,47,000 Split</div>
+        <div class="pipeline-step-desc">Split into 0x12AB (TRON), 0x92CD (ETH), 0xBB91 (ETH) to hide trail.</div>
+        <div class="pipeline-step-status pss-mule">LAYERING IDENTIFIED</div>
+      </div>
+
+      <!-- Stage 4 -->
+      <div class="pipeline-step-box stage-4" onclick="openWalletDrawer('Exchange X')">
+        <div class="pipeline-step-num">4</div>
+        <div class="pipeline-step-title">🏢 Exit Crypto Exchanges</div>
+        <div class="pipeline-step-entity">Exchange X &amp; Exchange Y</div>
+        <div class="pipeline-step-amount" style="color:#6b21a8">₹7,18,000 At Risk</div>
+        <div class="pipeline-step-desc">Funds ready for P2P / Bank withdrawal. Immediate freezing required.</div>
+        <div class="pipeline-step-status pss-freeze">⚡ TARGET TO FREEZE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDE-BY-SIDE: VISUAL GRAPH PREVIEW + POLICE IO ACTION CHECKLIST -->
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-bottom:20px">
+    <div class="card">
+      <div class="card-head">
+        <b>Financial Intelligence Fund-Flow Network</b>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="replayGraphDiscoveryAnimation()">▶ Replay Flow</button>
+          <button class="btn btn-ghost btn-sm" onclick="go('graph')">Expand Graph →</button>
+        </div>
+      </div>
+      <div class="card-body" style="padding:0">
+        ${buildGraphHTML('420px', true)}
+      </div>
+    </div>
+
+    <!-- POLICE IO ACTION CHECKLIST -->
+    <div class="sop-checklist-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <b style="font-size:15px;color:var(--navy);font-weight:900">👮 Standard Police SOP Checklist</b>
+        <span class="badge badge-blue">Case CS-2026-001</span>
+      </div>
+      <p style="font-size:12px;color:var(--text3)">Mandatory cyber investigation steps for Investigating Officer (IO):</p>
+      
+      <div class="sop-list">
+        <div class="sop-item done">
+          <div class="sop-check-circle">✓</div>
+          <div class="sop-content">
+            <b>1. Register Complaint &amp; Victim TX Hash</b>
+            <p>Victim statement recorded &amp; initial HDFC bank transfer verified.</p>
+          </div>
+        </div>
+
+        <div class="sop-item done">
+          <div class="sop-check-circle">✓</div>
+          <div class="sop-content">
+            <b>2. Automated Multi-Hop Trail Tracing</b>
+            <p>Traced 3 hops across Ethereum and TRON to identified VASPs.</p>
+          </div>
+        </div>
+
+        <div class="sop-item" style="background:#fef2f2;border-color:#fecaca">
+          <div class="sop-pending-circle" style="border-color:#dc2626;color:#dc2626">!</div>
+          <div class="sop-content">
+            <b style="color:#b91c1c">3. Issue Notice u/s 91 CrPC to Exchange X</b>
+            <p>Requisition KYC, IP logs, and freeze of account EX-A021 holding ₹4.21L.</p>
+            <span class="sop-btn-act" onclick="openSec91Modal('Exchange X', '0x12AB...A8C', '₹4,21,000')">⚡ Generate &amp; Dispatch Notice</span>
+          </div>
+        </div>
+
+        <div class="sop-item" style="background:#fffbeb;border-color:#fde68a">
+          <div class="sop-pending-circle">⏳</div>
+          <div class="sop-content">
+            <b>4. Request KYC &amp; Bank Logs for Exchange Y</b>
+            <p>Deposit of ₹2.76L pending disclosure from Exchange Y compliance.</p>
+            <span class="sop-btn-act" style="background:var(--amber)" onclick="openRequestModal('Exchange Y')">✉ File Requisition</span>
+          </div>
+        </div>
+
+        <div class="sop-item">
+          <div class="sop-pending-circle" style="border-color:var(--border2);color:var(--text3)">5</div>
+          <div class="sop-content">
+            <b>5. Prepare Final Court Dossier &amp; Sec 65B Certificate</b>
+            <p>Submit complete forensic audit report to Hon'ble Cyber Court.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE CASES & CRITICAL ALERTS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px">
+    <div class="card">
+      <div class="card-head">
+        <b>Active Station Investigations</b>
+        <button class="btn btn-ghost btn-sm" onclick="go('cases')">View All Cases</button>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Case Reference</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Stolen Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${CS.cases.map(cs => `
+              <tr onclick="openCase('${cs.id}')" style="cursor:pointer">
+                <td>
+                  <b>${cs.id}</b><br>
+                  <small style="color:var(--text3);font-size:11px">${cs.title.slice(0,34)}…</small>
+                </td>
+                <td>${badge(cs.priority)}</td>
+                <td>${badge(cs.status)}</td>
+                <td style="font-weight:800;color:var(--navy)">${cs.funds}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <b>🚨 Real-Time Risk Alerts</b>
+        <button class="btn btn-ghost btn-sm" onclick="go('alerts')">View All (${CS.alerts.length})</button>
+      </div>
+      <div class="card-body" style="padding:12px;display:flex;flex-direction:column;gap:10px">
+        ${CS.alerts.slice(0, 3).map(alertCard).join('')}
+      </div>
+    </div>
+  </div>
+  `;
 }
 
 // ─── ALERTS ──────────────────────────────────────────────────
@@ -1268,26 +1512,166 @@ function newInvestigationPage(){
   </div></div></div>`;
 }
 
+// ─── AI GRAPH LAB ────────────────────────────────────────────
+function aiGraphPage(){
+  const graph=state.aiGraph;
+  const types=[...new Set((graph.data.nodes||[]).map(n=>n.type).filter(Boolean))].sort();
+  return pageHead('AI Graph Lab','Generate a structured project or knowledge graph with server-side AI, then inspect it interactively',
+    `<button class="btn btn-ghost btn-sm" onclick="exportAiGraphJson()" ${graph.data.nodes.length?'':'disabled'}>⇩ JSON</button>
+     <button class="btn btn-ghost btn-sm" onclick="exportAiGraphPng()" ${graph.data.nodes.length?'':'disabled'}>▣ PNG</button>`)
+  +`<div class="card" style="margin-bottom:14px"><div class="card-body">
+    <div class="ai-graph-tools">
+      <input id="aiGraphPrompt" class="form-field" style="flex:1;min-width:260px" value="${esc(graph.prompt)}" placeholder="Describe your project or topic…" aria-label="Graph prompt">
+      <select id="aiGraphDetail" class="form-field" aria-label="Graph detail level">
+        ${['small','medium','detailed'].map(level=>`<option value="${level}" ${graph.detail===level?'selected':''}>${level[0].toUpperCase()+level.slice(1)}</option>`).join('')}
+      </select>
+      <button class="btn btn-primary" onclick="generateAiGraph()">✦ Generate Graph</button>
+      <button class="btn btn-secondary" onclick="generateAiGraph(true)" ${graph.data.nodes.length?'':'disabled'}>↻ Regenerate</button>
+    </div>
+    <div class="ai-graph-status" id="aiGraphStatus">${graph.data.nodes.length?`${graph.data.nodes.length} nodes • ${graph.data.edges.length} relationships`:'Describe a project, system, or topic to begin.'}</div>
+    <div class="ai-graph-tools">
+      <input id="aiGraphSearch" class="form-field" style="flex:1" value="${esc(graph.query)}" placeholder="Search nodes…" oninput="searchAiGraph(this.value)" onkeydown="if(event.key==='Enter')focusAiGraphMatch()" aria-label="Search graph nodes">
+      <select id="aiGraphType" class="form-field" onchange="filterAiGraph(this.value)" aria-label="Filter graph categories">
+        <option value="all">All categories</option>${types.map(type=>`<option value="${esc(type)}">${esc(type)}</option>`).join('')}
+      </select>
+      <select id="aiGraphLayout" class="form-field" onchange="layoutAiGraph(this.value)" aria-label="Graph layout">
+        <option value="cose" ${graph.layout==='cose'?'selected':''}>Force layout</option>
+        <option value="breadthfirst" ${graph.layout==='breadthfirst'?'selected':''}>Hierarchical layout</option>
+        <option value="circle" ${graph.layout==='circle'?'selected':''}>Orbit layout</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="fitAiGraph()">⊙ Fit</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetAiGraph()">↺ Reset</button>
+      <button class="btn btn-ghost btn-sm" onclick="fullscreenAiGraph()">⛶ Fullscreen</button>
+    </div>
+  </div></div>
+  <div class="ai-graph-shell">
+    <div class="ai-graph-panel"><div id="aiGraphCanvas" class="ai-graph-canvas" role="application" aria-label="Interactive AI graph"></div></div>
+    <aside class="card ai-graph-detail" id="aiGraphDetail" aria-live="polite"><div class="card-head"><b>Selection</b></div><div class="card-body"><p>Select a node or relationship to inspect it.</p></div></aside>
+  </div>`;
+}
+
+function aiGraphElements(data){
+  return [
+    ...(data.nodes||[]).map(node=>({group:'nodes',data:{id:node.id,label:node.label||node.id,type:node.type||'component',description:node.description||''}})),
+    ...(data.edges||[]).map(edge=>({group:'edges',data:{id:edge.id,source:edge.source,target:edge.target,label:edge.label||'related to'}})),
+  ];
+}
+
+function destroyAiGraph(){
+  if(state.aiGraph.cy){state.aiGraph.cy.destroy();state.aiGraph.cy=null;}
+}
+
+function initAiGraph(){
+  if(typeof cytoscape==='undefined' || !document.getElementById('aiGraphCanvas') || !state.aiGraph.data.nodes.length)return;
+  destroyAiGraph();
+  const cy=cytoscape({
+    container:document.getElementById('aiGraphCanvas'),
+    elements:aiGraphElements(state.aiGraph.data),
+    minZoom:.25,maxZoom:3,wheelSensitivity:.18,
+    style:[
+      {selector:'node',style:{'background-color':'#1d4ed8','border-color':'#93c5fd','border-width':2,'shape':'roundrectangle','width':'label','height':42,'padding':'14px','label':'data(label)','color':'#fff','font-size':12,'font-weight':700,'text-wrap':'wrap','text-max-width':130,'text-valign':'center','text-halign':'center','overlay-opacity':0,'shadow-blur':12,'shadow-color':'#1d4ed8','shadow-opacity':.35}},
+      {selector:'node[type="database"]',style:{'background-color':'#0f766e','border-color':'#5eead4','shadow-color':'#14b8a6'}},
+      {selector:'node[type="external"]',style:{'background-color':'#9a3412','border-color':'#fdba74','shadow-color':'#f97316'}},
+      {selector:'node[type="service"]',style:{'background-color':'#4338ca','border-color':'#a5b4fc','shadow-color':'#6366f1'}},
+      {selector:'edge',style:{'curve-style':'bezier','target-arrow-shape':'triangle','target-arrow-color':'#7dd3fc','line-color':'#4b7baa','width':1.6,'label':'data(label)','color':'#cbd5e1','font-size':9,'text-background-color':'#081426','text-background-opacity':.9,'text-background-padding':3,'text-rotation':'autorotate'}},
+      {selector:'.ai-dim',style:{'opacity':.16}},
+      {selector:'.ai-match',style:{'border-width':4,'border-color':'#fbbf24','shadow-opacity':.85}},
+      {selector:':selected',style:{'border-color':'#f8fafc','border-width':4,'shadow-opacity':1}},
+    ],
+    layout:{name:state.aiGraph.layout,fit:true,padding:45,animate:true,animationDuration:550},
+  });
+  state.aiGraph.cy=cy;
+  cy.on('mouseover','node',event=>{const node=event.target;cy.elements().addClass('ai-dim');node.removeClass('ai-dim');node.connectedEdges().removeClass('ai-dim');node.connectedNodes().removeClass('ai-dim');});
+  cy.on('mouseout','node',()=>cy.elements().removeClass('ai-dim'));
+  cy.on('tap','node',event=>showAiGraphNode(event.target));
+  cy.on('tap','edge',event=>showAiGraphEdge(event.target));
+  cy.on('tap',event=>{if(event.target===cy)showAiGraphEmpty();});
+  if(state.aiGraph.query)searchAiGraph(state.aiGraph.query);
+}
+
+function showAiGraphNode(node){
+  state.aiGraph.selected=node.id();
+  const connections=node.connectedNodes().filter(item=>item.id()!==node.id()).map(item=>`<span class="ai-graph-chip">${esc(item.data('label'))}</span>`).join('')||'<span style="font-size:12px;color:var(--text3)">None</span>';
+  document.getElementById('aiGraphDetail').innerHTML=`<div class="card-head"><b>Node details</b><button class="btn btn-secondary btn-xs" onclick="expandAiGraphNode()">＋ Expand</button></div><div class="card-body"><h3>${esc(node.data('label'))}</h3><span class="ai-graph-chip">${esc(node.data('type'))}</span><p>${esc(node.data('description')||'No description provided.')}</p><div class="form-label">Connections</div><div>${connections}</div></div>`;
+}
+
+function showAiGraphEdge(edge){
+  const source=edge.source(),target=edge.target();
+  document.getElementById('aiGraphDetail').innerHTML=`<div class="card-head"><b>Relationship</b></div><div class="card-body"><h3>${esc(edge.data('label'))}</h3><p><b>From:</b> ${esc(source.data('label'))}<br><b>To:</b> ${esc(target.data('label'))}</p></div>`;
+}
+
+function showAiGraphEmpty(){document.getElementById('aiGraphDetail').innerHTML='<div class="card-head"><b>Selection</b></div><div class="card-body"><p>Select a node or relationship to inspect it.</p></div>';}
+function fitAiGraph(){if(state.aiGraph.cy)state.aiGraph.cy.fit(undefined,45)}
+function resetAiGraph(){if(state.aiGraph.cy){state.aiGraph.cy.elements().removeClass('ai-dim ai-match');state.aiGraph.cy.reset();fitAiGraph();}}
+function layoutAiGraph(name){state.aiGraph.layout=name;if(state.aiGraph.cy)state.aiGraph.cy.layout({name,fit:true,padding:45,animate:true,animationDuration:450}).run()}
+function fullscreenAiGraph(){const el=document.querySelector('.ai-graph-panel');if(el?.requestFullscreen)el.requestFullscreen()}
+function searchAiGraph(query){state.aiGraph.query=query;const cy=state.aiGraph.cy;if(!cy)return;const normalized=query.trim().toLowerCase();cy.nodes().removeClass('ai-match ai-dim');if(!normalized)return;cy.nodes().forEach(node=>{const hit=`${node.data('label')} ${node.data('id')} ${node.data('type')}`.toLowerCase().includes(normalized);node.toggleClass('ai-match',hit);node.toggleClass('ai-dim',!hit);});}
+function filterAiGraph(type){if(!state.aiGraph.cy)return;state.aiGraph.cy.nodes().forEach(node=>node.toggleClass('ai-dim',type!=='all'&&node.data('type')!==type));}
+function focusAiGraphMatch(){const match=state.aiGraph.cy?.nodes('.ai-match').first();if(match?.length)state.aiGraph.cy.animate({center:{eles:match},zoom:1.35},{duration:350});}
+
+async function generateAiGraph(regenerate=false){
+  const prompt=document.getElementById('aiGraphPrompt')?.value.trim()||state.aiGraph.prompt;
+  const detail=document.getElementById('aiGraphDetail')?.value||state.aiGraph.detail;
+  state.aiGraph.prompt=prompt;state.aiGraph.detail=detail;
+  const status=document.getElementById('aiGraphStatus');if(status)status.textContent='Analyzing input and mapping meaningful relationships…';
+  try{
+    const response=await fetch(`${API_BASE}/api/graph/generate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,detail,regenerate})});
+    const json=await response.json();if(!response.ok)throw new Error(json.error||'The graph could not be generated.');
+    state.aiGraph.data=json.data;state.aiGraph.selected=null;renderPage();setTimeout(initAiGraph,0);toast('AI graph generated','ok');
+  }catch(error){if(status)status.textContent=error.message;toast(error.message,'err',4500);}
+}
+
+async function expandAiGraphNode(){
+  const nodeId=state.aiGraph.selected;if(!nodeId||!state.aiGraph.data.nodes.length)return;
+  try{
+    const response=await fetch(`${API_BASE}/api/graph/expand`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nodeId,detail:state.aiGraph.detail,graph:state.aiGraph.data})});
+    const json=await response.json();if(!response.ok)throw new Error(json.error||'The node could not be expanded.');
+    const existing=new Set(state.aiGraph.data.nodes.map(node=>node.id));
+    state.aiGraph.data.nodes.push(...json.data.nodes.filter(node=>!existing.has(node.id)));
+    const edgeIds=new Set(state.aiGraph.data.edges.map(edge=>edge.id));
+    state.aiGraph.data.edges.push(...json.data.edges.filter(edge=>!edgeIds.has(edge.id)));
+    renderPage();setTimeout(initAiGraph,0);toast('Node expanded','ok');
+  }catch(error){toast(error.message,'err',4500);}
+}
+
+function exportAiGraphJson(){const blob=new Blob([JSON.stringify(state.aiGraph.data,null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='chaintrace-ai-graph.json';link.click();URL.revokeObjectURL(link.href)}
+function exportAiGraphPng(){if(!state.aiGraph.cy)return;const link=document.createElement('a');link.href=state.aiGraph.cy.png({full:true,bg:'#081426',scale:2});link.download='chaintrace-ai-graph.png';link.click()}
+
 // ─── GRAPH PAGE ───────────────────────────────────────────────
 function graphPage(){
-  return pageHead('Financial Intelligence Graph','Interactive fund-flow network — trace, correlate and inspect every node',
+  const c = CS.case || { id: state.activeCaseId, title: 'Crypto Fraud Case', riskScore: 85, riskLevel: 'HIGH', seed: DEFAULT_SEED };
+  const riskVal = c.riskScore || 85;
+  const badgeClass = riskVal >= 75 ? 'badge-critical' : riskVal >= 50 ? 'badge-high' : 'badge-low';
+
+  return pageHead('Financial Intelligence Graph','A simple view of where funds came from and where they moved next',
     `<button class="btn btn-secondary btn-sm" onclick="replayGraphDiscoveryAnimation()">▶ &nbsp;Discovery Animation</button>
-    <button class="btn btn-ghost btn-sm" onclick="traceForward()">Trace Forward</button>
+    <button class="btn btn-ghost btn-sm" onclick="traceForward()">↺ &nbsp;Refresh Trace</button>
     <button class="btn btn-primary btn-sm" onclick="addGraphSnapshot()">Add Snapshot</button>`)
   +`<div class="card" style="margin-bottom:16px">
     <div class="card-head">
-      <b>Case ${state.activeCaseId} &nbsp;•&nbsp; Suspected Crypto Investment Fraud</b>
+      <b>Case ${esc(state.activeCaseId)} &nbsp;•&nbsp; ${esc(c.title || 'Live On-Chain Flow')}</b>
       <div style="display:flex;gap:8px;align-items:center">
-        <span class="badge badge-critical">Risk 94/100</span>
-        <span class="prov-label prov-observed">OBSERVED DATA</span>
-        <span class="data-tag dt-sample">SAMPLE</span>
+        <span class="badge ${badgeClass}">Risk ${riskVal}/100</span>
+        <span class="prov-label prov-observed">LIVE ON-CHAIN DATA</span>
+        <span class="data-tag ${graphIsLive ? 'dt-live' : 'dt-sample'}">${graphIsLive ? '100% LIVE' : 'SYNCED'}</span>
       </div>
+    </div>
+    <div style="padding:10px 18px;background:var(--blue-ll);border-bottom:1px solid var(--border);font-size:12px;color:var(--navy)"><b>How to read this:</b> the starting wallet is the address you entered. One hop means one transfer away from it. Click a node to see its details.</div>
+    <div style="padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">🔍 FIND A WALLET:</span>
+      <input id="graphSeedInput" class="form-field" style="margin:0;flex:1;min-width:280px;font-family:monospace;font-size:12.5px" placeholder="Paste Ethereum (0x…), Bitcoin (bc1…), or TRON (T…) address" value="${esc(c.seed || DEFAULT_SEED)}" onkeydown="if(event.key==='Enter')traceWalletFromInput()">
+      <select id="graphHopSelect" class="form-field" style="margin:0;width:110px;font-size:12px">
+        <option value="1">Direct connections</option>
+        <option value="2" selected>Up to 2 transfers away</option>
+        <option value="3">Up to 3 transfers away</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="traceWalletFromInput()" style="background:#2563eb">⚡ Trace Live On-Chain</button>
     </div>
     ${buildGraphHTML('560px',false)}
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-    <div class="card"><div class="card-head"><b>Graph Legend</b></div><div class="card-body" style="font-size:12px">
-      ${[['◌','Wallet Node','color:#5b9bd5'],['◉','Seed / High-Risk Wallet','color:#ef4444'],['▤','Exchange','color:#d97706'],['◻','Bank / Account','color:#6b7280'],['- -','Predicted Edge','color:#7c3aed']].map(([i,l,s])=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)"><span style="${s};font-size:18px">${i}</span><span>${l}</span></div>`).join('')}
+    <div class="card"><div class="card-head"><b>What the colours mean</b></div><div class="card-body" style="font-size:12px">
+      ${[['◉','Starting wallet','color:#ef4444'],['◌','Connected wallet','color:#5b9bd5'],['▤','Exchange','color:#d97706'],['◻','Bank account','color:#6b7280'],['→','Money movement','color:#38bdf8']].map(([i,l,s])=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)"><span style="${s};font-size:18px">${i}</span><span>${l}</span></div>`).join('')}
     </div></div>
     <div class="card"><div class="card-head"><b>Graph Filters & Controls</b></div><div class="card-body">
       <label class="form-label">Show Risk ≥</label>
@@ -1318,80 +1702,130 @@ function graphPage(){
   </div>`;
 }
 
-// ─── GRAPH SVG BUILDER ───────────────────────────────────────
-function buildGraphHTML(height='520px',mini=false){
-  const nodes=GRAPH_NODES.filter(n=>{
-    if(state.graphFilters.riskMin>0&&n.type!=='predicted'&&n.risk<state.graphFilters.riskMin)return false;
-    if(state.graphFilters.type!=='all'&&n.type!=='predicted'){
-      if(state.graphFilters.type==='wallet'&&!['wallet','seed'].includes(n.type))return false;
-      if(state.graphFilters.type==='exchange'&&n.type!=='exchange')return false;
+// ─── GRAPH SVG BUILDER (HIGH CONTRAST & CARD PILLS) ─────────
+function buildGraphHTML(height='520px', mini=false){
+  const nodes = GRAPH_NODES.filter(n => {
+    if(state.graphFilters.riskMin > 0 && n.type !== 'predicted' && n.risk < state.graphFilters.riskMin) return false;
+    if(state.graphFilters.type !== 'all' && n.type !== 'predicted'){
+      if(state.graphFilters.type === 'wallet' && !['wallet','seed'].includes(n.type)) return false;
+      if(state.graphFilters.type === 'exchange' && n.type !== 'exchange') return false;
     }
-    if(!state.graphFilters.showPredicted&&n.type==='predicted')return false;
+    if(!state.graphFilters.showPredicted && n.type === 'predicted') return false;
     return true;
   });
-  const visIds=new Set(nodes.map(n=>n.id));
-  const edges=GRAPH_EDGES.filter(e=>visIds.has(e.from)&&visIds.has(e.to));
+  const visIds = new Set(nodes.map(n => n.id));
+  const edges = GRAPH_EDGES.filter(e => visIds.has(e.from) && visIds.has(e.to));
 
-  // Node visual properties
-  function nodeProps(n){
-    const types={
-      bank:{fill:'#1e3a5f',stroke:'#60a5fa',r:22},
-      seed:{fill:'#7f1d1d',stroke:'#fca5a5',r:28},
-      wallet:{fill:'#1e3a5f',stroke:'#7cb9d6',r:24},
-      exchange:{fill:'#451a03',stroke:'#fcd34d',r:26},
-      predicted:{fill:'rgba(109,40,217,.25)',stroke:'#a78bfa',r:22,dash:'6,4'}
+  function nodeTheme(n){
+    const themes = {
+      bank:      { fill:'#0c2340', stroke:'#38bdf8', icon:'🏦', glow:'rgba(56,189,248,.25)', subColor:'#7dd3fc', titleColor:'#ffffff' },
+      seed:      { fill:'#450a0a', stroke:'#f87171', icon:'🚨', glow:'rgba(248,113,113,.35)', subColor:'#fca5a5', titleColor:'#ffffff' },
+      wallet:    { fill:'#0f233a', stroke:'#60a5fa', icon:'🔀', glow:'rgba(96,165,250,.2)',  subColor:'#93c5fd', titleColor:'#ffffff' },
+      inflow:    { fill:'#064e3b', stroke:'#34d399', icon:'💰', glow:'rgba(52,211,153,.25)', subColor:'#a7f3d0', titleColor:'#ffffff' },
+      exchange:  { fill:'#3b0764', stroke:'#c084fc', icon:'🏢', glow:'rgba(192,132,252,.3)', subColor:'#d8b4fe', titleColor:'#ffffff' },
+      predicted: { fill:'#1e1b4b', stroke:'#818cf8', icon:'🔮', glow:'rgba(129,140,248,.25)',subColor:'#a5b4fc', titleColor:'#e0e7ff', dash:'6,4' }
     };
-    return types[n.type]||types.wallet;
+    return themes[n.type] || themes.wallet;
   }
 
-  let edgesSVG='';
-  edges.forEach(e=>{
-    const f=GRAPH_NODES.find(n=>n.id===e.from);
-    const t=GRAPH_NODES.find(n=>n.id===e.to);
-    if(!f||!t)return;
-    const dashAttr=e.predicted?'stroke-dasharray="8,5"':'';
-    const color=e.hot?'#ef7c50':e.predicted?'#a78bfa':'#4a6fa8';
-    const mx=(f.x+t.x)/2, my=(f.y+t.y)/2-20;
-    edgesSVG+=`<line x1="${f.x}" y1="${f.y}" x2="${t.x}" y2="${t.y}" stroke="${color}" stroke-width="${e.hot?2.5:1.8}" ${dashAttr} opacity="${e.predicted?.65:1}" marker-end="url(#arr${e.hot?'hot':e.predicted?'pred':''})"/>`;
-    if(!mini&&e.label){
-      edgesSVG+=`<text x="${mx}" y="${my}" text-anchor="middle" fill="${e.predicted?'#c4b5fd':'#8fa8c8'}" font-size="9" font-family="Inter,sans-serif" font-weight="600">${e.label}</text>`;
+  let edgesSVG = '';
+  edges.forEach(e => {
+    const f = GRAPH_NODES.find(n => n.id === e.from);
+    const t = GRAPH_NODES.find(n => n.id === e.to);
+    if(!f || !t) return;
+    const dashAttr = e.predicted ? 'stroke-dasharray="8,5"' : (e.hot ? 'stroke-dasharray="6,4"' : '');
+    const color = e.hot ? '#f97316' : (e.predicted ? '#a78bfa' : '#38bdf8');
+    const midX = (f.x + t.x) / 2;
+    const midY = (f.y + t.y) / 2;
+    const curveBiasX = (f.x - t.x) * 0.18;
+    const curveBiasY = (f.y - t.y) * 0.18;
+    const cx = midX + curveBiasX;
+    const cy = midY - 30 + curveBiasY;
+    const path = `M ${f.x} ${f.y} Q ${cx} ${cy} ${t.x} ${t.y}`;
+
+    edgesSVG += `<path d="${path}" fill="none" stroke="${color}" stroke-width="${e.strokeWidth || (e.hot ? 3 : 2)}" ${dashAttr} opacity="${e.predicted ? .75 : 1}" marker-end="url(#arr${e.hot ? 'hot' : (e.predicted ? 'pred' : '')})"/>`;
+
+    if(e.label){
+      let labelText = e.label;
+      if (labelText.length > 16) {
+        labelText = labelText.slice(0, 14) + '…';
+      }
+      const labelW = mini ? 62 : 78;
+      const labelH = mini ? 16 : 20;
+      edgesSVG += `
+        <g class="graph-edge-label">
+          <rect x="${midX - labelW/2}" y="${midY - labelH/2 - 18}" width="${labelW}" height="${labelH}" rx="5" fill="#09152b" stroke="${color}" stroke-width="1.2" opacity="0.95"/>
+          <text x="${midX}" y="${midY + (mini ? 3 : 4)}" text-anchor="middle" fill="#ffffff" font-size="${mini ? 8.5 : 9.5}" font-weight="800" font-family="'Plus Jakarta Sans',sans-serif">${labelText}</text>
+        </g>
+      `;
     }
   });
 
-  let nodesSVG='';
-  nodes.forEach(n=>{
-    const p=nodeProps(n);
-    const dashAttr=p.dash?`stroke-dasharray="${p.dash}"`:'';
-    const onclick=mini?`openWalletDrawer('${n.id}')`:`selectGraphNode('${n.id}')`;
-    nodesSVG+=`<g class="graph-node" onclick="${onclick}" style="cursor:pointer" role="button" aria-label="${n.label}">
-      <circle cx="${n.x}" cy="${n.y}" r="${p.r}" fill="${p.fill}" stroke="${p.stroke}" stroke-width="2" ${dashAttr}/>
-      <text x="${n.x}" y="${n.y+4}" text-anchor="middle" fill="${n.type==='predicted'?'#c4b5fd':'#e0eeff'}" font-size="${mini?8:10}" font-weight="700" font-family="Inter,sans-serif">${n.label}</text>
-      <text x="${n.x}" y="${n.y + (mini ? 14 : 18)}" text-anchor="middle" fill="${n.type==='predicted'?'#a78bfa':'#7aa8c8'}" font-size="${mini?7:8}" font-family="Inter,sans-serif">${n.sub}</text>
-    </g>`;
+  let nodesSVG = '';
+  nodes.forEach(n => {
+    const th = nodeTheme(n);
+    const w = mini ? 108 : 136;
+    const h = mini ? 42 : 50;
+    const rx = 10;
+    const dashAttr = th.dash ? `stroke-dasharray="${th.dash}"` : '';
+    const onclick = mini ? `openWalletDrawer('${n.id}')` : `selectGraphNode('${n.id}')`;
+    
+    // Format display label cleanly
+    let displayTitle = n.label || n.id;
+    if(displayTitle.length > 14) displayTitle = displayTitle.slice(0, 13) + '…';
+
+    let displaySub = n.sub || '';
+    if(displaySub.length > 18) displaySub = displaySub.slice(0, 17) + '…';
+
+    nodesSVG += `
+      <g class="graph-node" onclick="${onclick}" style="cursor:pointer" role="button" aria-label="${n.label}">
+        <!-- Glow / Shadow -->
+        <rect x="${n.x - w/2 - 2}" y="${n.y - h/2 - 2}" width="${w + 4}" height="${h + 4}" rx="${rx + 2}" fill="${th.glow}" opacity="0.6"/>
+        
+        <!-- Main Card Body -->
+        <rect x="${n.x - w/2}" y="${n.y - h/2}" width="${w}" height="${h}" rx="${rx}" fill="${th.fill}" stroke="${th.stroke}" stroke-width="2" ${dashAttr}/>
+        
+        <!-- Left Icon Circle -->
+        <circle cx="${n.x - w/2 + (mini ? 16 : 20)}" cy="${n.y}" r="${mini ? 11 : 14}" fill="rgba(255,255,255,.12)" stroke="${th.stroke}" stroke-width="1"/>
+        <text x="${n.x - w/2 + (mini ? 16 : 20)}" y="${n.y + (mini ? 4 : 5)}" text-anchor="middle" font-size="${mini ? 11 : 14}">${th.icon}</text>
+        
+        <!-- Title & Subtitle -->
+        <text x="${n.x - w/2 + (mini ? 32 : 40)}" y="${n.y - (mini ? 2 : 3)}" text-anchor="start" fill="${th.titleColor}" font-size="${mini ? 9.5 : 11.5}" font-weight="800" font-family="'Plus Jakarta Sans',sans-serif">${displayTitle}</text>
+        <text x="${n.x - w/2 + (mini ? 32 : 40)}" y="${n.y + (mini ? 11 : 13)}" text-anchor="start" fill="${th.subColor}" font-size="${mini ? 8 : 9.5}" font-weight="700" font-family="'Plus Jakarta Sans',sans-serif">${displaySub}</text>
+      </g>
+    `;
   });
 
-  const controls=mini?'':`<div class="graph-controls">
-    <button class="graph-btn" onclick="traceForward()">⟶ Trace Forward</button>
-    <button class="graph-btn" onclick="traceBackward()">⟵ Trace Back</button>
-    <button class="graph-btn" onclick="isolatePath()">⊡ Isolate Path</button>
-    <button class="graph-btn" onclick="resetGraph()">↺ Reset</button>
+  const controls = mini ? '' : `<div class="graph-controls">
+    <button class="graph-btn active" onclick="replayGraphDiscoveryAnimation()">▶ Play flow</button>
+    <button class="graph-btn" onclick="traceForward()">⟶ Show next connections</button>
+    <button class="graph-btn" onclick="traceBackward()">⟵ Show previous connections</button>
+    <button class="graph-btn" onclick="isolatePath()">⊡ Focus path</button>
+    <button class="graph-btn" onclick="resetGraph()">↺ Reset view</button>
   </div>
   <div class="graph-label-bar" id="graphLabelBar">${graphIsLive
-    ? `🟢 LIVE DATA &nbsp;•&nbsp; Seed: ${(DEFAULT_SEED.slice(0,10)+'…')} &nbsp;•&nbsp; ${state.graphFilters.riskMin>0?'FILTERED':'FULL NETWORK'}`
-    : `DEMO / SAMPLE DATA &nbsp;•&nbsp; ${state.graphFilters.riskMin>0?'FILTERED':'FULL NETWORK'}`
+    ? `🟢 LIVE BLOCKCHAIN FEED &nbsp;•&nbsp; Seed: ${(DEFAULT_SEED.slice(0,10)+'…')} &nbsp;•&nbsp; ${state.graphFilters.riskMin > 0 ? 'FILTERED' : 'FULL TRAIL'}`
+    : `🛡️ FORENSIC SIMULATION &nbsp;•&nbsp; ${state.graphFilters.riskMin > 0 ? 'FILTERED' : 'FULL TRAIL'}`
   }</div>
-  <div class="graph-zoom"><button onclick="zoomGraph(1.25)" title="Zoom In">+</button><button onclick="zoomGraph(.8)" title="Zoom Out">−</button></div>`;
+  <div class="graph-zoom">
+    <button onclick="zoomGraph(1.25)" title="Zoom In">+</button>
+    <button onclick="zoomGraph(.8)" title="Zoom Out">−</button>
+  </div>`;
 
-  const legend=`<div class="graph-legend">
-    <span>● Wallet</span><span style="color:#fca5a5">● High-Risk/Seed</span><span style="color:#fcd34d">● Exchange</span><span style="color:#a78bfa">- - Predicted</span>
+  const legend = `<div class="graph-legend">
+    <span style="color:#38bdf8">🏦 Bank Account</span>
+    <span style="color:#f87171">🚨 Suspect Seed</span>
+    <span style="color:#60a5fa">🔀 Layering Mule</span>
+    <span style="color:#c084fc">🏢 Target Exchange</span>
+    <span style="color:#a78bfa">🔮 Predicted Next Move</span>
   </div>`;
 
   return `<div class="graph-wrap" style="height:${height}">
     <div class="graph-grid"></div>
     <svg class="graph-svg" id="graphSvg" viewBox="0 0 980 560" preserveAspectRatio="xMidYMid meet">
       <defs>
-        <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#4a6fa8"/></marker>
-        <marker id="arrhot" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#ef7c50"/></marker>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#38bdf8"/></marker>
+        <marker id="arrhot" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#f97316"/></marker>
         <marker id="arrpred" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#a78bfa"/></marker>
       </defs>
       <g id="graphGroup">${edgesSVG}${nodesSVG}</g>
@@ -1454,7 +1888,12 @@ function traceForward(){
   loadGraphFromBackend(seed, 3);
 }
 function traceBackward(){toast('Backward trace initiated — upstream path highlighted','ok');}
-function isolatePath(){toast('Critical fund-flow path isolated','ok');}
+function isolatePath(){
+  state.graphFilters.riskMin = state.graphFilters.riskMin === 75 ? 0 : 75;
+  renderPage();
+  setTimeout(initGraphInteraction, 100);
+  toast(state.graphFilters.riskMin === 75 ? '🚨 High-Risk critical trail isolated' : 'Full transaction network restored', 'ok');
+}
 function addGraphSnapshot(){
   const ev={id:`EV-CS-00${state.evidence.length+1}`,type:'Graph Snapshot',source:'ChainSentinel Platform',case:'CS-2026-001',entity:'Network',txRef:'—',collectedAt:'22 Aug 2026, '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+' IST',collectedBy:'CP-FCI-042',hash:'snap'+Math.random().toString(36).slice(2,8),status:'Collected',notes:'Graph snapshot added by investigator.'};
   state.evidence.push(ev);
@@ -1463,14 +1902,35 @@ function addGraphSnapshot(){
 
 // ─── TRANSACTIONS ─────────────────────────────────────────────
 function transactionsPage(){
-  let rows=CS.transactions;
-  const search=(state.tableSearch.transactions||'').toLowerCase();
-  const riskFilter=state.filters.txRisk||'all';
-  if(search)rows=rows.filter(t=>t.id.toLowerCase().includes(search)||t.from.toLowerCase().includes(search)||t.to.toLowerCase().includes(search)||t.hash.toLowerCase().includes(search));
+  let rows=CS.transactions || [];
+  const search=(state.tableSearch.transactions || '').trim().toLowerCase();
+  const riskFilter=state.filters.txRisk || 'all';
+
+  if(search){
+    rows = rows.filter(t => {
+      const haystacks = [
+        t.id,
+        t.hash,
+        t.tx_hash,
+        t.from,
+        t.sender,
+        t.to,
+        t.receiver,
+        t.value,
+        t.asset,
+        t.chain,
+        t.notes,
+      ].filter(Boolean).map(String).map(v => v.toLowerCase());
+
+      return haystacks.some(v => v.includes(search));
+    });
+  }
+
   if(riskFilter!=='all')rows=rows.filter(t=>{
-    if(riskFilter==='critical')return t.risk>=90;
-    if(riskFilter==='high')return t.risk>=75&&t.risk<90;
-    return t.risk<75;
+    const risk = Number(t.risk ?? t.score ?? 0);
+    if(riskFilter==='critical')return risk>=90;
+    if(riskFilter==='high')return risk>=75&&risk<90;
+    return risk<75;
   });
   return pageHead('Transaction Intelligence','Inspect individual transfers and supporting risk signals',
     `<button class="btn btn-ghost btn-sm" onclick="toast('Transaction index refreshed','ok')">↺ Refresh</button>`)
@@ -2090,9 +2550,11 @@ function settingsPage(){
 
 // ─── PAGE ROUTER ─────────────────────────────────────────────
 function renderPage(){
+  destroyAiGraph();
   const pages={
     dashboard:dashboardPage,newinvestigation:newInvestigationPage,cases:casesPage,alerts:alertsPage,
     graph:graphPage,transactions:transactionsPage,wallets:walletsPage,entities:entitiesPage,
+    aigraph:aiGraphPage,
     risk:riskPage,behaviour:behaviourPage,predictions:predictionsPage,
     requests:requestsPage,evidence:evidencePage,timeline:timelinePage,reports:reportsPage,
     sources:sourcesPage,exchange:exchangePage,osint:osintPage,crossborder:crossborderPage,
@@ -2101,6 +2563,7 @@ function renderPage(){
   document.getElementById('main').innerHTML=(pages[state.page]||dashboardPage)();
   setTimeout(()=>{
     if(['graph','dashboard','entities'].includes(state.page))initGraphInteraction();
+    if(state.page==='aigraph')initAiGraph();
   },50);
 }
 
@@ -2893,6 +3356,193 @@ function setRole(r){
   document.getElementById('topbarAvatar').textContent=avatars[r];
   renderSidebar();
   toast('Role switched: '+labels[r],'ok');
+}
+
+// ─── POLICE LEGAL NOTICES & EXECUTIVE TOOLS ───────────────────
+function toggleOfficerMode(){
+  state.officerMode = !state.officerMode;
+  localStorage.setItem('cs_officer_mode', state.officerMode ? 'true' : 'false');
+  
+  const pill = document.getElementById('modePill');
+  const label = document.getElementById('modeLabel');
+  if(pill && label){
+    if(state.officerMode){
+      pill.textContent = 'SOP ON';
+      pill.style.background = '#22c55e';
+      label.textContent = '👮 Officer View';
+      toast('Switched to Police Officer Simplified SOP View', 'ok');
+    } else {
+      pill.textContent = 'EXPERT';
+      pill.style.background = '#3b82f6';
+      label.textContent = '🔬 Analyst View';
+      toast('Switched to Forensic Deep-Dive View', 'ok');
+    }
+  }
+  renderPage();
+}
+
+function openSec91Modal(targetOrg='Exchange X', walletId='0x12AB...A8C', amount='₹4,21,000'){
+  const c = CS.case;
+  const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  
+  const noticeHtml = `
+    <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;background:var(--blue-ll);padding:12px 16px;border-radius:var(--r-sm);border:1px solid var(--blue-l)">
+      <div>
+        <b style="color:var(--navy);font-size:13.5px">Statutory Requisition Generator — Section 91 Cr.P.C. / Sec 94 BNSS</b>
+        <div style="font-size:11.5px;color:var(--text2);margin-top:2px">Court-admissible electronic requisition for cryptocurrency service providers</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-secondary btn-sm" onclick="copyNoticeText()">📋 Copy Text</button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">🖨️ Print Notice</button>
+      </div>
+    </div>
+
+    <div class="legal-notice-paper" id="noticePaper">
+      <div class="legal-notice-header">
+        <h2>OFFICE OF THE INVESTIGATING OFFICER</h2>
+        <p>STATE CYBER CRIME POLICE STATION, SECTOR 17, CHANDIGARH</p>
+        <p style="font-size:12px;font-weight:normal;color:#444">Email: cybercrime-chd@nic.in &nbsp;|&nbsp; Phone: 0172-2740000</p>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;font-weight:bold">
+        <div>Ref No: <b>CCPS/CHD/SEC91/2026/894</b></div>
+        <div>Date: <b>${today}</b></div>
+      </div>
+
+      <div style="margin-bottom:16px;font-size:13.5px;line-height:1.6">
+        <b>TO:</b><br>
+        The Nodal Officer / Law Enforcement Grievance Officer,<br>
+        <b>${esc(targetOrg)} Compliance &amp; Legal Cell</b><br>
+        (Virtual Digital Asset Service Provider / FIU-IND Registered Entity)
+      </div>
+
+      <div style="margin-bottom:14px;font-size:13.5px;font-weight:bold;text-decoration:underline">
+        SUBJECT: NOTICE UNDER SECTION 91 OF CODE OF CRIMINAL PROCEDURE, 1973 (CORRESPONDING TO SEC 94 BNSS, 2023) REGARDING EMERGENCY FREEZE OF CRYPTO ASSETS &amp; PRODUCTION OF SUBSCRIBER KYC DETAILS IN FIR NO. 42/2026.
+      </div>
+
+      <div class="legal-notice-body" style="font-size:13px;line-height:1.7;color:#222">
+        <p>1. Whereas this Police Station is investigating a cyber financial crime registered vide <b>FIR No. 42/2026</b> u/s 420/468/120B IPC and 66D IT Act on the complaint of victim <b>(Ref: ${c.victimRef})</b> who was fraudulently induced into transferring funds amounting to <b>₹12,40,000/-</b>.</p>
+        
+        <p style="margin-top:10px">2. Forensic on-chain analysis reveals that stolen funds were routed through intermediary wallet addresses and confirmed deposits amounting to <b>${amount}</b> were credited to account / deposit address linked to your exchange platform (Wallet/Identifier: <code>${walletId}</code>, TX Reference: <code>TX-CS-005</code>).</p>
+        
+        <p style="margin-top:10px">3. In view of the above and in exercise of powers vested under <b>Section 91 Cr.P.C. / Section 102 Cr.P.C.</b>, you are hereby directed to:</p>
+        <ul style="margin:8px 0 8px 24px;line-height:1.7">
+          <li><b>IMMEDIATELY FREEZE / PUT DEBIT RESTRAINT</b> on the cryptocurrency balance and linked fiat bank accounts of the suspect user holding address <code>${walletId}</code> to prevent siphoning of proceeds of crime.</li>
+          <li>Furnish complete <b>Customer Due Diligence / KYC records</b>, Photo ID, PAN, Aadhar, registered Mobile No., and Email of the account holder.</li>
+          <li>Provide complete <b>Fiat/Crypto transaction history, login IP logs</b> with port numbers and timestamps.</li>
+        </ul>
+
+        <p style="margin-top:10px">4. Compliance report must be submitted to the undersigned within <b>24 hours</b> of receipt of this notice. Failure to comply may attract statutory penal consequences under Section 175/176 IPC.</p>
+      </div>
+
+      <div class="legal-notice-footer">
+        <div style="font-size:11px;color:#555">
+          SEAL OF POLICE STATION<br>
+          Chandigarh Police Cyber Div.
+        </div>
+        <div style="text-align:right">
+          <b>(Insp. CP-FCI-042)</b><br>
+          Investigating Officer<br>
+          State Cyber Crime Police Station<br>
+          Chandigarh
+        </div>
+      </div>
+    </div>
+  `;
+
+  openModal('Statutory Notice u/s 91 Cr.P.C.', noticeHtml);
+}
+
+function copyNoticeText(){
+  const p = document.getElementById('noticePaper');
+  if(p){
+    navigator.clipboard.writeText(p.innerText).then(()=>{
+      toast('Legal notice text copied to clipboard', 'ok');
+    }).catch(()=>{
+      toast('Notice ready for print / copy', 'ok');
+    });
+  }
+}
+
+function openEmergencyFreezeModal(targetOrg='Exchange X', walletId='0x12AB...A8C', amount='₹4,21,000'){
+  openModal('🚨 Emergency Crypto Asset Freeze Request', `
+    <div style="background:#fee2e2;border:1.5px solid #fca5a5;padding:14px;border-radius:var(--r-sm);color:#991b1b;margin-bottom:16px">
+      <b>⚠️ URGENT FREEZE DIRECTIVE (I4C / LEA EXPRESS CHANNEL)</b>
+      <p style="font-size:12px;margin-top:4px">Funds are actively at risk of cashout via P2P or fiat bank withdrawal. An automated electronic hold request will be dispatched to the Nodal Compliance Cell of ${esc(targetOrg)}.</p>
+    </div>
+
+    <div class="kv-grid">
+      <div class="kv-item"><div class="kv-label">Target Exchange</div><div class="kv-value">${esc(targetOrg)}</div></div>
+      <div class="kv-item"><div class="kv-label">Target Deposit Address</div><div class="kv-value" style="font-size:12px">${esc(walletId)}</div></div>
+      <div class="kv-item"><div class="kv-label">Freezable Value</div><div class="kv-value" style="color:#b91c1c">${amount}</div></div>
+      <div class="kv-item"><div class="kv-label">FIR Reference</div><div class="kv-value">FIR No. 42/2026 (Sec 420/66D)</div></div>
+    </div>
+
+    <label class="form-label">NODAL OFFICER EMAIL</label>
+    <input class="form-field" value="nodal.compliance@exchange-x.com" style="margin-bottom:10px" readonly>
+
+    <label class="form-label">STATUTORY LEGAL BASIS</label>
+    <select class="form-field" style="margin-bottom:16px">
+      <option selected>Section 91 / 102 Cr.P.C. — Police Powers to Seize/Freeze</option>
+      <option>Section 94 / 106 Bharatiya Nagarik Suraksha Sanhita (BNSS)</option>
+      <option>I4C MHA Rapid Freeze Protocol</option>
+    </select>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-danger" style="flex:1;justify-content:center;padding:12px" onclick="dispatchFreezeRequest('${targetOrg}')">
+        ⚡ DISPATCH EMERGENCY FREEZE NOW
+      </button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  `);
+}
+
+function dispatchFreezeRequest(org){
+  closeModal();
+  toast(`🚨 Emergency Freeze Directive dispatched to ${org} Compliance Cell (Ref: FRZ-2026-0891)`, 'ok', 4000);
+}
+
+function openCaseExplainerModal(){
+  const c = CS.case;
+  openModal('🎙️ SARANSH AI — Case Summary in Simple Terms', `
+    <div style="background:linear-gradient(135deg,#0c2340,#1e3a8a);color:#fff;border-radius:var(--r);padding:18px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:800;color:#93c5fd;letter-spacing:.08em;text-transform:uppercase">EXECUTIVE BRIEF FOR SENIOR POLICE OFFICERS (SHO / DSP / SP)</div>
+      <div style="font-size:17px;font-weight:900;margin-top:4px">Case ${c.id}: Suspected Crypto Investment Fraud</div>
+      <div style="font-size:12px;color:#cbd5e1;margin-top:3px">Plain language breakdown without technical crypto jargon</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="padding:14px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:var(--r-sm)">
+        <b style="font-size:14px;color:#166534">1️⃣ घटना क्या हुई? (What Happened)</b>
+        <p style="font-size:13px;color:#14532d;margin-top:5px;line-height:1.6">
+          शिकायतकर्ता (Victim: <b>${c.victimRef}</b>) को व्हाट्सएप / कॉल पर ऑनलाइन भारी मुनाफे का झांसा देकर <b>₹12,40,000</b> ठग लिए गए। पीड़ित के HDFC बैंक खाते से पैसे क्रिप्टो ट्रांसफर के जरिए मुख्य संदिग्ध वॉलेट <code>${c.seed}</code> में भेजे गए।
+        </p>
+      </div>
+
+      <div style="padding:14px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--r-sm)">
+        <b style="font-size:14px;color:#92400e">2️⃣ पैसा अभी कहाँ पर है? (Where is the Money Now)</b>
+        <p style="font-size:13px;color:#78350f;margin-top:5px;line-height:1.6">
+          ठगों ने पुलिस को चकमा देने के लिए पैसे को केवल 4 मिनट में 3 अलग-अलग खच्चर खातों (Mule Wallets) में बांट दिया। इनमें से <b>₹7,18,000 (58% रकम)</b> सीधे <b>Exchange X और Exchange Y</b> में पहुंच चुका है, जहां से वे इसे P2P या बैंक में निकालने की फिराक में हैं।
+        </p>
+      </div>
+
+      <div style="padding:14px;background:#fef2f2;border:1.5px solid #fecaca;border-radius:var(--r-sm)">
+        <b style="font-size:14px;color:#991b1b">3️⃣ जांच अधिकारी (IO) के लिए तुरंत कार्रवाई (Action Required)</b>
+        <p style="font-size:13px;color:#7f1d1d;margin-top:5px;line-height:1.6">
+          👉 <b>तत्काल Exchange X को Section 91 Cr.P.C. का नोटिस भेजें</b> ताकि खाते को फ्रीज करवाकर ₹4.21 लाख और ₹2.97 लाख को सुरक्षित किया जा सके और आरोपी का आधार/पैन/KYC प्राप्त किया जा सके।
+        </p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:18px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closeModal();openSec91Modal('Exchange X', '0x12AB...A8C', '₹4,21,000')">
+        📄 तुरंत Notice u/s 91 CrPC जनरेट करें
+      </button>
+      <button class="btn btn-secondary" onclick="closeModal();go('graph')">
+        🗺️ पूरा नक्शा देखें (Graph)
+      </button>
+    </div>
+  `);
 }
 
 function showNotices(){

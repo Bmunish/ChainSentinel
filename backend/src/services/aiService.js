@@ -7,6 +7,7 @@
  */
 
 const { getDb, logAudit } = require('../db/database');
+const { computeRiskScore } = require('../engine/riskScoring');
 
 /**
  * Generates an evidence-grounded AI investigative summary for any wallet address.
@@ -15,10 +16,10 @@ const { getDb, logAudit } = require('../db/database');
  */
 function generateWalletSummary(address) {
   const db = getDb();
-  const wallet = db.prepare('SELECT * FROM wallets WHERE address = ?').get(address);
-  const txs = db.prepare('SELECT * FROM transactions WHERE sender = ? OR receiver = ? ORDER BY timestamp ASC').all(address, address);
-  const alerts = db.prepare('SELECT * FROM alerts WHERE wallet_address = ?').all(address);
-  const behaviours = db.prepare('SELECT * FROM behaviours WHERE entity = ?').all(address);
+  const wallet = db.prepare('SELECT * FROM wallets WHERE LOWER(address) = LOWER(?)').get(address);
+  const txs = db.prepare('SELECT * FROM transactions WHERE LOWER(sender) = LOWER(?) OR LOWER(receiver) = LOWER(?) ORDER BY timestamp ASC').all(address, address);
+  const alerts = db.prepare('SELECT * FROM alerts WHERE LOWER(wallet_address) = LOWER(?)').all(address);
+  const behaviours = db.prepare('SELECT * FROM behaviours WHERE LOWER(entity) = LOWER(?)').all(address);
 
   if (!wallet && txs.length === 0) {
     return {
@@ -34,9 +35,11 @@ function generateWalletSummary(address) {
 
   const wLabel = wallet ? (wallet.label || wallet.address) : address;
   const isSeed = address.includes('7A3F') || address.includes('FRAUD_ORIGIN');
-  const riskScore = wallet ? wallet.risk_score : 50;
-  const inTxs = txs.filter(t => t.receiver === address);
-  const outTxs = txs.filter(t => t.sender === address);
+  const riskProfile = wallet ? computeRiskScore(wallet.address, { useCache: false }) : null;
+  const riskScore = riskProfile?.riskScore ?? wallet?.risk_score ?? 0;
+  const normalizedAddress = address.toLowerCase();
+  const inTxs = txs.filter(t => String(t.receiver || '').toLowerCase() === normalizedAddress);
+  const outTxs = txs.filter(t => String(t.sender || '').toLowerCase() === normalizedAddress);
   const totalInUsd = inTxs.reduce((sum, t) => sum + (t.amount || 0), 0);
   const totalOutUsd = outTxs.reduce((sum, t) => sum + (t.amount || 0), 0);
 
@@ -86,7 +89,7 @@ function generateWalletSummary(address) {
     address,
     label: wLabel,
     riskScore,
-    riskLevel: wallet?.risk_level || 'HIGH',
+    riskLevel: riskScore >= 90 ? 'CRITICAL' : riskScore >= 75 ? 'HIGH' : riskScore >= 50 ? 'MEDIUM' : 'LOW',
     quickSummary,
     keyObservations: observations,
     whyFlagged,
@@ -98,6 +101,78 @@ function generateWalletSummary(address) {
     sources,
     generatedAt: new Date().toISOString(),
     classification: 'AI_ASSISTED_ANALYSIS',
+  };
+}
+
+async function generateWalletSummaryWithAI(address) {
+  const summary = generateWalletSummary(address);
+  const apiKey = process.env.OPENROUTER_API_KEY;
+
+  if (!apiKey) {
+    return { ...summary, aiProvider: 'deterministic-fallback' };
+  }
+
+  const db = getDb();
+  const txs = db.prepare(`
+    SELECT tx_hash, sender, receiver, amount, value_display, token, chain, timestamp
+    FROM transactions
+    WHERE LOWER(sender) = LOWER(?) OR LOWER(receiver) = LOWER(?)
+    ORDER BY timestamp ASC
+    LIMIT 100
+  `).all(address, address);
+
+  const evidence = {
+    address,
+    authoritativeRiskScore: summary.riskScore,
+    authoritativeRiskLevel: summary.riskLevel,
+    transactionCount: txs.length,
+    transactions: txs,
+    existingFactors: summary.keyObservations,
+  };
+
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': process.env.OPENROUTER_SITE_URL || 'http://localhost:3001',
+      'X-Title': process.env.OPENROUTER_APP_NAME || 'ChainTrace',
+    },
+    body: JSON.stringify({
+      model: process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini',
+      temperature: 0.1,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a blockchain forensic analyst. Use only the supplied evidence. Never invent transactions, entities, or risk factors. Do not change the authoritative risk score. Return JSON with summary, findings (array), and nextSteps (array).',
+        },
+        { role: 'user', content: JSON.stringify(evidence) },
+      ],
+      response_format: { type: 'json_object' },
+    }),
+  });
+
+  if (!response.ok) {
+    return { ...summary, aiProvider: 'deterministic-fallback', aiError: `OpenRouter HTTP ${response.status}` };
+  }
+
+  const payload = await response.json();
+  const content = payload.choices?.[0]?.message?.content;
+  let analysis;
+  try {
+    analysis = JSON.parse(content || '{}');
+  } catch {
+    analysis = {};
+  }
+
+  return {
+    ...summary,
+    aiProvider: process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini',
+    aiAnalysis: {
+      summary: typeof analysis.summary === 'string' ? analysis.summary : summary.quickSummary,
+      findings: Array.isArray(analysis.findings) ? analysis.findings : summary.keyObservations,
+      nextSteps: Array.isArray(analysis.nextSteps) ? analysis.nextSteps : [summary.whatToReviewNext],
+    },
   };
 }
 
@@ -225,5 +300,6 @@ function generateCaseNarrative(caseId = 'CS-2026-001') {
 
 module.exports = {
   generateWalletSummary,
+  generateWalletSummaryWithAI,
   generateCaseNarrative,
 };

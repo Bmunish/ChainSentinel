@@ -157,15 +157,15 @@ router.get('/:address/cluster', (req, res, next) => {
 router.get('/:address/risk', (req, res, next) => {
   try {
     const db      = getDb();
-    const wallet  = db.prepare('SELECT address FROM wallets WHERE address = ?')
-                      .get(req.params.address);
+    const wallet  = db.prepare('SELECT address FROM wallets WHERE LOWER(address) = LOWER(?)')
+              .get(req.params.address);
 
     if (!wallet) {
       return res.status(404).json({ error: 'Wallet not found.' });
     }
 
     const useCache = req.query.refresh !== 'true';
-    const profile  = computeRiskScore(req.params.address, { useCache });
+    const profile  = computeRiskScore(wallet.address, { useCache });
 
     return res.json({ success: true, data: profile });
   } catch (err) {

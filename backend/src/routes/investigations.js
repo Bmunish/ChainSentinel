@@ -9,7 +9,7 @@ const router = express.Router();
 const { getDb, logAudit } = require('../db/database');
 const { validateWallet, detectChain } = require('../blockchain');
 const { computeRiskScore } = require('../engine/riskScoring');
-const { analyzeBehaviours } = require('../engine/behaviourEngine');
+const { propagateLinkage } = require('../services/linkagePropagationService');
 
 // ── GET /api/investigations ───────────────────────────────────────────────────
 router.get('/', (req, res, next) => {
@@ -73,7 +73,7 @@ router.get('/', (req, res, next) => {
 });
 
 // ── POST /api/investigations ──────────────────────────────────────────────────
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     const db = getDb();
     const {
@@ -86,6 +86,7 @@ router.post('/', (req, res, next) => {
       priority = 'HIGH',
       victim_ref = 'VIC-2026-' + Math.floor(100 + Math.random() * 900),
       notes = '',
+      autoPropagate = true,
     } = req.body || {};
 
     if (!seed || seed.trim().length < 3) {
@@ -102,18 +103,21 @@ router.post('/', (req, res, next) => {
     const caseId = `CS-2026-${nextNum}`;
     const caseTitle = title || `Investigation on ${cleanSeed.slice(0, 10)}…`;
 
+    const isDemo = cleanSeed.includes('...') || cleanSeed.startsWith('0xFRAUD_');
+    const initialBaseRisk = isDemo ? 85 : 15;
+
     // Ensure wallet exists in DB
     const existingWallet = db.prepare('SELECT * FROM wallets WHERE address = ?').get(cleanSeed);
     if (!existingWallet) {
       db.prepare(`
         INSERT INTO wallets (address, chain, type, label, base_risk, flagged)
-        VALUES (?, ?, 'Seed Wallet', 'Investigation Seed', 85, 1)
-      `).run(cleanSeed, detectedChain);
+        VALUES (?, ?, 'Seed Wallet', ?, ?, ?)
+      `).run(cleanSeed, detectedChain, isDemo ? 'Investigation Seed' : 'Target Address', initialBaseRisk, isDemo ? 1 : 0);
     }
 
     // Compute initial risk
-    const riskProf = computeRiskScore(cleanSeed, { useCache: false });
-    const riskLevel = riskProf.riskScore >= 90 ? 'CRITICAL' : riskProf.riskScore >= 75 ? 'HIGH' : riskProf.riskScore >= 50 ? 'MEDIUM' : 'LOW';
+    let riskProf = computeRiskScore(cleanSeed, { useCache: false });
+    let riskLevel = riskProf.riskScore >= 90 ? 'CRITICAL' : riskProf.riskScore >= 75 ? 'HIGH' : riskProf.riskScore >= 50 ? 'MEDIUM' : 'LOW';
 
     // Insert investigation
     db.prepare(`
@@ -148,6 +152,20 @@ router.post('/', (req, res, next) => {
 
     logAudit(req.user?.officer_id || 'CP-FCI-042', `Created investigation ${caseId}`, 'Investigation', caseId, 'Success', { seed: cleanSeed });
 
+    // Multi-hop linkage propagation (if enabled)
+    let propagationStats = null;
+    if (autoPropagate) {
+      try {
+        propagationStats = await propagateLinkage(caseId, cleanSeed, detectedChain, 2, 30);
+        if (propagationStats && typeof propagationStats.riskScore === 'number') {
+          riskProf.riskScore = propagationStats.riskScore;
+          riskLevel = propagationStats.riskLevel;
+        }
+      } catch (propErr) {
+        // Fallback gracefully without failing case creation
+      }
+    }
+
     return res.status(201).json({
       success: true,
       data: {
@@ -160,8 +178,35 @@ router.post('/', (req, res, next) => {
         priority: priority.toUpperCase(),
         riskScore: riskProf.riskScore,
         riskLevel,
+        factors: propagationStats?.factors || [],
         validation: valResult,
+        propagation: propagationStats,
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ── POST /api/investigations/:id/propagate ────────────────────────────────────
+router.post('/:id/propagate', async (req, res, next) => {
+  try {
+    const db = getDb();
+    const c = db.prepare('SELECT * FROM investigations WHERE case_id = ? OR id = ?').get(req.params.id, req.params.id);
+
+    if (!c) {
+      return res.status(404).json({ error: 'Investigation not found.' });
+    }
+
+    const { hops = 2, maxTx = 40 } = req.body || {};
+    const result = await propagateLinkage(c.case_id, c.seed_address, c.blockchain, hops, maxTx);
+
+    logAudit(req.user?.officer_id || 'CP-FCI-042', `Propagated graph for ${c.case_id}`, 'Investigation', c.case_id, 'Success', result);
+
+    return res.json({
+      success: true,
+      message: 'Multi-hop graph propagation complete.',
+      data: result,
     });
   } catch (err) {
     next(err);

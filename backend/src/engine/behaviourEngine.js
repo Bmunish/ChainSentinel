@@ -12,7 +12,10 @@ const {
   detectHighVelocity,
   detectMixerInteraction,
   detectChainHopping,
-  detectDormantReactivation
+  detectDormantReactivation,
+  detectPeelChain,
+  detectStructuring,
+  detectRoundTrip,
 } = require('./riskScoring');
 
 /**
@@ -42,12 +45,63 @@ function analyzeBehaviours(caseIdOrSeed) {
     }));
   }
 
-  // Fallback rule evaluation
+  // Dynamic domain rule evaluation
   const isFanOut = detectRapidFanOut(db, seed);
   const isVelocity = detectHighVelocity(db, seed);
   const isMixer = detectMixerInteraction(db, seed);
   const isChainHop = detectChainHopping(db, seed);
   const isDormant = detectDormantReactivation(db, seed);
+  const isPeelChain = detectPeelChain(db, seed);
+  const isStructuring = detectStructuring(db, seed);
+  const isRoundTrip = detectRoundTrip(db, seed);
+
+  if (isPeelChain) {
+    detected.push({
+      id: 'BH-006',
+      name: 'Peel Chain Topology',
+      severity: 'CRITICAL',
+      entity: seed,
+      timeRange: 'Multi-Hop Sequence',
+      desc: 'Systematic peel chain structure: funds are forwarded with high volume (75%–98%) to a single fresh address while peeling off small slices.',
+      evidence: [
+        'High forward volume share detected per hop',
+        'Sequential single-input, split-output topology',
+        'Decaying change output obfuscation pattern'
+      ]
+    });
+  }
+
+  if (isStructuring) {
+    detected.push({
+      id: 'BH-007',
+      name: 'Structuring / Smurfing',
+      severity: 'HIGH',
+      entity: seed,
+      timeRange: 'Transaction Cluster',
+      desc: 'Multiple transfers repeatedly clustered just under statutory AML compliance reporting thresholds ($10,000 USD / INR 10 Lakh).',
+      evidence: [
+        'Transfers clustered in the 65%–99% threshold corridor',
+        'Distributed across multiple distinct destination wallets',
+        'Consistent smurfing signature to avoid triggering SAR filings'
+      ]
+    });
+  }
+
+  if (isRoundTrip) {
+    detected.push({
+      id: 'BH-008',
+      name: 'Round-Trip Wash Loop',
+      severity: 'HIGH',
+      entity: seed,
+      timeRange: 'Circular Cycle',
+      desc: 'Funds cycle through intermediate hops and return to the origin address, indicative of wash trading or provenance laundering.',
+      evidence: [
+        'Direct multi-hop cycle detected returning to seed',
+        'Wash loop volume recycling',
+        'Artificial volume generation or trail obfuscation'
+      ]
+    });
+  }
 
   if (isDormant) {
     detected.push({

@@ -33,6 +33,7 @@ const ocrRouter = require('./routes/ocr');
 const orgRequestsRouter = require('./routes/orgRequests');
 const aiRouter = require('./routes/ai');
 const graphEventsRouter = require('./routes/graphEvents');
+const graphRouter = require('./routes/graph');
 
 const { resetDb } = require('./db/database');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
@@ -115,6 +116,7 @@ app.use('/api/v1/ai', aiRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/v1', aiRouter);
 app.use('/api/v1/graph', graphEventsRouter);
+app.use('/api/graph', graphRouter);
 
 // ── Dev-only: re-seed endpoint ────────────────────────────────────────────────
 app.post('/api/seed', async (req, res, next) => {

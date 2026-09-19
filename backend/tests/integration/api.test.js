@@ -68,6 +68,16 @@ describe('ChainTrace REST API Integration Suite', () => {
     expect(res.body.data.status).toBe('INVESTIGATING');
   });
 
+  test('POST /api/investigations/:id/propagate runs multi-hop on-chain expansion', async () => {
+    const res = await request(app)
+      .post('/api/investigations/CS-2026-001/propagate')
+      .send({ hops: 2, maxTx: 10 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data.caseNumber).toBe('CS-2026-001');
+  });
+
   test('GET /api/trace/:seed traverses transaction graph', async () => {
     const res = await request(app).get('/api/trace/0x7A3F...B91F?hops=3');
     expect(res.status).toBe(200);

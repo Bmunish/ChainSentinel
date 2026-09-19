@@ -992,7 +992,7 @@ async function syncAllDataFromBackend(caseId) {
 // ─── LIVE BACKEND GRAPH LOADER ───────────────────────────────
 async function loadGraphFromBackend(seedAddress, hops = 2) {
   seedAddress = seedAddress || (CS.case && CS.case.seed) || DEFAULT_SEED;
-  const url = `${API_BASE}/api/trace/${encodeURIComponent(seedAddress)}?hops=${hops}&direction=both`;
+  const url = `${API_BASE}/api/trace/${encodeURIComponent(seedAddress)}?hops=${hops}&direction=both&refresh=true`;
 
   const labelBar = document.querySelector('.graph-label-bar');
   if (labelBar) labelBar.textContent = '⏳ Loading live on-chain graph data…';

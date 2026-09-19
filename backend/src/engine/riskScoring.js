@@ -90,15 +90,14 @@ function maxWindowVolume(txs, windowMs) {
  * Classic smurfing / structuring indicator.
  */
 function detectRapidFanOut(db, address) {
-  const targetAddress = String(address || '').toLowerCase();
   const windowMs = CFG.FAN_OUT_WINDOW_MINUTES * 60 * 1000;
 
   const outgoing = db.prepare(`
     SELECT receiver, timestamp
     FROM   transactions
-    WHERE  LOWER(sender) = ?
+    WHERE  sender = ?
     ORDER  BY timestamp ASC
-  `).all(targetAddress);
+  `).all(address);
 
   if (outgoing.length < CFG.FAN_OUT_MIN_RECEIVERS) return false;
 
@@ -122,15 +121,14 @@ function detectRapidFanOut(db, address) {
  * Triggered when total outgoing volume exceeds $THRESHOLD in any 1-hour window.
  */
 function detectHighVelocity(db, address) {
-  const targetAddress = String(address || '').toLowerCase();
   const windowMs = CFG.VELOCITY_WINDOW_HOURS * 60 * 60 * 1000;
 
   const outgoing = db.prepare(`
     SELECT timestamp, amount
     FROM   transactions
-    WHERE  LOWER(sender) = ?
+    WHERE  sender = ?
     ORDER  BY timestamp ASC
-  `).all(targetAddress);
+  `).all(address);
 
   const maxVol = maxWindowVolume(outgoing, windowMs);
   return maxVol >= CFG.VELOCITY_THRESHOLD_USD;
@@ -141,16 +139,15 @@ function detectHighVelocity(db, address) {
  * Triggered when the wallet has a direct transaction to/from a Mixer wallet.
  */
 function detectMixerInteraction(db, address) {
-  const targetAddress = String(address || '').toLowerCase();
   const result = db.prepare(`
     SELECT COUNT(*) AS cnt
     FROM   transactions t
     JOIN   wallets      w ON (w.address = t.receiver OR w.address = t.sender)
     WHERE  w.type = 'Mixer'
-      AND  LOWER(w.address) != LOWER(?)
-      AND  (LOWER(t.sender) = LOWER(?) OR LOWER(t.receiver) = LOWER(?))
+      AND  w.address != ?
+      AND  (t.sender = ? OR t.receiver = ?)
     LIMIT  1
-  `).get(targetAddress, targetAddress, targetAddress);
+  `).get(address, address, address);
 
   return result && result.cnt > 0;
 }
@@ -161,16 +158,15 @@ function detectMixerInteraction(db, address) {
  * (Inferred from the wallets connected to this address.)
  */
 function detectChainHopping(db, address) {
-  const targetAddress = String(address || '').toLowerCase();
   // Collect all unique chains of directly-connected counterparty wallets
   const result = db.prepare(`
     SELECT COUNT(DISTINCT w.chain) AS chain_count
     FROM   transactions t
     JOIN   wallets      w ON (
-             (LOWER(t.sender) = LOWER(?) AND LOWER(w.address) = LOWER(t.receiver))
-           OR (LOWER(t.receiver) = LOWER(?) AND LOWER(w.address) = LOWER(t.sender))
+             (t.sender = ? AND w.address = t.receiver)
+          OR (t.receiver = ? AND w.address = t.sender)
            )
-  `).get(targetAddress, targetAddress);
+  `).get(address, address);
 
   return result && result.chain_count >= 2;
 }
@@ -181,7 +177,6 @@ function detectChainHopping(db, address) {
  * A "burst" = ≥3 transactions within 24h after the gap.
  */
 function detectDormantReactivation(db, address) {
-  const targetAddress = String(address || '').toLowerCase();
   const dormantMs  = CFG.DORMANT_DAYS_THRESHOLD * 24 * 60 * 60 * 1000;
   const burstCount = 3;
   const burstMs    = 24 * 60 * 60 * 1000;
@@ -189,9 +184,9 @@ function detectDormantReactivation(db, address) {
   const allTxs = db.prepare(`
     SELECT timestamp
     FROM   transactions
-    WHERE  LOWER(sender) = LOWER(?) OR LOWER(receiver) = LOWER(?)
+    WHERE  sender = ? OR receiver = ?
     ORDER  BY timestamp ASC
-  `).all(targetAddress, targetAddress);
+  `).all(address, address);
 
   if (allTxs.length < burstCount + 1) return false;
 
@@ -357,16 +352,15 @@ function explainRiskProfile(db, address, riskScore = 50, flags = []) {
 function computeRiskScore(address, options = {}) {
   const db = getDb();
   const { useCache = true } = options;
-  const normalizedAddress = String(address || '').trim().toLowerCase();
 
   // Check cache first
   if (useCache) {
     const cached = db.prepare(`
       SELECT risk_score, flags, computed_at
       FROM   risk_cache
-      WHERE  LOWER(address) = ?
+      WHERE  address = ?
         AND  computed_at > datetime('now', '-5 minutes')
-    `).get(normalizedAddress);
+    `).get(address);
 
     if (cached) {
       return {
@@ -383,8 +377,8 @@ function computeRiskScore(address, options = {}) {
 
   // Fetch wallet base risk
   const wallet = db.prepare(`
-    SELECT base_risk FROM wallets WHERE LOWER(address) = ?
-  `).get(normalizedAddress);
+    SELECT base_risk FROM wallets WHERE address = ?
+  `).get(address);
 
   const baseRisk = wallet ? wallet.base_risk : 0;
 
@@ -399,13 +393,10 @@ function computeRiskScore(address, options = {}) {
     { key: 'MIXER_INTERACTION',     label: 'Mixer Interaction',      fn: detectMixerInteraction     },
     { key: 'CHAIN_HOPPING',         label: 'Chain Hopping',          fn: detectChainHopping         },
     { key: 'DORMANT_REACTIVATION',  label: 'Dormant Reactivation',   fn: detectDormantReactivation  },
-    { key: 'PEEL_CHAIN',            label: 'Peel Chain',             fn: detectPeelChain            },
-    { key: 'STRUCTURING',           label: 'Structuring',            fn: detectStructuring           },
-    { key: 'ROUND_TRIP',            label: 'Round Trip',             fn: detectRoundTrip            },
   ];
 
   for (const check of checks) {
-    if (check.fn(db, normalizedAddress)) {
+    if (check.fn(db, address)) {
       detectedFlags.push(check.label);
       appliedPenalties[check.key] = PENALTIES[check.key];
       bonusScore += PENALTIES[check.key];
@@ -414,7 +405,6 @@ function computeRiskScore(address, options = {}) {
 
   const riskScore = clamp(baseRisk + bonusScore, 0, 100);
   const computedAt = new Date().toISOString();
-  const explanations = explainRiskProfile(db, normalizedAddress, riskScore, detectedFlags);
 
   // Upsert into cache
   db.prepare(`
@@ -424,14 +414,13 @@ function computeRiskScore(address, options = {}) {
       risk_score  = excluded.risk_score,
       flags       = excluded.flags,
       computed_at = excluded.computed_at
-  `).run(normalizedAddress, riskScore, JSON.stringify(detectedFlags), computedAt);
+  `).run(address, riskScore, JSON.stringify(detectedFlags), computedAt);
 
   return {
     address,
     riskScore,
     baseRisk,
     flags:     detectedFlags,
-    explanations,
     penalties: appliedPenalties,
     computedAt,
     fromCache: false,
@@ -460,10 +449,6 @@ module.exports = {
   detectMixerInteraction,
   detectChainHopping,
   detectDormantReactivation,
-  detectPeelChain,
-  detectStructuring,
-  detectRoundTrip,
-  explainRiskProfile,
   CFG,
   PENALTIES,
 };

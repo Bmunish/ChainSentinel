@@ -83,6 +83,12 @@ class EthereumProvider extends BlockchainProvider {
       };
 
       const res = await fetch(url, fetchOptions);
+      const tokenUrl = `${this.apiBaseUrl}?chainid=1&module=account&action=tokentx&address=${encodeURIComponent(
+        cleanAddress
+      )}&page=1&offset=${limit}&sort=desc${
+        effectiveApiKey ? `&apikey=${encodeURIComponent(effectiveApiKey)}` : ''
+      }`;
+      const tokenRes = await fetch(tokenUrl, fetchOptions);
       clearTimeout(timeoutId);
 
       if (!res.ok) {
@@ -101,7 +107,14 @@ class EthereumProvider extends BlockchainProvider {
       }
 
       if (data.status === '1' && Array.isArray(data.result)) {
-        return data.result.map(tx => this._normalizeTx(tx, cleanAddress));
+        const native = data.result.map(tx => this._normalizeTx(tx, cleanAddress));
+        const tokenData = tokenRes.ok ? await tokenRes.json() : null;
+        const tokens = tokenData?.status === '1' && Array.isArray(tokenData.result)
+          ? tokenData.result.map(tx => this._normalizeTokenTx(tx, cleanAddress))
+          : [];
+        const unique = new Map();
+        [...native, ...tokens].forEach(tx => unique.set(tx.tx_hash, tx));
+        return Array.from(unique.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, limit);
       }
 
       // If no on-chain records returned or error code, fall back to DB
@@ -207,6 +220,28 @@ class EthereumProvider extends BlockchainProvider {
       fee: feeEth,
       status: tx.isError === '0' || !tx.isError ? 'CONFIRMED' : 'FAILED',
       flagged: tx.isError === '1' ? 1 : 0,
+    };
+  }
+
+  _normalizeTokenTx(tx, queryAddress) {
+    const decimals = parseInt(tx.tokenDecimal, 10) || 18;
+    const amount = Number(tx.value || 0) / (10 ** decimals);
+    const timestamp = new Date(parseInt(tx.timeStamp, 10) * 1000 || Date.now()).toISOString();
+    const token = tx.tokenSymbol || 'ERC20';
+    return {
+      tx_hash: String(tx.hash || `erc20_${Date.now()}`).toLowerCase(),
+      sender: String(tx.from || queryAddress).toLowerCase(),
+      receiver: String(tx.to || '0x0000000000000000000000000000000000000000').toLowerCase(),
+      amount,
+      value_display: `${amount.toLocaleString('en-US', { maximumFractionDigits: 6 })} ${token}`,
+      token_symbol: token,
+      token,
+      chain: 'Ethereum',
+      timestamp,
+      block_number: parseInt(tx.blockNumber, 10) || 0,
+      fee: 0,
+      status: 'CONFIRMED',
+      flagged: 0,
     };
   }
 

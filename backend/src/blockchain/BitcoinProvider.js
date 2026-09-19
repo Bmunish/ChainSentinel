@@ -66,8 +66,6 @@ class BitcoinProvider extends BlockchainProvider {
         }
       };
 
-      const limit = Math.min(options.limit || 20, 25);
-      const url = `${this.apiBaseUrl}/address/${encodeURIComponent(cleanAddress)}/txs`;
       const res = await fetch(url, fetchOptions);
       clearTimeout(timeoutId);
 
@@ -77,6 +75,7 @@ class BitcoinProvider extends BlockchainProvider {
 
       const txs = await res.json();
       if (Array.isArray(txs)) {
+        const limit = Math.min(options.limit || 20, 20);
         return txs.slice(0, limit).map(tx => this._normalizeTx(tx, cleanAddress));
       }
 

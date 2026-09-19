@@ -178,7 +178,6 @@ router.post('/', async (req, res, next) => {
         priority: priority.toUpperCase(),
         riskScore: riskProf.riskScore,
         riskLevel,
-        factors: propagationStats?.factors || [],
         validation: valResult,
         propagation: propagationStats,
       },

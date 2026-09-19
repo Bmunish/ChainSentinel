@@ -36,7 +36,7 @@ const providers = {
  * @returns {BlockchainProvider}
  */
 function getProvider(chainNameOrSymbol = 'ETH') {
-  const key = String(chainNameOrSymbol).toUpperCase().trim().replace(/[-_]/g, ' ');
+  const key = String(chainNameOrSymbol).toUpperCase().trim();
   return providers[key] || ethProvider;
 }
 
@@ -48,17 +48,16 @@ function getProvider(chainNameOrSymbol = 'ETH') {
 function detectChain(address) {
   if (!address || typeof address !== 'string') return 'Ethereum';
   const a = address.trim();
-  const upper = a.toUpperCase();
-  if (a.startsWith('bc1') || a.startsWith('BC1') || a.startsWith('1') || a.startsWith('3') || upper.includes('BTC')) {
+  if (a.startsWith('bc1') || a.startsWith('1') || a.startsWith('3') || a.toUpperCase().includes('BTC')) {
     return 'Bitcoin';
   }
-  if ((a.startsWith('T') && a.length >= 20) || a.startsWith('T_') || upper.includes('TRON') || upper.includes('TRX')) {
+  if (a.startsWith('T') || a.startsWith('T_') || a.toUpperCase().includes('TRON') || a.toUpperCase().includes('TRX')) {
     return 'TRON';
   }
-  if (a.startsWith('bnb1') || a.startsWith('BNB1') || upper.includes('BNB') || upper.includes('BSC')) {
+  if (a.startsWith('bnb1') || a.toUpperCase().includes('BNB') || a.toUpperCase().includes('BSC')) {
     return 'BNB Chain';
   }
-  if (a.startsWith('HDFC') || a.includes('Bank') || upper.includes('BANK')) {
+  if (a.startsWith('HDFC') || a.includes('Bank') || a.toUpperCase().includes('BANK')) {
     return 'Bank';
   }
   return 'Ethereum';

@@ -54,10 +54,9 @@ class BNBProvider extends BlockchainProvider {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
 
-      const limit = Math.min(options.limit || 25, 25);
       const url = `${this.apiBaseUrl}?module=account&action=txlist&address=${encodeURIComponent(
         cleanAddress
-      )}&startblock=0&endblock=99999999&page=1&offset=${limit}&sort=desc${
+      )}&startblock=0&endblock=99999999&page=1&offset=${options.limit || 25}&sort=desc${
         this.apiKey ? `&apikey=${encodeURIComponent(this.apiKey)}` : ''
       }`;
 
@@ -73,20 +72,11 @@ class BNBProvider extends BlockchainProvider {
 
       const data = await res.json();
 
-      const native = data.status === '1' && Array.isArray(data.result)
-        ? data.result.map(tx => this._normalizeTx(tx, cleanAddress))
-        : [];
-      const tokenUrl = `${this.apiBaseUrl}?module=account&action=tokentx&address=${encodeURIComponent(cleanAddress)}&page=1&offset=${limit}&sort=desc${this.apiKey ? `&apikey=${encodeURIComponent(this.apiKey)}` : ''}`;
-      const tokenRes = await fetch(tokenUrl, {
-        signal: controller.signal,
-        headers: { 'User-Agent': 'ChainTrace-ThreatEngine/2.0' },
-      });
-      const tokenData = tokenRes.ok ? await tokenRes.json() : null;
-      const tokens = tokenData?.status === '1' && Array.isArray(tokenData.result)
-        ? tokenData.result.map(tx => this._normalizeTokenTx(tx, cleanAddress))
-        : [];
-      const transactions = [...native, ...tokens].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, limit);
-      return transactions.length ? transactions : this._fallbackFromLocalDb(cleanAddress);
+      if (data.status === '1' && Array.isArray(data.result)) {
+        return data.result.map(tx => this._normalizeTx(tx, cleanAddress));
+      }
+
+      return this._fallbackFromLocalDb(cleanAddress);
     } catch (err) {
       return this._fallbackFromLocalDb(cleanAddress);
     }
@@ -114,27 +104,6 @@ class BNBProvider extends BlockchainProvider {
       fee: feeBnb,
       status: tx.isError === '0' || !tx.isError ? 'CONFIRMED' : 'FAILED',
       flagged: tx.isError === '1' ? 1 : 0,
-    };
-  }
-
-  _normalizeTokenTx(tx, queryAddress) {
-    const decimals = parseInt(tx.tokenDecimal, 10) || 18;
-    const amount = Number(tx.value || 0) / (10 ** decimals);
-    const timestamp = new Date(parseInt(tx.timeStamp, 10) * 1000 || Date.now()).toISOString();
-    return {
-      tx_hash: String(tx.hash || `bsc_token_${Date.now()}`).toLowerCase(),
-      sender: String(tx.from || queryAddress).toLowerCase(),
-      receiver: String(tx.to || '0x0000000000000000000000000000000000000000').toLowerCase(),
-      amount,
-      value_display: `${amount.toFixed(4)} ${tx.tokenSymbol || 'BEP20'}`,
-      token_symbol: tx.tokenSymbol || 'BEP20',
-      token: tx.tokenSymbol || 'BEP20',
-      chain: 'BNB Chain',
-      timestamp,
-      block_number: parseInt(tx.blockNumber, 10) || 0,
-      fee: 0,
-      status: 'CONFIRMED',
-      flagged: 0,
     };
   }
 

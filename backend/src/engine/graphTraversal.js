@@ -20,7 +20,7 @@ const DEFAULT_MAX_HOPS = 3;
 function filterKeyForensicNodes(seedAddress, transactions) {
   const target = String(seedAddress).toLowerCase();
   const validTransactions = transactions.filter(tx => Number(tx.amount || 0) > 0);
-  const pool = validTransactions.length > 0 ? validTransactions : transactions.slice(0, 5);
+  const pool = validTransactions;
 
   const aggregate = (items, counterpartyKey) => {
     const grouped = new Map();
@@ -128,6 +128,62 @@ async function buildTraceGraph(seedAddress, maxHops = 3, opts = {}) {
   const effectiveMaxHops = Math.min(parseInt(maxHops ?? DEFAULT_MAX_HOPS, 10), 5);
   const maxNodes = Math.min(parseInt(opts.maxNodes ?? 250, 10), 500);
 
+  const directRows = db.prepare(`
+    SELECT tx_hash, sender, receiver, amount, value_display, token,
+           chain, timestamp, block_number, fee, flagged
+    FROM transactions
+    WHERE LOWER(sender) = ? OR LOWER(receiver) = ?
+    ORDER BY timestamp DESC
+    LIMIT 50
+  `).all(cleanSeed.toLowerCase(), cleanSeed.toLowerCase());
+
+  if (directRows.length > 0) {
+    const directLinks = directRows.map(tx => ({
+      id: tx.tx_hash,
+      hash: tx.tx_hash,
+      sender: tx.sender,
+      receiver: tx.receiver,
+      source: tx.sender,
+      target: tx.receiver,
+      amount: Number(tx.amount || 0),
+      valueDisplay: tx.value_display || '',
+      token: tx.token || 'ETH',
+      chain: tx.chain || 'Ethereum',
+      timestamp: tx.timestamp,
+      flagged: Boolean(tx.flagged),
+    }));
+    const compact = filterKeyForensicNodes(cleanSeed, directLinks);
+    const nodes = compact.nodes.map(node => {
+      const wallet = db.prepare('SELECT chain, type, entity, base_risk, flagged FROM wallets WHERE LOWER(address) = LOWER(?)').get(node.id);
+      const risk = computeRiskScore(node.id, { useCache: false });
+      return {
+        ...node,
+        chain: wallet?.chain || 'Ethereum',
+        type: node.role === 'SEED' ? 'Seed Wallet' : node.role === 'INFLOW' ? 'Incoming funds' : 'Connected wallet',
+        entity: wallet?.entity || null,
+        risk_score: risk.riskScore,
+        riskScore: risk.riskScore,
+        riskFlags: risk.flags || [],
+        baseRisk: wallet?.base_risk || node.riskScore || 10,
+        flagged: Boolean(wallet?.flagged || risk.riskScore >= 75),
+      };
+    });
+    const edges = aggregateGraphEdges(compact.links);
+    return {
+      nodes,
+      links: compact.links,
+      edges,
+      meta: {
+        seedAddress: cleanSeed,
+        totalNodes: nodes.length,
+        totalEdges: edges.length,
+        maxHops: effectiveMaxHops,
+        traversalMs: Date.now() - startTime,
+        source: 'LIVE_INDEXED_TRANSACTIONS',
+      },
+    };
+  }
+
   const nodes = [];
   const links = [];
   const linksMap = new Map(); // tx_hash -> link
@@ -226,6 +282,34 @@ async function buildTraceGraph(seedAddress, maxHops = 3, opts = {}) {
         }
       }
     }
+  }
+
+  if (links.length === 0) {
+    try {
+      const directTransactions = db.prepare(`
+        SELECT tx_hash, sender, receiver, amount, value_display, token,
+               chain, timestamp, block_number, fee, flagged, notes
+        FROM transactions
+        WHERE LOWER(sender) = ? OR LOWER(receiver) = ?
+        ORDER BY timestamp DESC
+        LIMIT 50
+      `).all(cleanSeed.toLowerCase(), cleanSeed.toLowerCase());
+      directTransactions.forEach(tx => links.push({
+        id: tx.tx_hash,
+        hash: tx.tx_hash,
+        source: tx.sender,
+        target: tx.receiver,
+        from: tx.sender,
+        to: tx.receiver,
+        amount: Number(tx.amount || 0),
+        valueDisplay: tx.value_display || '',
+        label: tx.value_display || '',
+        token: tx.token || 'ETH',
+        chain: tx.chain || 'Ethereum',
+        timestamp: tx.timestamp,
+        flagged: Boolean(tx.flagged),
+      }));
+    } catch {}
   }
 
   const keyGraph = filterKeyForensicNodes(cleanSeed, links);

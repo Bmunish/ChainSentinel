@@ -9,6 +9,7 @@ const router               = express.Router();
 const { getDb }            = require('../db/database');
 const { computeRiskScore } = require('../engine/riskScoring');
 const { analyzeWalletClusters } = require('../engine/clusteringEngine');
+const { propagateLinkage } = require('../services/linkagePropagationService');
 
 // ── GET /api/wallets ──────────────────────────────────────────────────────────
 router.get('/', (req, res, next) => {
@@ -154,20 +155,34 @@ router.get('/:address/cluster', (req, res, next) => {
 });
 
 // ── GET /api/wallets/:address/risk ────────────────────────────────────────────
-router.get('/:address/risk', (req, res, next) => {
+router.get('/:address/risk', async (req, res, next) => {
   try {
     const db      = getDb();
     const wallet  = db.prepare('SELECT address FROM wallets WHERE LOWER(address) = LOWER(?)')
-              .get(req.params.address);
+                      .get(req.params.address);
 
     if (!wallet) {
       return res.status(404).json({ error: 'Wallet not found.' });
     }
 
-    const useCache = req.query.refresh !== 'true';
-    const profile  = computeRiskScore(wallet.address, { useCache });
+    const refresh = req.query.refresh === 'true';
+    let dataSource = 'LOCAL_INDEX';
+    let liveTransactionCount = null;
 
-    return res.json({ success: true, data: profile });
+    if (refresh && !wallet.address.includes('...') && !wallet.address.startsWith('0xFRAUD_')) {
+      db.prepare('DELETE FROM transactions WHERE LOWER(sender) = LOWER(?) OR LOWER(receiver) = LOWER(?)')
+        .run(wallet.address, wallet.address);
+      const propagation = await propagateLinkage(null, wallet.address, null, 1, 25);
+      liveTransactionCount = propagation.totalTransactionsIngested;
+      dataSource = 'LIVE_PROVIDER';
+    }
+
+    const profile  = computeRiskScore(wallet.address, { useCache: false });
+
+    return res.json({
+      success: true,
+      data: { ...profile, dataSource, liveTransactionCount },
+    });
   } catch (err) {
     next(err);
   }

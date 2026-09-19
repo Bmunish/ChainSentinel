@@ -7,13 +7,13 @@
 
 const express = require('express');
 const router = express.Router();
-const { generateWalletSummaryWithAI, generateCaseNarrative } = require('../services/aiService');
+const { generateWalletSummary, generateCaseNarrative } = require('../services/aiService');
 const { getDb } = require('../db/database');
 
 // ── GET /api/v1/wallets/:address/summary ──────────────────────────────────────
-router.get('/wallets/:address/summary', async (req, res, next) => {
+router.get('/wallets/:address/summary', (req, res, next) => {
   try {
-    const summary = await generateWalletSummaryWithAI(req.params.address);
+    const summary = generateWalletSummary(req.params.address);
     return res.json({
       success: true,
       data: summary,

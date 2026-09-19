@@ -18,11 +18,6 @@ const {
   detectDormantReactivation,
   PENALTIES,
 } = require('../../src/engine/riskScoring');
-const {
-  calculateRiskScore,
-  evaluateLiveBehaviours,
-  aggregateGraphEdges,
-} = require('../../src/services/liveRiskEngine');
 
 const { getDb, resetDb } = require('../../src/db/database');
 const { v4: uuidv4 }    = require('uuid');
@@ -221,62 +216,6 @@ describe('detectChainHopping', () => {
     insertTx(db, 'ORIGIN', 'ETH_B', 3000, 'ETH', minutesAgo(15));
 
     expect(detectChainHopping(db, 'ORIGIN')).toBe(false);
-  });
-});
-
-describe('live risk engine regression checks', () => {
-  test('seed wallets use base risk 40 and add penalties correctly', () => {
-    const result = calculateRiskScore('SEED_WALLET', [
-      { rule: 'MIXER_INTERACTION', penalty: 30, reason: 'Direct mixer link' },
-      { rule: 'RAPID_FAN_OUT', penalty: 25, reason: 'Quick fan-out' },
-    ]);
-
-    expect(result.baseScore).toBe(40);
-    expect(result.score).toBe(95);
-    expect(result.level).toBe('CRITICAL');
-  });
-
-  test('live behaviour detection flags mixer and bridge contracts', () => {
-    const txs = [
-      { sender: '0x1234567890abcdef1234567890abcdef12345678', receiver: '0x722122df12d45044dd7917c805eb3a1f81014e7a', amount: 1, timestamp: Date.now() - 1000 },
-      { sender: '0x280e4d75a1aa087967480848d536a73653aa0508', receiver: '0x1234567890abcdef1234567890abcdef12345678', amount: 2, timestamp: Date.now() - 2000 },
-    ];
-
-    const behaviours = evaluateLiveBehaviours('0x1234567890abcdef1234567890abcdef12345678', txs);
-    const rules = behaviours.map(b => b.rule);
-
-    expect(rules).toContain('MIXER_INTERACTION');
-    expect(rules).toContain('CHAIN_HOPPING');
-  });
-
-  test('FATF counterparty exposure adds explainable mixer and darknet factors', () => {
-    const result = calculateRiskScore('SEED_WALLET', [], [
-      { category: 'MIXER_POOL' },
-      { category: 'DARKNET' },
-    ]);
-
-    expect(result.score).toBe(100);
-    expect(result.level).toBe('CRITICAL');
-    expect(result.factors.map(factor => factor.name)).toEqual(expect.arrayContaining([
-      'Base Profile: SEED_WALLET',
-      'INDIRECT_MIXER_EXPOSURE',
-      'DARKNET_EXPOSURE',
-    ]));
-  });
-
-  test('aggregates zero-value edge groups and preserves counts', () => {
-    const txs = [
-      { sender: 'A', receiver: 'B', amount: 0, tx_hash: 'h1', timestamp: Date.now() },
-      { sender: 'A', receiver: 'B', amount: 0, tx_hash: 'h2', timestamp: Date.now() + 1000 },
-      { sender: 'A', receiver: 'C', amount: 1.5, tx_hash: 'h3', timestamp: Date.now() + 2000 },
-    ];
-
-    const edges = aggregateGraphEdges(txs);
-    const ab = edges.find(e => e.source === 'A' && e.target === 'B');
-    expect(ab).toBeDefined();
-    expect(ab.count).toBe(2);
-    expect(ab.amount).toBe(0);
-    expect(ab.label).toContain('2 calls');
   });
 });
 

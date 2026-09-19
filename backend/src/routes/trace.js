@@ -56,6 +56,7 @@ router.get('/:seed', async (req, res, next) => {
     const txCountRow = db.prepare('SELECT COUNT(*) AS cnt FROM transactions WHERE LOWER(sender) = LOWER(?) OR LOWER(receiver) = LOWER(?)').get(targetSeed, targetSeed);
     const hasTransactions = txCountRow && txCountRow.cnt > 0;
     const isLiveAddress = !targetSeed.includes('...') && !targetSeed.startsWith('0xFRAUD_');
+    const refreshLive = req.query.refresh === 'true' || req.query.live === 'true';
 
     if (isLiveAddress) {
       db.prepare(`
@@ -68,8 +69,11 @@ router.get('/:seed', async (req, res, next) => {
       `).run(targetSeed);
     }
 
-    if (!hasTransactions && isLiveAddress) {
+    if ((!hasTransactions || refreshLive) && isLiveAddress) {
       try {
+        if (refreshLive) {
+          db.prepare('DELETE FROM transactions WHERE LOWER(sender) = LOWER(?) OR LOWER(receiver) = LOWER(?)').run(targetSeed, targetSeed);
+        }
         await propagateLinkage(null, targetSeed, null, Math.min(hops, 2), 30);
       } catch (err) {
         // Continue gracefully
